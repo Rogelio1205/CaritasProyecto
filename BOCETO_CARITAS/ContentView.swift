@@ -6,16 +6,55 @@
 //
 
 import SwiftUI
-
 struct ContentView: View {
+    @State private var tabSeleccionado: Tabs = .inicio
+
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+        NavigationStack {
+            ZStack(alignment: .bottom) {
+                Color(red: 0.94, green: 0.94, blue: 0.94)
+                    .ignoresSafeArea()
+
+                ScrollView {
+                    VStack {
+                        switch tabSeleccionado {
+                        case .inicio:
+                            PantallaPrincipal(tabSeleccionado: $tabSeleccionado)
+                        case .riesgo:
+                            DonantesEnRiesgo()
+                        case .donantes:
+                            DonantesPotenciales()
+                        case .potenciales:
+                            DonantesAltoValor()
+                        }
+
+                        Color.clear.frame(height: 120)
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.top, 12)
+                }
+
+                NavBar(tabSeleccionado: $tabSeleccionado)
+                    .padding(.bottom, 12)
+            }
+            .navigationDestination(for: DonanteDetalladoInfo.self) { donante in
+                DonanteDetalladoView(donante: donante)
+            }
         }
-        .padding()
+    }
+}
+
+struct PantallaPrincipal: View {
+    @Binding var tabSeleccionado: Tabs
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 24) {
+            TopBar()
+            Resumen()
+            DonantesEnRiesgoComp(tabSeleccionado: $tabSeleccionado)
+            DonantesPotencialesComp(tabSeleccionado: $tabSeleccionado)
+            DonantesAltoValorComp(tabSeleccionado: $tabSeleccionado)
+        }
     }
 }
 
