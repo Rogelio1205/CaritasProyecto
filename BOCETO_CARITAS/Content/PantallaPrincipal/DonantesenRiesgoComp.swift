@@ -69,20 +69,15 @@ struct DonantesEnRiesgoComp: View {
 
             VStack(spacing: 12) {
                 ForEach(donantes) { donante in
-                    NavigationLink(value: DonanteDetalladoInfo.DonanteInformacion(
-                        nombre: donante.nombre,
-                        etiquetaRiesgo: "RIESGO \(donante.riesgo.texto)",
-                        colorRiesgo: donante.riesgo.color
-                    )) {
                         MuestraDonante(donante: donante)
                     }
                     .buttonStyle(.plain)
                 }
-            }
+            }.padding(20)
         }
-        .padding(20)
+        
     }
-}
+
 
 struct MuestraDonante: View {
     let donante: Donante

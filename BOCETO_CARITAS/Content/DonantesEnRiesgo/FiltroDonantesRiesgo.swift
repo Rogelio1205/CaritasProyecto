@@ -111,14 +111,7 @@ struct FiltroDonantesRiesgo: View {
 
             VStack(spacing: 12) {
                 ForEach(donantesFiltrados) { donante in
-                    NavigationLink(value: DonanteDetalladoInfo.DonanteInformacion(
-                        nombre: donante.nombre,
-                        etiquetaRiesgo: donante.riesgo.titulo,
-                        colorRiesgo: donante.riesgo.colorFondoSeleccionado
-                    )) {
                         MostrarDonanteRiesgo(donante: donante)
-                    }
-                    .buttonStyle(.plain)
                 }
             }
         }

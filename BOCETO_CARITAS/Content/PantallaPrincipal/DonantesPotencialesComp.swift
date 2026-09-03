@@ -45,18 +45,15 @@ struct DonantesPotencialesComp: View {
 
             HStack(alignment: .top, spacing: 16) {
                 ForEach(donantes) { donante in
-                    NavigationLink(value: DonanteDetalladoInfo.DonanteInformacion(
-                        nombre: donante.nombre
-                    )) {
                         DonantePotencialCard(donante: donante)
                     }
                     .buttonStyle(.plain)
                 }
-            }
+            }.padding(20)
         }
-        .padding(20)
+        
     }
-}
+
 
 struct DonantePotencialCard: View {
     let donante: DonantePotencial

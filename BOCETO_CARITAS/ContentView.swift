@@ -37,12 +37,11 @@ struct ContentView: View {
                 NavBar(tabSeleccionado: $tabSeleccionado)
                     .padding(.bottom, 12)
             }
-            .navigationDestination(for: DonanteDetalladoInfo.self) { donante in
-                DonanteDetalladoView(donante: donante)
+            
             }
         }
     }
-}
+
 
 struct PantallaPrincipal: View {
     @Binding var tabSeleccionado: Tabs

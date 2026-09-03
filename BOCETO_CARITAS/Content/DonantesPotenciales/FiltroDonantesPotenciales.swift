@@ -90,12 +90,8 @@ struct FiltroDonantesPotenciales: View {
 
             VStack(spacing: 12) {
                 ForEach(donantesOrdenados) { donante in
-                    NavigationLink(value: DonanteDetalladoInfo.DonanteInformacion(
-                        nombre: donante.nombre
-                    )) {
-                        MostrarDonantePotencial(donante: donante)
-                    }
-                    .buttonStyle(.plain)
+                    MostrarDonantePotencial(donante: donante)
+                    
                 }
             }
         }

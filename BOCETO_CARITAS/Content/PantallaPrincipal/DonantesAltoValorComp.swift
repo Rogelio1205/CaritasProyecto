@@ -47,12 +47,7 @@ struct DonantesAltoValorComp: View {
 
             VStack(spacing: 12) {
                 ForEach(donantes) { donante in
-                    NavigationLink(value: DonanteDetalladoInfo.DonanteInformacion(
-                        nombre: donante.nombre
-                    )) {
                         MuestraDonanteAltoValor(donante: donante)
-                    }
-                    .buttonStyle(.plain)
                 }
             }
         }

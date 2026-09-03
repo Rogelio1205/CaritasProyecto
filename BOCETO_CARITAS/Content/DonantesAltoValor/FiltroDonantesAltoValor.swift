@@ -90,12 +90,8 @@ struct FiltroDonantesAltoValor: View {
 
             VStack(spacing: 12) {
                 ForEach(donantesOrdenados) { donante in
-                    NavigationLink(value: DonanteDetalladoInfo.DonanteInformacion(
-                        nombre: donante.nombre
-                    )) {
                         MostrarAltoValor(donante: donante)
-                    }
-                    .buttonStyle(.plain)
+
                 }
             }
         }
