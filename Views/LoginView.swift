@@ -14,21 +14,30 @@ struct LoginView: View {
     var body: some View {
         VStack { // VStack principal
             HStack { // Barra de arriba
-                HStack(spacing: 8) {
+            
                     Image("Caritas-Photoroom")
                         .resizable(resizingMode: .stretch)
                         .aspectRatio(contentMode: .fit)
                         .frame(height: 125)
-                        .padding(. leading, 25)
-                }
+                        .padding(.leading, 25)
+                        //.padding(.bottom, )
+                
                 Spacer()
                 
             } // Barra de arriba
-            .background(.white)
-            .padding(.bottom, 50)
+            .background( // Se pone el fondo de esta manera para solo aplicar la sombra a la figura
+                Rectangle()
+                    .fill(Color.white)
+                    .shadow(color: .gray, radius: 10)
+                    .padding(.bottom,20)
+            )
             
-            
-            //Spacer()
+            .overlay {
+                Rectangle()
+                    .stroke(.gray, lineWidth: 1)
+                    .padding(.bottom, 20)
+            }
+            .padding(.bottom, 10)
             
             // IMagen LOGO
             Image("Logo Cara y Cruz")
@@ -36,53 +45,57 @@ struct LoginView: View {
                 .aspectRatio(contentMode: .fit)
                 .frame(height: 250)
             
-            Text("Cara y Cruz")
-                .bold()
+            Text("CARA Y CRUZ")
                 .font(.system(size: 65))
-                .padding(.bottom, 50)
+                .fontWeight(.heavy)
+                .padding(.bottom, 55)
             
             
             VStack { // VStack reucadro blanco
                 
                 VStack (alignment: .leading) { // VStack campus de captura
-                    Text("Iniciar Sesión")
-                        .font(.system(size: 60))
-                        .bold()
-                        .padding(.bottom, 35)
+                    Text("INICIAR SESIÓN")
+                        .font(.system(size: 50))
+                        .fontWeight(.bold)
+                       // .padding(.bottom, 35)
                         .padding(.leading, 45)
                     
-                    Text("Usuario")
-                        .font(.system(size: 45))
-                        .bold()
+                    Divider()
+                        .padding(.bottom, 10)
+                    
+                    Text("USUARIO")
+                        .font(.system(size: 36))
+                        .fontWeight(.bold)
                         .padding(.leading, 45)
                     
                     // Se hace el textField de manera manual para poder customizarlo
                     TextField("caritas@gmailcom", text: $username)
-                        .font(.system(size: 45))
+                        .textInputAutocapitalization(.never)
+                        .font(.system(size: 33))
+                        .padding(20) // Pading interior
+                        .background(Color(red: 191/255, green: 190/255, blue: 186/255))
+                        .cornerRadius(12) // Redondear borde
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 12)
+                                .stroke(Color(red:0, green: 152/255, blue: 174/255), lineWidth: 3) // Color del borde
+                        )
+                        .padding(.horizontal, 45)
+                        .padding(.bottom, 50)
+                    
+                    Text("CONTRASEÑA")
+                        .font(.system(size: 36))
+                        .fontWeight(.bold)
+                        .padding(.leading, 45)
+                    
+                    SecureField("•••••••", text: $password)
+                        .font(.system(size: 33))
                         .padding(20) // Padin interior
                         .background(Color(red: 191/255, green: 190/255, blue: 186/255))
                         .cornerRadius(12) // Redondear borde
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(red:0, green: 152/255, blue: 174/255), lineWidth: 3) // Color del borde
-                            )
-                        .padding(.horizontal, 45)
-                        .padding(.bottom, 50)
-                    
-                    Text("Contraseña")
-                        .font(.system(size: 45))
-                        .bold()
-                        .padding(.leading, 45)
-                    
-                    TextField("*******", text: $password)
-                        .font(.system(size: 45))
-                        .padding(20) // Padin interior
-                        .background(Color(red: 164/255, green: 164/255, blue: 164/255))
-                        .cornerRadius(12) // Redondear borde
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(red:0, green: 152/255, blue: 174/255), lineWidth: 3) // Color del borde
-                            )
+                                .stroke(Color(red:0, green: 152/255, blue: 174/255), lineWidth: 3) // Color del borde
+                        )
                         .padding(.horizontal, 45)
                     
                 } // VStack campus de captura
@@ -96,8 +109,8 @@ struct LoginView: View {
                         .padding(.top, 15)
                         .padding(.bottom, 15)
                         .font(.system(size: 35))
-                        .bold()
-                        
+                        .fontWeight(.bold)
+                    
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.roundedRectangle(radius: 20))
@@ -110,14 +123,20 @@ struct LoginView: View {
             .padding(.vertical, 40)
             .background(.white.opacity(0.85))
             .clipShape(RoundedRectangle(cornerRadius: 35))
+            .overlay {
+                RoundedRectangle(cornerRadius: 35)
+                    .stroke(.gray, lineWidth: 1)
+            }
+            .shadow(color: .gray, radius: 10)
             .padding(.horizontal, 60)
             
-        
-        
+            
+            
+            Spacer()
+            
         } // VStack principal
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        //.background(Color(red:0, green: 152/255, blue: 174/255))
-        .background(
+        .background( // Degradado
             LinearGradient(
                 colors: [
                     Color(red: 195/255, green: 230/255, blue: 228/255),
@@ -126,8 +145,11 @@ struct LoginView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-        )
+        ) // Degradado
         .ignoresSafeArea()
+        
+
+        
         
     }
 }
