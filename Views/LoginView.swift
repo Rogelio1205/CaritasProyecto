@@ -13,10 +13,22 @@ struct LoginView: View {
     
     var body: some View {
         VStack { // VStack principal
-           
-           // Barra de arriba
+            HStack { // Barra de arriba
+                HStack(spacing: 8) {
+                    Image("Caritas-Photoroom")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(height: 160)
+                }
+                Spacer()
+                
+            } // Barra de arriba
+            .background(.white)
+            
+            //Spacer()
             
             // IMagen LOGO
+            Image("Logo Cara y Cruz")
             
             Text("Cara y Cruz")
                 .bold()
@@ -42,7 +54,7 @@ struct LoginView: View {
                     TextField("caritas@gmailcom", text: $username)
                         .font(.system(size: 45))
                         .padding(20) // Padin interior
-                        .background(Color(red: 164/255, green: 164/255, blue: 164/255))
+                        .background(Color(red: 191/255, green: 190/255, blue: 186/255))
                         .cornerRadius(12) // Redondear borde
                         .overlay(
                             RoundedRectangle(cornerRadius: 12)
