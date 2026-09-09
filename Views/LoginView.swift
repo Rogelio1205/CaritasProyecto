@@ -16,19 +16,25 @@ struct LoginView: View {
             HStack { // Barra de arriba
                 HStack(spacing: 8) {
                     Image("Caritas-Photoroom")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 160)
+                        .resizable(resizingMode: .stretch)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(height: 125)
+                        .padding(. leading, 25)
                 }
                 Spacer()
                 
             } // Barra de arriba
             .background(.white)
+            .padding(.bottom, 50)
+            
             
             //Spacer()
             
             // IMagen LOGO
             Image("Logo Cara y Cruz")
+                .resizable(resizingMode: .stretch)
+                .aspectRatio(contentMode: .fit)
+                .frame(height: 250)
             
             Text("Cara y Cruz")
                 .bold()
@@ -110,7 +116,17 @@ struct LoginView: View {
         
         } // VStack principal
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .background(Color(red:0, green: 152/255, blue: 174/255))
+        //.background(Color(red:0, green: 152/255, blue: 174/255))
+        .background(
+            LinearGradient(
+                colors: [
+                    Color(red: 195/255, green: 230/255, blue: 228/255),
+                    Color(red:0, green: 152/255, blue: 174/255)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+        )
         .ignoresSafeArea()
         
     }
