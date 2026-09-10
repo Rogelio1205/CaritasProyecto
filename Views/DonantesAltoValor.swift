@@ -1,10 +1,3 @@
-//
-//  DonantesAltoValor.swift
-//  BOCETO_CARITAS
-//
-//  Created by Rogelio Iram González Ortiz on 29/08/26.
-//
-
 import SwiftUI
 
 struct DonantesAltoValor: View {
