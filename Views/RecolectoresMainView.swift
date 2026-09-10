@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct RecolectoresMainView: View {
+    
+    @State private var Filtro = 1
+    
     var body: some View {
         VStack {
-            TopBar()
-            .padding()
+            Header()
             Divider()
                 .padding(.bottom, 10)
             HStack {
@@ -19,7 +21,7 @@ struct RecolectoresMainView: View {
                 Text("SOLICITUDES")
                     .font(.system(size: 70))
                     .bold()
-                    .foregroundStyle(Color(red: 0, green: 152/255, blue: 174/255))
+                    .foregroundStyle(ColorConstants.mainColor)
                     .padding()
                     .padding(.trailing, 65)
             }
@@ -58,29 +60,42 @@ struct RecolectoresMainView: View {
                 .padding()
             }
             VStack {
-                Text("RECOLECCIÓN PROYECTADA")
-                    .font(.system(size: 20))
-                    .bold()
-                    .foregroundStyle(Color(red: 0, green: 152/255, blue: 174/255))
-                HStack {
-                    Spacer()
-                    Text("$31,761")
-                        .font(.system(size: 60))
+                VStack {
+                    Text("RECOLECCIÓN PROYECTADA")
+                        .font(.system(size: 20))
                         .bold()
-                        .foregroundStyle(Color(red: 0, green: 152/255, blue: 174/255))
-                    Text("Pesos")
-                        .font(.system(size: 30))
-                        .bold()
-                        .foregroundStyle(Color(red: 0, green: 152/255, blue: 174/255))
-                    Spacer()
+                        .foregroundStyle(ColorConstants.mainColor)
+                    HStack {
+                        Spacer()
+                        Text("$31,761")
+                            .font(.system(size: 60))
+                            .bold()
+                            .foregroundStyle(ColorConstants.mainColor)
+                        Text("Pesos")
+                            .font(.system(size: 30))
+                            .bold()
+                            .foregroundStyle(ColorConstants.mainColor)
+                        Spacer()
+                    }
                 }
+                .padding()
+                .background(Color(.cyan.opacity(0.15)))
+                .cornerRadius(20)
+                VStack(spacing: 0) {
+                    GraficaRecoleccionesSemanales()
+                        .padding()
+                }
+                .frame(height: 300)
+                .background(Color(.white))
+                .cornerRadius(20)
+                Picker(selection: $Filtro, label: Text("")){
+                    Text("PRÓXIMAS").tag(1)
+                    Text("MAYOR DONACIÓN").tag(2)
+                }.pickerStyle(.segmented)
+                Spacer()
             }
-            .padding()
-            .background(Color(.cyan.opacity(0.15)))
-            .cornerRadius(20)
-            .padding(.trailing, 80)
             .padding(.leading, 80)
-            Spacer()
+            .padding(.trailing, 80)
         }.background(Color(.gray.opacity(0.05)))
     }
 }
