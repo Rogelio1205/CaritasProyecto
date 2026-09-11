@@ -10,6 +10,11 @@ import SwiftUI
 struct RecolectoresMainView: View {
     
     @State private var Filtro = 1
+    let listaRecolecciones = [
+        RecoleccionSiguiente(nombreDonante: "Melanie Rivera", diasHastaSigDonacion: 10, cantDonacion: 10236),
+        RecoleccionSiguiente(nombreDonante: "Samuel Garza", diasHastaSigDonacion: 12, cantDonacion: 12466),
+        RecoleccionSiguiente(nombreDonante: "Héctor Vargas", diasHastaSigDonacion: 15, cantDonacion: 8475)
+    ]
     
     var body: some View {
         VStack {
@@ -92,6 +97,9 @@ struct RecolectoresMainView: View {
                     Text("PRÓXIMAS").tag(1)
                     Text("MAYOR DONACIÓN").tag(2)
                 }.pickerStyle(.segmented)
+                List(listaRecolecciones) {recoleccionItem in
+                    RecoleccionRow(recoleccionSig: recoleccionItem)
+                }
                 Spacer()
             }
             .padding(.leading, 80)

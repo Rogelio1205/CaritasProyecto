@@ -13,9 +13,28 @@ struct RecoleccionRow: View {
     
     var body: some View {
         VStack {
-            Text("")
+            HStack {
+                Spacer()
+                VStack(alignment: .leading) {
+                    Text("\(recoleccionSig.nombreDonante)")
+                        .font(.title)
+                        .bold()
+                        .foregroundStyle(ColorConstants.mainColor)
+                    Text("Recolecciones en \(recoleccionSig.diasHastaSigDonacion) días")
+                        .font(.system(size: 20))
+                }
+                .padding(.trailing, 50)
+                VStack {
+                    Text("Donación")
+                        .font(.system(size: 20))
+                    Text("$\(recoleccionSig.cantDonacion)")
+                        .font(.title)
+                        .bold()
+                }
+                Spacer()
+            }
         }
-        .background(Color(.gray.opacity(0.2)))
+        .padding()
         .cornerRadius(20)
         .padding()
     }
