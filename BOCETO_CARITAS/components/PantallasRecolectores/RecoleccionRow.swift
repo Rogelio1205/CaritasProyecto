@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct RecoleccionRow: View {
+    
+    @State public var recoleccionSig: RecoleccionSiguiente
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        VStack {
+            Text("")
+        }
+        .background(Color(.gray.opacity(0.2)))
+        .cornerRadius(20)
+        .padding()
     }
 }
 
 #Preview {
-    RecoleccionRow()
+    let recoleccionSigPrueba = RecoleccionSiguiente(nombreDonante: "Melanie Rivera", diasHastaSigDonacion: 10, cantDonacion: 10236)
+    RecoleccionRow(recoleccionSig: recoleccionSigPrueba)
 }
