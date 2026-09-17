@@ -47,10 +47,13 @@ struct Resumen: View {
 
                     ZStack {
                         Circle()
-                            .stroke(Color.white.opacity(0.3), lineWidth: 14)
+                            .stroke(Color(red: 0.14, green: 0.38, blue: 0.44), lineWidth: 14)
                         Circle()
                             .trim(from: 0, to: progreso)
-                            .stroke(Color.white, style: StrokeStyle(lineWidth: 14, lineCap: .round))
+                            .stroke(
+                                Color(red: 0.80, green: 0.93, blue: 0.95),
+                                style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                            )
                             .rotationEffect(.degrees(-90))
                         Text("\(Int(progreso * 100))%")
                             .font(.system(size: 24, weight: .bold))
