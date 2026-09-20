@@ -3,9 +3,10 @@ import json
 import sys
 import mssql_functions as MSSql
 
+# Connect to mssql dB from start
 mssql_params = {}
-mssql_params['DB_HOST'] = '10.14.255.41'
-mssql_params['DB_NAME'] = 'caritasDB'
+mssql_params['DB_HOST'] = '100.80.80.7'
+mssql_params['DB_NAME'] = 'CaritasBD'
 mssql_params['DB_USER'] = 'SA'
 mssql_params['DB_PASSWORD'] = 'Shakira123.'
 
@@ -19,15 +20,36 @@ app = Flask(__name__)
 
 @app.route("/hello")
 def hello():
-    return "Bark Psychosis rocks!\n"
+    """
+    Returns 'Shakira rocks!' as a keepalive
+    ---
+    responses:
+        200:
+        description: A successful response is "Shakira rocks"
+    """
+    return "Shakira rocks!\n"
 
 @app.route("/user")
-def user():
-    username = request.args.get('username', None)
-    #print(username)
-    d_user = MSSql.read_user_data('users', username)
+def infoUser():
+    usern = request.args.get("nombre")
+    d_user = MSSql.read_user_data('Usuario', usern)
     return make_response(jsonify(d_user))
+
+@app.route("/login", methods=['POST'])
+def logIn(): 
+    data = request.json
+
+    usuario = data.get("userName")
+    password = data.get("password_hash")
+
+    validUser = MSSql.funcionLogin('Usuario',usuario,password)
+    
+    if validUser:
+        return make_response(jsonify({"nombre": validUser["nombre"], "idRol": validUser["idRol"]}))
+    else:
+        return make_response(jsonify({"error": "Usuario Invalido"}))
 
 if __name__ == '__main__':
     print ("Running API...")
-    app.run(host='0.0.0.0', port=10201, debug=True)
+    app.run(host='0.0.0.0', port=10206, debug=True)
+
