@@ -2,6 +2,7 @@ from flask import Flask, jsonify, make_response, request, send_file
 import json
 import sys
 import mssql_functions as MSSql
+from endpoints.detailed_donor import donors_bp
 
 # Connect to mssql dB from start
 mssql_params = {}
@@ -17,6 +18,8 @@ except Exception as e:
     sys.exit()
 
 app = Flask(__name__)
+
+app.register_blueprint(donors_bp)
 
 @app.route("/hello")
 def hello():

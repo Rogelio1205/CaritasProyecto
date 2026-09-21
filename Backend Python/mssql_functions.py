@@ -71,7 +71,21 @@ def funcionLogin(table_name, userName, password):
     if answer and answer["userName"] == userName and answer["password_hash"] == password:
         return answer 
     else:
-        return None    
+        return None  
+
+#  -------------- Alex -------------------
+def getDetailedDonor(donorId):
+    global cnx
+
+    query = "SELECT * FROM Donante WHERE idDonante = %s"
+
+    cursor = cnx.cursor(as_dict=True)
+    cursor.execute(query, (donorId,))
+
+    answer = cursor.fetchone()
+    cursor.close()
+
+    return answer
 
 """ def sql_read_where(table_name, d_where):
     import pymssql
