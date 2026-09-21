@@ -17,94 +17,95 @@ struct RecolectoresMainView: View {
     ]
     
     var body: some View {
-        VStack {
-            Header()
-            Divider()
-                .padding(.bottom, 10)
-            HStack {
-                Spacer()
-                Text("SOLICITUDES")
-                    .font(.system(size: 70))
-                    .bold()
-                    .foregroundStyle(ColorConstants.mainColor)
-                    .padding()
-                    .padding(.trailing, 65)
-            }
-            HStack {
-                VStack(alignment: .leading) {
-                    Text("RECOLECCIONES PENDIENTES")
-                        .font(.system(size: 25))
-                        .bold()
-                        .padding(.top, 15)
-                        .padding(.leading, 25)
-                        .padding(.trailing, 25)
-                    Text("34")
-                        .font(.system(size: 50))
-                        .bold()
-                        .padding(.leading, 25)
-                        .padding(.bottom, 15)
-                }
-                .background(Color(.gray.opacity(0.2)))
-                .cornerRadius(20)
-                .padding()
-                VStack(alignment: .leading) {
-                    Text("RECOLECCIONES EN PROCESO")
-                        .font(.system(size: 25))
-                        .bold()
-                        .padding(.top, 15)
-                        .padding(.leading, 25)
-                        .padding(.trailing, 25)
-                    Text("5")
-                        .font(.system(size: 50))
-                        .bold()
-                        .padding(.leading, 25)
-                        .padding(.bottom, 15)
-                }
-                .background(Color(.gray.opacity(0.2)))
-                .cornerRadius(20)
-                .padding()
-            }
             VStack {
-                VStack {
-                    Text("RECOLECCIÓN PROYECTADA")
-                        .font(.system(size: 20))
+                Header()
+                Divider()
+                    .padding(.bottom, 10)
+                HStack {
+                    Spacer()
+                    Text("SOLICITUDES")
+                        .font(.system(size: 70))
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
-                    HStack {
-                        Spacer()
-                        Text("$31,761")
-                            .font(.system(size: 60))
-                            .bold()
-                            .foregroundStyle(ColorConstants.mainColor)
-                        Text("Pesos")
-                            .font(.system(size: 30))
-                            .bold()
-                            .foregroundStyle(ColorConstants.mainColor)
-                        Spacer()
-                    }
-                }
-                .padding()
-                .background(Color(.cyan.opacity(0.15)))
-                .cornerRadius(20)
-                VStack(spacing: 0) {
-                    GraficaRecoleccionesSemanales()
                         .padding()
+                        .padding(.trailing, 65)
                 }
-                .frame(height: 300)
-                .background(Color(.white))
-                .cornerRadius(20)
-                Picker(selection: $Filtro, label: Text("")){
-                    Text("PRÓXIMAS").tag(1)
-                    Text("MAYOR DONACIÓN").tag(2)
-                }.pickerStyle(.segmented)
-                List(listaRecolecciones) {recoleccionItem in
-                    RecoleccionRow(recoleccionSig: recoleccionItem)
+                HStack {
+                    VStack(alignment: .leading) {
+                        Text("RECOLECCIONES PENDIENTES")
+                            .font(.system(size: 25))
+                            .bold()
+                            .padding(.top, 15)
+                            .padding(.leading, 25)
+                            .padding(.trailing, 25)
+                        Text("34")
+                            .font(.system(size: 50))
+                            .bold()
+                            .padding(.leading, 25)
+                            .padding(.bottom, 15)
+                    }
+                    .background(Color(.gray.opacity(0.2)))
+                    .cornerRadius(20)
+                    .padding()
+                    VStack(alignment: .leading) {
+                        Text("RECOLECCIONES EN PROCESO")
+                            .font(.system(size: 25))
+                            .bold()
+                            .padding(.top, 15)
+                            .padding(.leading, 25)
+                            .padding(.trailing, 25)
+                        Text("5")
+                            .font(.system(size: 50))
+                            .bold()
+                            .padding(.leading, 25)
+                            .padding(.bottom, 15)
+                    }
+                    .background(Color(.gray.opacity(0.2)))
+                    .cornerRadius(20)
+                    .padding()
                 }
-                Spacer()
-            }
-            .padding(.leading, 80)
-            .padding(.trailing, 80)
-        }.background(Color(.gray.opacity(0.05)))
+                VStack {
+                    VStack {
+                        Text("RECOLECCIÓN PROYECTADA")
+                            .font(.system(size: 20))
+                            .bold()
+                            .foregroundStyle(ColorConstants.mainColor)
+                        HStack {
+                            Spacer()
+                            Text("$31,761")
+                                .font(.system(size: 60))
+                                .bold()
+                                .foregroundStyle(ColorConstants.mainColor)
+                            Text("Pesos")
+                                .font(.system(size: 30))
+                                .bold()
+                                .foregroundStyle(ColorConstants.mainColor)
+                            Spacer()
+                        }
+                    }
+                    .padding()
+                    .background(Color(.cyan.opacity(0.15)))
+                    .cornerRadius(20)
+                    VStack() {
+                        GraficaRecoleccionesSemanales()
+                            .padding()
+                    }
+                    .frame(height: 300)
+                    .background(Color(.white))
+                    .cornerRadius(20)
+                    Picker(selection: $Filtro, label: Text("")){
+                        Text("PRÓXIMAS").tag(1)
+                        Text("MAYOR DONACIÓN").tag(2)
+                    }.pickerStyle(.segmented)
+                    List(listaRecolecciones) {recoleccionItem in
+                        RecoleccionRow(recoleccionSig: recoleccionItem)
+                    }
+                    Spacer()
+                }
+                .padding(.leading, 80)
+                .padding(.trailing, 80)
+            }.background(Color(.gray.opacity(0.05)))
+        
     }
 }
 

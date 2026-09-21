@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct RecoleccionSiguiente: Identifiable {
+struct RecoleccionSiguiente: Identifiable, Hashable, Codable {
     let id = UUID()
     let nombreDonante: String
     var diasHastaSigDonacion: Int
