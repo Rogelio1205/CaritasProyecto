@@ -92,8 +92,8 @@ def getDetailedDonor(donorId):
             d.excluido,
             d.fechaExclusion,
             d.correo,
-            p.idPromesa ,
-            c.nombre,
+            p.idPromesa,
+            c.nombre as nombreCaso,
             p.frecuencia,
             p.monto,
             p.idEstado 
