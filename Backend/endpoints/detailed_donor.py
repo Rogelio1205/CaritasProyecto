@@ -11,6 +11,12 @@ def getDonor():
     donor = MSSql.getDetailedDonor(donorId)
 
     if donor:
+        donor["telefonos"] = {
+            "casa": donor.pop("telCasa"),
+            "movil": donor.pop("telPersonal"),
+            "trabajo": donor.pop("telTrabajo")
+        }
+
         return jsonify(donor)
 
     return jsonify({"error": "Donor not found"}), 404
