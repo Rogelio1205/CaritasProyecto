@@ -9,7 +9,7 @@ import Foundation
 
 private let urlBase = "http://10.14.255.41:10206/login"
 
-func verificaeLogin(_ newLogin: LoginRequest) async throws -> LoginResponse{
+func verificarLogin(_ newLogin: LoginRequest) async throws -> LoginResponse{
     
   guard let url = URL(string: "\(urlBase)") else{
       print("URL incorrecto")
