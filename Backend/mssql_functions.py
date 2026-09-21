@@ -77,12 +77,36 @@ def funcionLogin(table_name, userName, password):
 def getDetailedDonor(donorId):
     global cnx
 
-    query = "SELECT * FROM Donante WHERE idDonante = %s"
+    query = """
+        select 
+            d.nombre, 
+            d.apellidoPaterno,
+            d.apellidoMaterno,
+            d.telCasa,
+            d.telTrabajo,
+            d.telPersonal,
+            d.telTmp,
+            d.tipoDonante,
+            d.idClasificacion,
+            d.donanteEspecial,
+            d.excluido,
+            d.fechaExclusion,
+            d.correo,
+            p.idPromesa ,
+            c.nombre,
+            p.frecuencia,
+            p.monto,
+            p.idEstado 
+        from donante d
+        left join promesa p on d.idDonante = p.idDonante
+        left join caso c on c.idCaso = p.idCaso
+        where d.idDonante = %s;
+    """
 
     cursor = cnx.cursor(as_dict=True)
     cursor.execute(query, (donorId,))
 
-    answer = cursor.fetchone()
+    answer = cursor.fetchall()
     cursor.close()
 
     return answer
