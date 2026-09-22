@@ -7,7 +7,7 @@ struct InfoBox<Content: View> : View {
     @ViewBuilder let content: Content
     
     var body: some View {
-        VStack (alignment: .leading){
+        VStack (alignment: .leading, spacing: 0){
             HStack {
                 Image(systemName: icon)
                     .foregroundStyle(ColorConstants.mainColor)

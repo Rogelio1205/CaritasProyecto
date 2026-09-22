@@ -3,6 +3,8 @@ import SwiftUI
 struct DonanteDetallado: View {
     
     @State public var filterBy = 1
+    @State private var donante : Donor?
+    @State private var nombreCompleto : String?
     
     var body: some View {
         ZStack {
@@ -21,9 +23,10 @@ struct DonanteDetallado: View {
                 }
                 
                 VStack (alignment: .leading) {
-                    Text("OSCAR RAMÍREZ CRUZ")
+                    Text(nombreCompleto?.uppercased() ?? "Sin nombre".uppercased())
                         .font(.system(size: 36))
                         .bold()
+                        
                     
                     HStack {
                         BubbleWidget(
@@ -71,16 +74,27 @@ struct DonanteDetallado: View {
                     
                     switch filterBy {
                     case 1:
-                        GeneralInformation()
+                        GeneralInformation(telefonos: donante?.telefonos)
                     case 2:
-                        PaymentsAndPromises()
+                        PaymentsAndPromises(promesas: donante?.promesas)
                     default:
-                        GeneralInformation()
+                        GeneralInformation(telefonos: donante?.telefonos)
                     }
                 }.padding(.horizontal, 41)
                 Spacer()
             }
         }.ignoresSafeArea()
+        .task {
+            do {
+                donante = try await DonanteService.getDonante(id: 1)
+                
+                if (donante?.nombre != nil || donante?.apellidoPaterno != nil || donante?.apellidoMaterno != nil) {
+                    nombreCompleto = "\(donante?.nombre ?? "") \(donante?.apellidoPaterno ?? "") \(donante?.apellidoMaterno ?? "")"
+                }
+            } catch {
+                print("Error obteniendo donante: \(error)")
+            }
+        }
     }
 }
 

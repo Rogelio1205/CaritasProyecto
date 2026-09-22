@@ -48,7 +48,7 @@ struct BubbleWidget: View {
             }
         }
         .frame(maxWidth: .infinity,maxHeight: .infinity, alignment: .leading)
-        .padding(10)
+        .padding(15)
         .background(backgroundColor)
         .foregroundStyle(textColor)
         .clipShape(RoundedRectangle(cornerRadius: 20))
