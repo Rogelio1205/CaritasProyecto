@@ -32,6 +32,7 @@ struct LoginView: View {
                 }
                     
             } catch {
+                print("\(error)")
                 showAlert.toggle()
                 messageAlert = "Error en la conexión"
             }
@@ -39,7 +40,7 @@ struct LoginView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack { // Navigation Stack
             VStack { // VStack principal
                 HStack { // Barra de arriba
                     
@@ -130,10 +131,7 @@ struct LoginView: View {
                     
                     Button{
                         verificacionLogin()
-                        
-                        if (estaLogueado == true) {
-                            
-                        }
+                        print(username)
                     }
                     label: {
                         Text("INICIAR SESIÓN")
@@ -183,7 +181,12 @@ struct LoginView: View {
                 )
             ) // Degradado
             .ignoresSafeArea()
-        }
+            .navigationDestination(isPresented: $estaLogueado)
+            {
+                ContentView()
+            }
+        } // Navigation Stack
+        
         
 
         
