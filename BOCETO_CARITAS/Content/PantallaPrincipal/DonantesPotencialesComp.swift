@@ -7,21 +7,9 @@
 
 import SwiftUI
 
-struct DonantePotencial: Identifiable {
-    let id = UUID()
-    let nombre: String
-    let mesesUltimaDonacion: Int
-    let casosSimilares: Int
-}
-
 struct DonantesPotencialesComp: View {
     @Binding var tabSeleccionado: Tabs
-    let donantes: [DonantePotencial] = [
-        DonantePotencial(nombre: "Manuel Rodríguez", mesesUltimaDonacion: 25, casosSimilares: 7),
-        DonantePotencial(nombre: "Esperanza Lopez", mesesUltimaDonacion: 22,
-            casosSimilares: 5),
-        DonantePotencial(nombre: "Javier Herrera", mesesUltimaDonacion: 18, casosSimilares: 2)
-    ]
+    let donantes: [DonantePotencial]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -43,12 +31,19 @@ struct DonantesPotencialesComp: View {
             }
             .padding(.horizontal, 4)
 
-            HStack(alignment: .top, spacing: 16) {
-                ForEach(donantes) { donante in
-                    DonantePotencialCard(donante: donante)
+            if donantes.isEmpty {
+                Text("Sin donantes potenciales por ahora")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 4)
+            } else {
+                HStack(alignment: .top, spacing: 16) {
+                    ForEach(donantes) { donante in
+                        DonantePotencialCard(donante: donante)
+                    }
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
         .padding(20)
     }
@@ -84,5 +79,12 @@ struct DonantePotencialCard: View {
 }
 
 #Preview {
-    DonantesPotencialesComp(tabSeleccionado: .constant(.inicio))
+    DonantesPotencialesComp(
+        tabSeleccionado: .constant(.inicio),
+        donantes: [
+            DonantePotencial(idDonante: 1, nombre: "Manuel Rodríguez", mesesUltimaDonacion: 25, casosSimilares: 7),
+            DonantePotencial(idDonante: 2, nombre: "Esperanza Lopez", mesesUltimaDonacion: 22, casosSimilares: 5),
+            DonantePotencial(idDonante: 3, nombre: "Javier Herrera", mesesUltimaDonacion: 18, casosSimilares: 2)
+        ]
+    )
 }

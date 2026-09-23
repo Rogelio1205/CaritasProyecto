@@ -12,6 +12,14 @@ enum NivelRiesgo {
     case medio
     case bajo
 
+    init(api: String) {
+        switch api {
+        case "alto": self = .alto
+        case "bajo": self = .bajo
+        default:     self = .medio
+        }
+    }
+
     var texto: String {
         switch self {
         case .alto: return "RIESGO ALTO"
@@ -40,13 +48,7 @@ enum NivelRiesgo {
 struct DonantesEnRiesgoComp: View {
 
     @Binding var tabSeleccionado: Tabs
-
-    let donantes: [Donante] = [
-        Donante(nombre: "Oscar Ramírez", ultimaDonacion: "Última donación hace 2 años", riesgo: .alto),
-        Donante(nombre: "Danna Sepúlveda", ultimaDonacion: "Última donación hace 1 año", riesgo: .alto),
-        Donante(nombre: "Rogelio García", ultimaDonacion: "Última donación hace 13 meses", riesgo: .alto),
-        Donante(nombre: "María Estrada", ultimaDonacion: "Última donación hace 6 meses", riesgo: .medio)
-    ]
+    let donantes: [DonanteRiesgo]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -68,19 +70,28 @@ struct DonantesEnRiesgoComp: View {
             }
             .padding(.horizontal, 4)
 
-            VStack(spacing: 12) {
-                ForEach(donantes) { donante in
-                    MuestraDonante(donante: donante)
+            if donantes.isEmpty {
+                Text("Sin donantes en riesgo por ahora")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 4)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(donantes) { donante in
+                        MuestraDonante(donante: donante)
+                    }
                 }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
         }
         .padding(20)
     }
 }
 
 struct MuestraDonante: View {
-    let donante: Donante
+    let donante: DonanteRiesgo
+
+    private var nivel: NivelRiesgo { NivelRiesgo(api: donante.nivel) }
 
     var body: some View {
         HStack {
@@ -89,21 +100,21 @@ struct MuestraDonante: View {
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
 
-                Text(donante.ultimaDonacion)
+                Text(formatoFecha(donante.mesesUltimaDonacion))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.gray)
             }
 
             Spacer()
 
-            Text(donante.riesgo.texto)
+            Text(nivel.texto)
                 .font(.system(size: 13, weight: .bold))
-                .foregroundColor(donante.riesgo.colorTexto)
+                .foregroundColor(nivel.colorTexto)
                 .padding(.horizontal, 14)
                 .padding(.vertical, 8)
                 .background(
                     Capsule()
-                        .fill(donante.riesgo.colorFondo)
+                        .fill(nivel.colorFondo)
                 )
                 .padding(.trailing, 12)
 
@@ -121,6 +132,13 @@ struct MuestraDonante: View {
 }
 
 #Preview {
-    DonantesEnRiesgoComp(tabSeleccionado: .constant(.inicio))
-        .frame(width: 860)
+    DonantesEnRiesgoComp(
+        tabSeleccionado: .constant(.inicio),
+        donantes: [
+            DonanteRiesgo(idDonante: 1, nombre: "Oscar Ramírez", mesesUltimaDonacion: 24, nivel: "alto"),
+            DonanteRiesgo(idDonante: 2, nombre: "Danna Sepúlveda", mesesUltimaDonacion: 12, nivel: "alto"),
+            DonanteRiesgo(idDonante: 3, nombre: "María Estrada", mesesUltimaDonacion: 6, nivel: "medio")
+        ]
+    )
+    .frame(width: 860)
 }

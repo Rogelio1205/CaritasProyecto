@@ -183,7 +183,7 @@ struct LoginView: View {
             .ignoresSafeArea()
             .navigationDestination(isPresented: $estaLogueado)
             {
-                ContentView()
+                ContentView(idUsuario: usuarioLogquado?.idUsuario ?? 0)
             }
         } // Navigation Stack
         

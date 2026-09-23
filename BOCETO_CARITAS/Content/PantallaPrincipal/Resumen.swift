@@ -8,15 +8,17 @@
 import SwiftUI
 
 struct Resumen: View {
+    let meta: Meta
+    let riesgo: Riesgo
 
-    let llamadasHechas = 16
-    let llamadasMeta = 25
-    let progreso = 0.65
+    private var llamadasHechas: Int { meta.llamadasHoy }
+    private var llamadasMeta: Int { meta.metaDiaria }
+    private var progreso: Double { meta.progreso }
+    private var riesgoAlto: Int { riesgo.alto }
+    private var riesgoMedio: Int { riesgo.medio }
+    private var riesgoBajo: Int { riesgo.bajo }
+    private var inactivos: Int { riesgo.inactivos }
 
-    let riesgoAlto = 12
-    let riesgoMedio = 17
-    let riesgoBajo = 29
-    let inactivos = 14
 
     var body: some View {
         HStack {
@@ -142,6 +144,7 @@ struct StatCard: View {
 }
 
 #Preview {
-    Resumen()
+    Resumen(meta: Meta(llamadasHoy: 16, metaDiaria: 25),
+            riesgo: Riesgo(alto: 12, medio: 17, bajo: 29, inactivos: 14))
         .frame(width: 900, height: 340)
 }

@@ -60,5 +60,5 @@ struct BotonTabs: View {
 }
 
 #Preview {
-    ContentView()
+    ContentView(idUsuario: 1)
 }
