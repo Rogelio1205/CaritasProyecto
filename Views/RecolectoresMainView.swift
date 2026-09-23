@@ -10,16 +10,25 @@ import SwiftUI
 struct RecolectoresMainView: View {
     
     @State private var Filtro = 1
-    let listaRecolecciones = [
+    @State private var listaRecolecciones: Array<RecoleccionSiguiente> = [
         RecoleccionSiguiente(nombreDonante: "Melanie Rivera", diasHastaSigDonacion: 10, cantDonacion: 10236),
         RecoleccionSiguiente(nombreDonante: "Samuel Garza", diasHastaSigDonacion: 12, cantDonacion: 12466),
         RecoleccionSiguiente(nombreDonante: "Héctor Vargas", diasHastaSigDonacion: 15, cantDonacion: 8475)
     ]
+    let recoleccionesService = RecoleccionesService()
     
     var body: some View {
+        Header()
             VStack {
-                Header()
-                Divider()
+                Button("Cargar Lista de Supers") {
+                    Task {
+                        do {
+                            listaRecolecciones = try await recoleccionesService.getListaRecoleccionesProx()
+                        } catch {
+                            print("Error en llamada: \(error)")
+                        }
+                    }
+                }.buttonStyle(.borderedProminent)
                     .padding(.bottom, 10)
                 HStack {
                     Spacer()

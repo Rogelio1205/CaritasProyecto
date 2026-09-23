@@ -8,7 +8,7 @@
 import Foundation
 
 class RecoleccionesService {
-    private let urlBase = "http://10.14.255.41:10206/hello"
+    private let urlBase = "http://10.14.255.41:10206/recolecciones"
     
     func getListaRecoleccionesProx() async throws -> Array<RecoleccionSiguiente>{
         
