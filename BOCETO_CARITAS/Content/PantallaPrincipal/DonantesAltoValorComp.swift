@@ -63,17 +63,17 @@ struct MuestraDonanteAltoValor: View {
         formato.numberStyle = .decimal
         formato.groupingSeparator = ","
         let numero = formato.string(from: NSNumber(value: donante.totalDonado)) ?? "\(Int(donante.totalDonado))"
-        return "$\(numero) PESOS"
+        return "$\(numero) pesos"
     }
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(donante.nombre.uppercased())
+                Text(donante.nombre)
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
 
-                Text("ÚLTIMA DONACIÓN HACE \(donante.mesesUltimaDonacion) MESES")
+                Text("Última donación hace \(donante.mesesUltimaDonacion) meses")
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.gray)
             }
@@ -81,7 +81,7 @@ struct MuestraDonanteAltoValor: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text("TOTAL DONADO")
+                Text("Total donado")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.gray)
                 Text(totalFormateado)

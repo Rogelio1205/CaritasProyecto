@@ -45,32 +45,32 @@ struct DonantesPotencialesComp: View {
 
             HStack(alignment: .top, spacing: 16) {
                 ForEach(donantes) { donante in
-                        DonantePotencialCard(donante: donante)
-                    }
-                    .buttonStyle(.plain)
+                    DonantePotencialCard(donante: donante)
                 }
-            }.padding(20)
+            }
+            .buttonStyle(.plain)
         }
-        
+        .padding(20)
     }
-
+}
 
 struct DonantePotencialCard: View {
     let donante: DonantePotencial
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Text(donante.nombre.uppercased())
+        VStack(alignment: .leading, spacing: 12) {
+            Text(donante.nombre)
                 .font(.system(size: 22, weight: .bold))
                 .foregroundColor(Color(red: 0.13, green: 0.34, blue: 0.38))
+                .fixedSize(horizontal: false, vertical: true)
 
-            Text("ÚLTIMA DONACIÓN:\nHACE \(donante.mesesUltimaDonacion) MESES")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.white)
+            Text("Última donación:\nHace \(donante.mesesUltimaDonacion) meses")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.black)
 
             Spacer()
 
-            Text("HAY \(donante.casosSimilares) CASOS SIMILARES A SU ÚLTIMA DONACIÓN")
+            Text("Hay \(donante.casosSimilares) casos similares a su última donación")
                 .font(.system(size: 13, weight: .bold))
                 .foregroundColor(Color(red: 0.13, green: 0.34, blue: 0.38))
         }
