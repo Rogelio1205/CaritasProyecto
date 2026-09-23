@@ -3,4 +3,11 @@ import SwiftUI
 
 struct ColorConstants {
     static let mainColor = Color(red: 0/255, green: 152/255, blue: 174/255)
+    static let lightMainColor = Color(red: 0/255, green: 152/255, blue: 174/255, opacity: 0.1)
+    static let backgorund = Color(red: 244/255, green: 244/255, blue: 244/255)
+    static let lightGray = Color(red: 129/255, green: 129/255, blue: 129/255, opacity: 0.1)
+    
+    // Rick indicators
+    static let lightHighRisk = Color(red: 124/255, green: 28/255, blue: 14/255, opacity: 0.1)
+    static let highRisk = Color(red: 124/255, green: 28/255, blue: 14/255)
 }
