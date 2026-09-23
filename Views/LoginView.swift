@@ -199,12 +199,7 @@ struct LoginView: View {
                 ContentView()
                     .navigationBarBackButtonHidden(true)
             }
-        } // Navigation Stack
-        
-        
-
-        
-        
+        } // Navigation Stack       
     }
 }
 
