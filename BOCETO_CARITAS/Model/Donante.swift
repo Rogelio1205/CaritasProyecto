@@ -1,10 +1,3 @@
-//
-//  Donante.swift
-//  BOCETO_CARITAS
-//
-//  Created by Alumno on 03/09/26.
-//
-
 import Foundation
 
 struct Donante: Identifiable {
