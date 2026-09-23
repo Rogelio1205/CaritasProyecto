@@ -11,9 +11,9 @@ struct RecolectoresMainView: View {
     
     @State private var Filtro = 1
     @State private var listaRecolecciones: Array<RecoleccionSiguiente> = [
-        RecoleccionSiguiente(apellidoPaterno: "Melanie", fecha: Date(), monto: 10236, nombre: "Rivera"),
-        RecoleccionSiguiente(apellidoPaterno: "Garza", fecha: Date(), monto: 10236, nombre: "Samuel"),
-        RecoleccionSiguiente(apellidoPaterno: "Vargas", fecha: Date(), monto: 10236, nombre: "Hector")
+        RecoleccionSiguiente(apellidoPaterno: "Melanie", fecha: "12/09/2026", monto: 10236, nombre: "Rivera"),
+        RecoleccionSiguiente(apellidoPaterno: "Garza", fecha: "12/09/2026", monto: 10236, nombre: "Samuel"),
+        RecoleccionSiguiente(apellidoPaterno: "Vargas", fecha: "12/09/2026", monto: 10236, nombre: "Hector")
     ]
     let recoleccionesService = RecoleccionesService()
     

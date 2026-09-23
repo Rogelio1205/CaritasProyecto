@@ -10,7 +10,7 @@ import Foundation
 struct RecoleccionSiguiente: Identifiable, Hashable, Codable {
     let id = UUID()
     let apellidoPaterno: String
-    let fecha: Date
+    let fecha: String
     let monto: Int
     let nombre: String
 }

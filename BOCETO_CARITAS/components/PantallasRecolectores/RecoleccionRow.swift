@@ -41,6 +41,6 @@ struct RecoleccionRow: View {
 }
 
 #Preview {
-    let recoleccionSigPrueba = RecoleccionSiguiente(apellidoPaterno: "Melanie", fecha: Date(), monto: 10236, nombre: "Rivera")
+    let recoleccionSigPrueba = RecoleccionSiguiente(apellidoPaterno: "Melanie", fecha: "12/09/2026", monto: 10236, nombre: "Rivera")
     RecoleccionRow(recoleccionSig: recoleccionSigPrueba)
 }
