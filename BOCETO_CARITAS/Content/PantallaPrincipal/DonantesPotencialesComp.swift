@@ -1,5 +1,5 @@
 //
-//  DonantesPotenciales.swift
+//  DonantesPotencialesComp.swift
 //  BOCETO_CARITAS
 //
 //  Created by Rogelio Iram González Ortiz on 29/08/26.
@@ -39,10 +39,14 @@ struct DonantesPotencialesComp: View {
             } else {
                 HStack(alignment: .top, spacing: 16) {
                     ForEach(donantes) { donante in
-                        DonantePotencialCard(donante: donante)
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            DonantePotencialCard(donante: donante)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(20)
@@ -79,12 +83,14 @@ struct DonantePotencialCard: View {
 }
 
 #Preview {
-    DonantesPotencialesComp(
-        tabSeleccionado: .constant(.inicio),
-        donantes: [
-            DonantePotencial(idDonante: 1, nombre: "Manuel Rodríguez", mesesUltimaDonacion: 25, casosSimilares: 7),
-            DonantePotencial(idDonante: 2, nombre: "Esperanza Lopez", mesesUltimaDonacion: 22, casosSimilares: 5),
-            DonantePotencial(idDonante: 3, nombre: "Javier Herrera", mesesUltimaDonacion: 18, casosSimilares: 2)
-        ]
-    )
+    NavigationStack {
+        DonantesPotencialesComp(
+            tabSeleccionado: .constant(.inicio),
+            donantes: [
+                DonantePotencial(idDonante: 1, nombre: "Manuel Rodríguez", mesesUltimaDonacion: 25, casosSimilares: 7),
+                DonantePotencial(idDonante: 2, nombre: "Esperanza Lopez", mesesUltimaDonacion: 22, casosSimilares: 5),
+                DonantePotencial(idDonante: 3, nombre: "Javier Herrera", mesesUltimaDonacion: 18, casosSimilares: 2)
+            ]
+        )
+    }
 }

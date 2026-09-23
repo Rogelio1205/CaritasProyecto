@@ -1,5 +1,5 @@
 //
-//  DonantesAltoValor.swift
+//  DonantesAltoValorComp.swift
 //  BOCETO_CARITAS
 //
 //  Created by Rogelio Iram González Ortiz on 29/08/26.
@@ -40,7 +40,12 @@ struct DonantesAltoValorComp: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(donantes) { donante in
-                        MuestraDonanteAltoValor(donante: donante)
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            MuestraDonanteAltoValor(donante: donante)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
@@ -98,13 +103,15 @@ struct MuestraDonanteAltoValor: View {
 }
 
 #Preview {
-    DonantesAltoValorComp(
-        tabSeleccionado: .constant(.inicio),
-        donantes: [
-            DonanteAltoValor(idDonante: 1, nombre: "Laura Fuentes", mesesUltimaDonacion: 5, totalDonado: 18459),
-            DonanteAltoValor(idDonante: 2, nombre: "Gustavo Gutierrez", mesesUltimaDonacion: 6, totalDonado: 14395),
-            DonanteAltoValor(idDonante: 3, nombre: "Octavio Castro", mesesUltimaDonacion: 2, totalDonado: 9503)
-        ]
-    )
+    NavigationStack {
+        DonantesAltoValorComp(
+            tabSeleccionado: .constant(.inicio),
+            donantes: [
+                DonanteAltoValor(idDonante: 1, nombre: "Laura Fuentes", mesesUltimaDonacion: 5, totalDonado: 18459),
+                DonanteAltoValor(idDonante: 2, nombre: "Gustavo Gutierrez", mesesUltimaDonacion: 6, totalDonado: 14395),
+                DonanteAltoValor(idDonante: 3, nombre: "Octavio Castro", mesesUltimaDonacion: 2, totalDonado: 9503)
+            ]
+        )
+    }
     .frame(width: 900)
 }

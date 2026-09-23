@@ -1,5 +1,5 @@
 //
-//  DonantesEnRiesgo.swift
+//  DonantesEnRiesgoComp.swift
 //  BOCETO_CARITAS
 //
 //  Created by Rogelio Iram González Ortiz on 29/08/26.
@@ -78,10 +78,14 @@ struct DonantesEnRiesgoComp: View {
             } else {
                 VStack(spacing: 12) {
                     ForEach(donantes) { donante in
-                        MuestraDonante(donante: donante)
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            MuestraDonante(donante: donante)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
-                .buttonStyle(.plain)
             }
         }
         .padding(20)
@@ -132,13 +136,15 @@ struct MuestraDonante: View {
 }
 
 #Preview {
-    DonantesEnRiesgoComp(
-        tabSeleccionado: .constant(.inicio),
-        donantes: [
-            DonanteRiesgo(idDonante: 1, nombre: "Oscar Ramírez", mesesUltimaDonacion: 24, nivel: "alto"),
-            DonanteRiesgo(idDonante: 2, nombre: "Danna Sepúlveda", mesesUltimaDonacion: 12, nivel: "alto"),
-            DonanteRiesgo(idDonante: 3, nombre: "María Estrada", mesesUltimaDonacion: 6, nivel: "medio")
-        ]
-    )
+    NavigationStack {
+        DonantesEnRiesgoComp(
+            tabSeleccionado: .constant(.inicio),
+            donantes: [
+                DonanteRiesgo(idDonante: 1, nombre: "Oscar Ramírez", mesesUltimaDonacion: 24, nivel: "alto"),
+                DonanteRiesgo(idDonante: 2, nombre: "Danna Sepúlveda", mesesUltimaDonacion: 12, nivel: "alto"),
+                DonanteRiesgo(idDonante: 3, nombre: "María Estrada", mesesUltimaDonacion: 6, nivel: "medio")
+            ]
+        )
+    }
     .frame(width: 860)
 }
