@@ -11,63 +11,52 @@ struct RecolectoresMainView: View {
     
     @State private var Filtro = 1
     @State private var listaRecolecciones: Array<RecoleccionSiguiente> = [
-        RecoleccionSiguiente(apellidoPaterno: "Melanie", fecha: "12/09/2026", monto: 10236, nombre: "Rivera"),
+        RecoleccionSiguiente(apellidoPaterno: "Melanie", fecha: "30/09/2026", monto: 10236, nombre: "Rivera"),
         RecoleccionSiguiente(apellidoPaterno: "Garza", fecha: "12/09/2026", monto: 10236, nombre: "Samuel"),
-        RecoleccionSiguiente(apellidoPaterno: "Vargas", fecha: "12/09/2026", monto: 10236, nombre: "Hector")
+        RecoleccionSiguiente(apellidoPaterno: "Vargas", fecha: "12/10/2026", monto: 10236, nombre: "Hector")
     ]
     let recoleccionesService = RecoleccionesService()
     
     var body: some View {
         Header()
             VStack {
-                Button("Cargar Lista de Supers") {
-                    Task {
-                        do {
-                            listaRecolecciones = try await recoleccionesService.getListaRecoleccionesProx()
-                        } catch {
-                            print("Error en llamada: \(error)")
-                        }
-                    }
-                }.buttonStyle(.borderedProminent)
-                    .padding(.bottom, 10)
                 HStack {
                     Spacer()
                     Text("SOLICITUDES")
-                        .font(.system(size: 70))
+                        .font(.system(size: 45))
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
                         .padding()
-                        .padding(.trailing, 65)
                 }
                 HStack {
                     VStack(alignment: .leading) {
                         Text("RECOLECCIONES PENDIENTES")
-                            .font(.system(size: 25))
                             .bold()
                             .padding(.top, 15)
-                            .padding(.leading, 25)
-                            .padding(.trailing, 25)
+                            .padding(.leading, 15)
+                            .padding(.trailing, 15)
                         Text("34")
-                            .font(.system(size: 50))
                             .bold()
-                            .padding(.leading, 25)
+                            .font(.largeTitle)
                             .padding(.bottom, 15)
+                            .padding(.leading, 15)
+                            .padding(.trailing, 15)
                     }
                     .background(Color(.gray.opacity(0.2)))
                     .cornerRadius(20)
-                    .padding()
+                    .padding(.leading, 15)
                     VStack(alignment: .leading) {
                         Text("RECOLECCIONES EN PROCESO")
-                            .font(.system(size: 25))
                             .bold()
                             .padding(.top, 15)
-                            .padding(.leading, 25)
-                            .padding(.trailing, 25)
+                            .padding(.leading, 15)
+                            .padding(.trailing, 15)
                         Text("5")
-                            .font(.system(size: 50))
                             .bold()
-                            .padding(.leading, 25)
+                            .font(.largeTitle)
                             .padding(.bottom, 15)
+                            .padding(.leading, 15)
+                            .padding(.trailing, 15)
                     }
                     .background(Color(.gray.opacity(0.2)))
                     .cornerRadius(20)
@@ -95,27 +84,44 @@ struct RecolectoresMainView: View {
                     .padding()
                     .background(Color(.cyan.opacity(0.15)))
                     .cornerRadius(20)
-                    VStack() {
-                        GraficaRecoleccionesSemanales()
-                            .padding()
-                    }
-                    .frame(height: 300)
                     .background(Color(.white))
                     .cornerRadius(20)
+                    .padding(5)
                     Picker(selection: $Filtro, label: Text("")){
                         Text("PRÓXIMAS").tag(1)
                         Text("MAYOR DONACIÓN").tag(2)
                     }.pickerStyle(.segmented)
-                    List(listaRecolecciones) {recoleccionItem in
-                        RecoleccionRow(recoleccionSig: recoleccionItem)
-                    }
+                    List(listaRecolecciones) { recoleccionItem in
+                                RecoleccionRow(recoleccionSig: recoleccionItem)
+                            }
+                            .task {
+                                await cargarLista()
+                            }
+                            .onChange(of: Filtro) { _ in
+                                Task { await cargarLista() }
+                            }
                     Spacer()
                 }
-                .padding(.leading, 80)
-                .padding(.trailing, 80)
+                .padding(.trailing, 15)
+                .padding(.leading, 15)
             }.background(Color(.gray.opacity(0.05)))
         
     }
+    private func cargarLista() async {
+            if Filtro == 1 {
+                do {
+                    listaRecolecciones = try await RecoleccionesService.getListaRecoleccionesProx()
+                } catch {
+                    print("Error en llamada: \(error)")
+                }
+            } else {
+                do {
+                    listaRecolecciones = try await RecoleccionesService.getListaRecoleccionesProxByMonto()
+                } catch {
+                    print("Error en llamada: \(error)")
+                }
+            }
+        }
 }
 
 #Preview {
