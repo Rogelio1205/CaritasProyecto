@@ -27,7 +27,7 @@ struct InfoField: View {
                     .bold()
                     .foregroundStyle(ColorConstants.mainColor)
                 
-                Text(value)
+                Text("\(value)")
                     .font(.system(size: 16))
                     .bold()
             }

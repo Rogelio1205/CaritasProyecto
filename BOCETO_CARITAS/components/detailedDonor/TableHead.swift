@@ -8,13 +8,13 @@ struct TableHead: View {
     
     var body: some View {
         HStack() {
-            Text("Campaña")
+            Text(column1)
                 .frame(maxWidth: .infinity)
 
-            Text("Frecuencia")
+            Text(column2)
                 .frame(maxWidth: .infinity)
 
-            Text("Monto")
+            Text(column3)
                 .frame(maxWidth: .infinity)
         }
         .font(.system(size: 20))

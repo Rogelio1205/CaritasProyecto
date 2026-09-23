@@ -3,6 +3,7 @@ import SwiftUI
 struct PaymentsAndPromises: View {
     
     let promesas : [Promesa]?
+    let pagos : [Pago]?
     
     var body: some View {
         VStack (){
@@ -30,21 +31,21 @@ struct PaymentsAndPromises: View {
                 
                 ScrollView {
                     VStack(spacing: 0) {
-                            TableRow(field1: "Campaña Cáncer", field2: "12/08/26", field3: "$10,236")
-                            Divider()
-                            TableRow(field1: "Campaña Karla Valdéz", field2: "22/12/25", field3: "$10,000")
-                            Divider()
-                            TableRow(field1: "Campaña Hambre Cero", field2: "28/04/25", field3: "$2,500")
+                        ForEach(pagos ?? [], id: \.id) { pago in
+                            TableRow(
+                                field1: String(pago.id),
+                                field2: formatDate(pago.fecha),
+                                field3: "$\(pago.importe)"
+                            )
                             Divider()
                         }
                     }
-
-                
+                }
             }).frame(height: 270)
         }
     }
 }
 
 #Preview {
-    PaymentsAndPromises(promesas: [])
+    PaymentsAndPromises(promesas: [], pagos: [])
 }
