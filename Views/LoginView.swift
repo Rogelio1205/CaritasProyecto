@@ -196,7 +196,8 @@ struct LoginView: View {
             .ignoresSafeArea()
             .navigationDestination(isPresented: $estaLogueado)
             {
-                ContentView()               
+                ContentView()
+                    .navigationBarBackButtonHidden(true)
             }
         } // Navigation Stack
         
