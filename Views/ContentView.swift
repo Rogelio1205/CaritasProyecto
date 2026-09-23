@@ -48,7 +48,7 @@ struct PantallaPrincipal: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            TopBar()
+            Header()
             Resumen()
             DonantesEnRiesgoComp(tabSeleccionado: $tabSeleccionado)
             DonantesPotencialesComp(tabSeleccionado: $tabSeleccionado)

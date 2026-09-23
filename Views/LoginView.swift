@@ -19,16 +19,29 @@ struct LoginView: View {
     private func verificacionLogin() {
         Task{
             do{
-                let request = LoginRequest(userName: username, password_hash: password)
-                let response = try await verificarLogin(request)
-                
-                if(response.error != nil) {
+                if (username == "" || password == "") {
                     showAlert.toggle()
-                    messageAlert = "El correo o la contraseña son incorrectos"
-                }
-                else {
-                    usuarioLogquado = response
-                    estaLogueado = true
+                    messageAlert = "Favor de rellenar todos los campos"
+                    
+                } else {
+                    
+                    let request = LoginRequest(userName: username, password_hash: password)
+                    let response = try await verificarLogin(request)
+                    
+                    if(response.error != nil) {
+                        showAlert.toggle()
+                        messageAlert = "El correo o la contraseña son incorrectos"
+                    } else {
+                        usuarioLogquado = response
+                        
+                        if(response.idRol == 2) {
+                            estaLogueado = true
+                        } else {
+                            showAlert.toggle()
+                            messageAlert = "No cuentas con los permisos necesarios"
+                        }
+                    
+                    }
                 }
                     
             } catch {
@@ -184,13 +197,9 @@ struct LoginView: View {
             .navigationDestination(isPresented: $estaLogueado)
             {
                 ContentView()
+                    .navigationBarBackButtonHidden(true)
             }
-        } // Navigation Stack
-        
-        
-
-        
-        
+        } // Navigation Stack       
     }
 }
 

@@ -39,14 +39,53 @@ def infoUser():
     return make_response(jsonify(d_user))
 
 @app.route("/login", methods=['POST'])
-def logIn(): 
+def logIn():
+    """
+    Validacion del usuario al entrar a la app (Endpoint log in)
+    ---
+    summary: Verifica que el correo y la contraseña de un usuario coincidan con la informacion de la BD
+    description: Recibe un JSON con el usuario y contraseña. Regresa un JSOn con el nombre del usuario y su rol
+    parameters:
+    - name: body
+      in: body
+      required: true
+      description: JSON con el correo del usuario y su contraseña
+      schema: 
+        type: object
+        required: 
+           - userName
+           - password_hash
+        properties: 
+            userName: 
+                type: string
+            password_hash: 
+                type: string
+
+    responses:
+      200:
+        description: Si es un usuario valido regresa un JSON con el nombre del usuario y su idRol
+        schema: 
+          type: object
+          properties:
+            nombre: 
+              type: string
+            idRol: 
+              type: integer
+      400:
+        description: El usuario no es valido, regresa un mensaje de error
+        schema: 
+          type: object
+          properties:
+            error: 
+              type: string
+    """
     data = request.json
 
     usuario = data.get("userName")
     password = data.get("password_hash")
 
     validUser = MSSql.funcionLogin('Usuario',usuario,password)
-    
+
     if validUser:
         return make_response(jsonify({"nombre": validUser["nombre"], "idRol": validUser["idRol"]}))
     else:

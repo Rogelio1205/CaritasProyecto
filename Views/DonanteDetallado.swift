@@ -3,6 +3,7 @@ import SwiftUI
 struct DonanteDetallado: View {
     
     @State public var filterBy = 1
+    @State public var id : Int
     @State private var donante : Donor?
     @State private var nombreCompleto : String?
     @State var colorRiesgo : Color?
@@ -34,7 +35,7 @@ struct DonanteDetallado: View {
                             backgroundColor:  colorRiesgo?.opacity(0.1) ?? ColorConstants.highRisk.opacity(0.1),
                             textColor: colorRiesgo ?? ColorConstants.highRisk,
                             title: "NIVEL DE RIESGO",
-                            value: donante?.nivelRiesgo.uppercased() ?? "",
+                            value: donante?.nivelRiesgo.uppercased() ?? "INDEFINIDO",
                             valueFontSize: 32
 
                         )
@@ -87,7 +88,7 @@ struct DonanteDetallado: View {
         }.ignoresSafeArea()
         .task {
             do {
-                donante = try await DonanteService.getDonante(id: 1)
+                donante = try await DonanteService.getDonante(id: id)
                 
                 if (donante?.nombre != nil || donante?.apellidoPaterno != nil) {
                     nombreCompleto = "\(donante?.nombre ?? "") \(donante?.apellidoPaterno ?? "") \(donante?.apellidoMaterno ?? "")"
@@ -110,5 +111,5 @@ struct DonanteDetallado: View {
 }
 
 #Preview {
-    DonanteDetallado()
+    DonanteDetallado(id: 1)
 }
