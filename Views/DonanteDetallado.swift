@@ -5,6 +5,7 @@ struct DonanteDetallado: View {
     @State public var filterBy = 1
     @State private var donante : Donor?
     @State private var nombreCompleto : String?
+    @State var colorRiesgo : Color?
     
     var body: some View {
         ZStack {
@@ -30,19 +31,19 @@ struct DonanteDetallado: View {
                     
                     HStack {
                         BubbleWidget(
-                            backgroundColor: ColorConstants.lightHighRisk,
-                            textColor: ColorConstants.highRisk,
+                            backgroundColor:  colorRiesgo?.opacity(0.1) ?? ColorConstants.highRisk.opacity(0.1),
+                            textColor: colorRiesgo ?? ColorConstants.highRisk,
                             title: "NIVEL DE RIESGO",
-                            value: "RIESGO ALTO",
+                            value: donante?.nivelRiesgo.uppercased() ?? "",
                             valueFontSize: 32
 
                         )
                         
                         BubbleWidget(
                             title: "ÚLTIMA DONACIÓN:",
-                            value: "SEP 21 2024",
+                            value: formatDate(donante?.ultimaDonacion ?? "SIN DONACIONES"),
                             valueFontSize: 32,
-                            subtitle: "HACE 2 AÑOS",
+                            subtitle: timeAgo(donante?.ultimaDonacion ?? ""),
                             subtitleFontSize: 10
                         )
                         
@@ -50,7 +51,7 @@ struct DonanteDetallado: View {
                             backgroundColor: ColorConstants.lightMainColor,
                             textColor: ColorConstants.mainColor,
                             title: "TOTAL DONADO:",
-                            value: "$22,736",
+                            value: "$\(donante?.totalDonado ?? "0")",
                             valueFontSize: 32,
                             subtitle: "PESOS",
                             subtitleFontSize: 10
@@ -74,11 +75,11 @@ struct DonanteDetallado: View {
                     
                     switch filterBy {
                     case 1:
-                        GeneralInformation(telefonos: donante?.telefonos)
+                        GeneralInformation(telefonos: donante?.telefonos, informacion: donante?.informacionGeneral)
                     case 2:
-                        PaymentsAndPromises(promesas: donante?.promesas)
+                        PaymentsAndPromises(promesas: donante?.promesas, pagos: donante?.pagos)
                     default:
-                        GeneralInformation(telefonos: donante?.telefonos)
+                        GeneralInformation(telefonos: donante?.telefonos, informacion: donante?.informacionGeneral)
                     }
                 }.padding(.horizontal, 41)
                 Spacer()
@@ -88,9 +89,19 @@ struct DonanteDetallado: View {
             do {
                 donante = try await DonanteService.getDonante(id: 1)
                 
-                if (donante?.nombre != nil || donante?.apellidoPaterno != nil || donante?.apellidoMaterno != nil) {
+                if (donante?.nombre != nil || donante?.apellidoPaterno != nil) {
                     nombreCompleto = "\(donante?.nombre ?? "") \(donante?.apellidoPaterno ?? "") \(donante?.apellidoMaterno ?? "")"
                 }
+                                
+                if (donante?.nivelRiesgo == "Bajo" || donante?.nivelRiesgo == "Sin historial") {
+                    colorRiesgo = ColorConstants.lowRisk
+                } else if (donante?.nivelRiesgo == "Medio") {
+                    colorRiesgo = ColorConstants.midRisk
+                } else {
+                    colorRiesgo = ColorConstants.highRisk
+                }
+                
+                
             } catch {
                 print("Error obteniendo donante: \(error)")
             }
