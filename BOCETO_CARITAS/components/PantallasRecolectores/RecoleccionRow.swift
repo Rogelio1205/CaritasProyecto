@@ -16,18 +16,18 @@ struct RecoleccionRow: View {
             HStack {
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("\(recoleccionSig.nombreDonante)")
+                    Text("\(recoleccionSig.nombre)")
                         .font(.title)
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
-                    Text("Recolecciones en \(recoleccionSig.diasHastaSigDonacion) días")
+                    Text("Recolecciones en \(recoleccionSig.fecha)")
                         .font(.system(size: 20))
                 }
                 .padding(.trailing, 50)
                 VStack {
                     Text("Donación")
                         .font(.system(size: 20))
-                    Text("$\(recoleccionSig.cantDonacion)")
+                    Text("$\(recoleccionSig.monto)")
                         .font(.title)
                         .bold()
                 }
@@ -41,6 +41,6 @@ struct RecoleccionRow: View {
 }
 
 #Preview {
-    let recoleccionSigPrueba = RecoleccionSiguiente(nombreDonante: "Melanie Rivera", diasHastaSigDonacion: 10, cantDonacion: 10236)
+    let recoleccionSigPrueba = RecoleccionSiguiente(apellidoPaterno: "Melanie", fecha: Date(), monto: 10236, nombre: "Rivera")
     RecoleccionRow(recoleccionSig: recoleccionSigPrueba)
 }
