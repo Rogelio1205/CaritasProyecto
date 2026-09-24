@@ -10,7 +10,6 @@ import SwiftUI
 struct DetallePromesas: View {
     @Environment(\.dismiss) private var dismiss
     
-    // Parámetro para saber qué promesa buscar
     let idPromesa: Int
     
     @State private var promesaActual: PromesaDetalle?
@@ -18,7 +17,6 @@ struct DetallePromesas: View {
     @State private var mensajeError: String?
     
     var body: some View {
-        // 2. Envolvemos en un ScrollView por si el sheet es más pequeño que el contenido
         ScrollView {
             VStack {
                 if estaCargado {
@@ -61,22 +59,19 @@ struct DetallePromesas: View {
                     }
                 }
                 
-                // 3. Pasamos las acciones a los botones
                 ButtonsSheet(
                     onCancel: { dismiss() },
                     onAccept: {
-                        // Aquí puedes poner lógica de guardado antes de cerrar
                         dismiss()
                     }
                 )
                 .padding(.top, 20)
             }
             .padding(30)
-            // 4. Eliminamos el .frame fijo y el .background original para que fluya nativo
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .task {
             do {
-                // Usamos el ID dinámico en lugar del 1 hardcodeado
                 promesaActual = try await ObtenerPromesaDetalle(idPromesa: idPromesa)
                 estaCargado = false
             } catch {
@@ -88,7 +83,6 @@ struct DetallePromesas: View {
     }
 }
 
-// MARK: - Botones Actualizados para recibir acciones
 struct ButtonsSheet: View {
     var onCancel: () -> Void
     var onAccept: () -> Void
@@ -111,7 +105,7 @@ struct ButtonsSheet: View {
             .buttonStyle(.borderedProminent)
             .font(.system(size: 30, weight: .semibold))
             .frame(height: 50)
-            .tint(ColorConstants.mainColor) // Asegúrate de tener tu ColorConstants en el proyecto
+            .tint(ColorConstants.mainColor)
         }
         .frame(width: 500)
         .padding(10)
