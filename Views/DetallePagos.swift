@@ -29,7 +29,7 @@ struct DetallePagosSheet: View {
                         monto: pago.montoDouble,
                         estatus: pago.estatusPago,
                         formaPago: pago.formaPago,
-                        fechaConfirmacion: pago.fechaConfirmacion ?? "N/A",
+                        fechaConfirmacion: formatDate(pago.fechaConfirmacion!),
                         cancelado: pago.cancelado
                     )
                     
@@ -146,10 +146,8 @@ struct DetailStackPago: View {
         VStack(alignment: .leading) {
             Text(label)
                 .font(Font.system(size: 16, weight: .bold))
-                .foregroundStyle(Color.gray)
             Text(value)
-                .font(Font.system(size: 18, weight: .semibold))
-                .foregroundStyle(Color.black)
+                .font(Font.system(size: 18))
         }
     }
 }
@@ -162,11 +160,9 @@ struct StatCardPago: View {
         VStack(alignment: .leading, spacing: 5) {
             Text(title)
                 .font(.system(size: 16, weight: .bold))
-                .foregroundColor(Color(red: 17/255, green: 153/255, blue: 170/255))
 
             Text(subtitulo)
-                .font(.system(size: 20, weight: .semibold))
-                .foregroundColor(Color.black.opacity(0.85))
+                .font(.system(size: 20))
         }
         .padding(20)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)

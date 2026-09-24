@@ -31,7 +31,7 @@ struct DetallePromesas: View {
                     VStack {
                         HeaderCard(titulo: promesa.nombreCaso, subtitulo: "Promesa de pago")
                         
-                        StatusCard(cantidad: promesa.monto, isActive: false, numeroCaso: promesa.idCaso, FormaPago: promesa.formaPago, FechaAlta: promesa.fechaCorta)
+                        StatusCard(cantidad: promesa.monto, estado: promesa.estadoNombre, numeroCaso: promesa.idCaso, FormaPago: promesa.formaPago, FechaAlta: promesa.fechaCorta)
                         
                         VStack {
                             Grid() {
@@ -134,7 +134,7 @@ struct HeaderCard: View {
 
 struct StatusCard: View {
     let cantidad: Double
-    let isActive: Bool
+    let estado: String
     let numeroCaso: Int
     let FormaPago: String
     let FechaAlta: String
@@ -152,11 +152,11 @@ struct StatusCard: View {
                 VStack(alignment: .leading, spacing: 5){
                     Text("Estado")
                         .font(.system(size: 16, weight: .bold))
+                        
                     HStack(spacing: 8){
-                        Text("Activa")
-                        Toggle("", isOn: .constant(isActive))
-                            .frame(width: 50)
-                            .labelsHidden()
+                        Text(estado)
+                            .bold()
+                            .foregroundStyle(estado == "Activa" ? ColorConstants.mainColor : .gray)
                     }
                 }
             }

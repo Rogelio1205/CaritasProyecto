@@ -37,7 +37,7 @@ struct Promesa: Codable, Identifiable {
     let monto: Double
 }
 
-struct Pago: Codable {
+struct Pago: Codable, Identifiable {
     let estadoPago: String
     let fecha: String
     let id: Int
