@@ -6,6 +6,7 @@ struct PaymentsAndPromises: View {
     let pagos: [Pago]?
     
     @State private var promesaSeleccionada: Promesa?
+    @State private var pagoSeleccionado: Pago?
     
     var body: some View {
         VStack {
@@ -62,7 +63,7 @@ struct PaymentsAndPromises: View {
                                     field2: formatDate(pago.fecha),
                                     field3: "$\(pago.importe)",
                                     onTap: {
-                                        
+                                        pagoSeleccionado = pago
                                     }
                                 )
                                 
@@ -78,6 +79,11 @@ struct PaymentsAndPromises: View {
             DetallePromesas(idPromesa: promesa.id)
                 .presentationDetents([.large])
         }
+        .sheet(item: $pagoSeleccionado) { pago in
+            DetallePagosSheet(idPago: pago.id)
+                .presentationDetents([.large])
+        }
+
     }
 }
 
@@ -85,5 +91,7 @@ struct PaymentsAndPromises: View {
 #Preview {
     PaymentsAndPromises(promesas: [
         Promesa(caso: "hola", frecuencia: "No", id: 1, idEstado: 1, monto: 2)
-    ], pagos: [])
+    ], pagos: [
+        Pago(estadoPago: "No", fecha: "no", id: 1, idPromesa: 1, importe: "10")
+    ])
 }
