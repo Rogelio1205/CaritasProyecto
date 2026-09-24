@@ -35,7 +35,8 @@ struct RecolectoresMainView: View {
     var body: some View {
         VStack {
             headerMobile(logout: $Logout)
-            VStack {
+            ScrollView {
+                VStack {
                     HStack {
                         Spacer()
                         Text("SOLICITUDES")
@@ -123,12 +124,16 @@ struct RecolectoresMainView: View {
                             await cargarRecPorDia()
                         }
                         .padding()
+                        .frame(height: 220)
                         Picker(selection: $Filtro, label: Text("")){
                             Text("PRÓXIMAS").tag(1)
                             Text("MAYOR DONACIÓN").tag(2)
                         }.pickerStyle(.segmented)
-                        List(listaRecolecciones) { recoleccionItem in
-                            RecoleccionRow(recoleccionSig: recoleccionItem)
+                        .padding(.horizontal, 15)
+                        VStack(spacing: 0) {
+                            ForEach(listaRecolecciones) { recoleccionItem in
+                                RecoleccionRow(recoleccionSig: recoleccionItem)
+                            }
                         }
                         .task {
                             await cargarLista()
@@ -136,8 +141,8 @@ struct RecolectoresMainView: View {
                         .onChange(of: Filtro) { _ in
                             Task { await cargarLista() }
                         }
-                        Spacer()
                 }.background(Color(.gray.opacity(0.05)))
+                }
             }
         }
         
