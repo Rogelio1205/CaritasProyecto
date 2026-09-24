@@ -8,15 +8,17 @@
 import SwiftUI
 
 struct Resumen: View {
+    let meta: Meta
+    let riesgo: Riesgo
 
-    let llamadasHechas = 16
-    let llamadasMeta = 25
-    let progreso = 0.65
+    private var llamadasHechas: Int { meta.llamadasHoy }
+    private var llamadasMeta: Int { meta.metaDiaria }
+    private var progreso: Double { meta.progreso }
+    private var riesgoAlto: Int { riesgo.alto }
+    private var riesgoMedio: Int { riesgo.medio }
+    private var riesgoBajo: Int { riesgo.bajo }
+    private var inactivos: Int { riesgo.inactivos }
 
-    let riesgoAlto = 12
-    let riesgoMedio = 17
-    let riesgoBajo = 29
-    let inactivos = 14
 
     var body: some View {
         HStack {
@@ -47,10 +49,13 @@ struct Resumen: View {
 
                     ZStack {
                         Circle()
-                            .stroke(Color.white.opacity(0.3), lineWidth: 14)
+                            .stroke(Color(red: 0.14, green: 0.38, blue: 0.44), lineWidth: 14)
                         Circle()
                             .trim(from: 0, to: progreso)
-                            .stroke(Color.white, style: StrokeStyle(lineWidth: 14, lineCap: .round))
+                            .stroke(
+                                Color(red: 0.80, green: 0.93, blue: 0.95),
+                                style: StrokeStyle(lineWidth: 14, lineCap: .round)
+                            )
                             .rotationEffect(.degrees(-90))
                         Text("\(Int(progreso * 100))%")
                             .font(.system(size: 24, weight: .bold))
@@ -139,6 +144,7 @@ struct StatCard: View {
 }
 
 #Preview {
-    Resumen()
+    Resumen(meta: Meta(llamadasHoy: 16, metaDiaria: 25),
+            riesgo: Riesgo(alto: 12, medio: 17, bajo: 29, inactivos: 14))
         .frame(width: 900, height: 340)
 }

@@ -1,5 +1,5 @@
 //
-//  DonantesAltoValor.swift
+//  DonantesAltoValorComp.swift
 //  BOCETO_CARITAS
 //
 //  Created by Rogelio Iram González Ortiz on 29/08/26.
@@ -7,23 +7,10 @@
 
 import SwiftUI
 
-struct DonanteAltoValor: Identifiable {
-    let id = UUID()
-    let nombre: String
-    let mesesUltimaDonacion: Int
-    let totalDonado: Double
-}
-
 struct DonantesAltoValorComp: View {
 
     @Binding var tabSeleccionado: Tabs
-
-    let donantes: [DonanteAltoValor] = [
-        DonanteAltoValor(nombre: "Laura Fuentes", mesesUltimaDonacion: 5, totalDonado: 18459),
-        DonanteAltoValor(nombre: "Gustavo Gutierrez", mesesUltimaDonacion: 6, totalDonado: 14395),
-        DonanteAltoValor(nombre: "Margarita Aguilar", mesesUltimaDonacion: 11, totalDonado: 10694),
-        DonanteAltoValor(nombre: "Octavio Castro", mesesUltimaDonacion: 2, totalDonado: 9503)
-    ]
+    let donantes: [DonanteAltoValor]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -45,9 +32,21 @@ struct DonantesAltoValorComp: View {
             }
             .padding(.horizontal, 4)
 
-            VStack(spacing: 12) {
-                ForEach(donantes) { donante in
-                        MuestraDonanteAltoValor(donante: donante)
+            if donantes.isEmpty {
+                Text("Sin donantes de alto valor por ahora")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 4)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(donantes) { donante in
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            MuestraDonanteAltoValor(donante: donante)
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
             }
         }
@@ -63,17 +62,17 @@ struct MuestraDonanteAltoValor: View {
         formato.numberStyle = .decimal
         formato.groupingSeparator = ","
         let numero = formato.string(from: NSNumber(value: donante.totalDonado)) ?? "\(Int(donante.totalDonado))"
-        return "$\(numero) PESOS"
+        return "$\(numero) pesos"
     }
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(donante.nombre.uppercased())
+                Text(donante.nombre)
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
 
-                Text("ÚLTIMA DONACIÓN HACE \(donante.mesesUltimaDonacion) MESES")
+                Text(formatoFecha(donante.mesesUltimaDonacion))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.gray)
             }
@@ -81,7 +80,7 @@ struct MuestraDonanteAltoValor: View {
             Spacer()
 
             VStack(alignment: .trailing, spacing: 2) {
-                Text("TOTAL DONADO")
+                Text("Total donado")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundColor(.gray)
                 Text(totalFormateado)
@@ -104,6 +103,15 @@ struct MuestraDonanteAltoValor: View {
 }
 
 #Preview {
-    DonantesAltoValorComp(tabSeleccionado: .constant(.inicio))
-        .frame(width: 900)
+    NavigationStack {
+        DonantesAltoValorComp(
+            tabSeleccionado: .constant(.inicio),
+            donantes: [
+                DonanteAltoValor(idDonante: 1, nombre: "Laura Fuentes", mesesUltimaDonacion: 5, totalDonado: 18459),
+                DonanteAltoValor(idDonante: 2, nombre: "Gustavo Gutierrez", mesesUltimaDonacion: 6, totalDonado: 14395),
+                DonanteAltoValor(idDonante: 3, nombre: "Octavio Castro", mesesUltimaDonacion: 2, totalDonado: 9503)
+            ]
+        )
+    }
+    .frame(width: 900)
 }

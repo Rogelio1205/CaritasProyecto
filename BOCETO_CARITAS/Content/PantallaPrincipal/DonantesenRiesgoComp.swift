@@ -1,5 +1,5 @@
 //
-//  DonantesEnRiesgo.swift
+//  DonantesEnRiesgoComp.swift
 //  BOCETO_CARITAS
 //
 //  Created by Rogelio Iram González Ortiz on 29/08/26.
@@ -12,19 +12,35 @@ enum NivelRiesgo {
     case medio
     case bajo
 
-    var texto: String {
-        switch self {
-        case .alto: return "ALTO"
-        case .medio: return "MEDIO"
-        case .bajo: return "BAJO"
+    init(api: String) {
+        switch api {
+        case "alto": self = .alto
+        case "bajo": self = .bajo
+        default:     self = .medio
         }
     }
 
-    var color: Color {
+    var texto: String {
+        switch self {
+        case .alto: return "RIESGO ALTO"
+        case .medio: return "RIESGO MEDIO"
+        case .bajo: return "RIESGO BAJO"
+        }
+    }
+
+    var colorTexto: Color {
         switch self {
         case .alto: return Color(red: 0.55, green: 0.15, blue: 0.15)
         case .medio: return Color(red: 0.53, green: 0.42, blue: 0.10)
         case .bajo: return Color(red: 0.14, green: 0.33, blue: 0.14)
+        }
+    }
+
+    var colorFondo: Color {
+        switch self {
+        case .alto: return Color(red: 0.98, green: 0.93, blue: 0.93)
+        case .medio: return Color(red: 0.98, green: 0.96, blue: 0.88)
+        case .bajo: return Color(red: 0.90, green: 0.96, blue: 0.90)
         }
     }
 }
@@ -32,13 +48,7 @@ enum NivelRiesgo {
 struct DonantesEnRiesgoComp: View {
 
     @Binding var tabSeleccionado: Tabs
-
-    let donantes: [Donante] = [
-        Donante(nombre: "Oscar Ramírez", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 2 AÑOS", riesgo: .alto),
-        Donante(nombre: "Danna Sepúlveda", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 1 AÑO", riesgo: .alto),
-        Donante(nombre: "Rogelio García", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 13 MESES", riesgo: .alto),
-        Donante(nombre: "María Estrada", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 6 MESES", riesgo: .medio)
-    ]
+    let donantes: [DonanteRiesgo]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -60,48 +70,61 @@ struct DonantesEnRiesgoComp: View {
             }
             .padding(.horizontal, 4)
 
-            VStack(spacing: 12) {
-                ForEach(donantes) { donante in
-                        MuestraDonante(donante: donante)
+            if donantes.isEmpty {
+                Text("Sin donantes en riesgo por ahora")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 4)
+            } else {
+                VStack(spacing: 12) {
+                    ForEach(donantes) { donante in
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            MuestraDonante(donante: donante)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
-            }.padding(20)
+            }
         }
-        
+        .padding(20)
     }
-
+}
 
 struct MuestraDonante: View {
-    let donante: Donante
+    let donante: DonanteRiesgo
+
+    private var nivel: NivelRiesgo { NivelRiesgo(api: donante.nivel) }
 
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text(donante.nombre.uppercased())
+                Text(donante.nombre)
                     .font(.system(size: 18, weight: .bold))
                     .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
 
-                Text(donante.ultimaDonacion)
+                Text(formatoFecha(donante.mesesUltimaDonacion))
                     .font(.system(size: 13, weight: .medium))
                     .foregroundColor(.gray)
             }
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text("RIESGO")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(donante.riesgo.color.opacity(0.75))
-                Text(donante.riesgo.texto)
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(donante.riesgo.color)
-            }
-            .padding(.trailing, 12)
+            Text(nivel.texto)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(nivel.colorTexto)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(nivel.colorFondo)
+                )
+                .padding(.trailing, 12)
 
             Image(systemName: "chevron.right")
                 .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(Color.gray.opacity(0.5))
+                .foregroundColor(Color.gray.opacity(0.4))
         }
         .padding(18)
         .background(
@@ -113,6 +136,15 @@ struct MuestraDonante: View {
 }
 
 #Preview {
-    DonantesEnRiesgoComp(tabSeleccionado: .constant(.inicio))
-        .frame(width: 860)
+    NavigationStack {
+        DonantesEnRiesgoComp(
+            tabSeleccionado: .constant(.inicio),
+            donantes: [
+                DonanteRiesgo(idDonante: 1, nombre: "Oscar Ramírez", mesesUltimaDonacion: 24, nivel: "alto"),
+                DonanteRiesgo(idDonante: 2, nombre: "Danna Sepúlveda", mesesUltimaDonacion: 12, nivel: "alto"),
+                DonanteRiesgo(idDonante: 3, nombre: "María Estrada", mesesUltimaDonacion: 6, nivel: "medio")
+            ]
+        )
+    }
+    .frame(width: 860)
 }

@@ -1,8 +1,11 @@
 from flask import Flask, jsonify, make_response, request, send_file
+from endpoints.dashboard import dashboard_bp
 import json
 import sys
 import mssql_functions as MSSql
 from endpoints.detailed_donor import donors_bp
+from endpoints.promesas import promesas_bp
+from flasgger import Swagger
 
 # Connect to mssql dB from start
 mssql_params = {}
@@ -19,7 +22,17 @@ except Exception as e:
 
 app = Flask(__name__)
 
+swagger = Swagger(app, template= {
+    "info": {
+        "title": "API TC2007B",
+        "description": "REST API para la materia TC2007B",
+        "version": "1.0.0"
+    } 
+})
+
 app.register_blueprint(donors_bp)
+app.register_blueprint(promesas_bp)
+app.register_blueprint(dashboard_bp)
 
 @app.route("/hello")
 def hello():
@@ -28,7 +41,7 @@ def hello():
     ---
     responses:
         200:
-        description: A successful response is "Shakira rocks"
+            description: A successful response is "Shakira rocks"
     """
     return "Shakira rocks!\n"
 
@@ -37,6 +50,23 @@ def infoUser():
     usern = request.args.get("nombre")
     d_user = MSSql.read_user_data('Usuario', usern)
     return make_response(jsonify(d_user))
+
+@app.route("/recolecciones", methods=['GET'])
+def getRecolecciones():
+    recArr = MSSql.getRecProximas()
+    return make_response(jsonify(recArr))
+
+@app.route("/recoleccionesMonto", methods=['GET'])
+def getRecoleccionesMonto():
+    recArr = MSSql.getRecProximasByMonto()
+    """
+    Regresa el monto, nombre y fecha recolecciones registradas en la base de datos, ordenadas de mayor donación a menor. Se usa en la pantalla de recolectoresView para construir la lista de recolecciones con el filtro de mayor a menor.
+    ---
+    responses:
+        200:
+            description: Un JSON con el monto, nombre y fecha de las recolecciones, con el monto de mayor a menor.
+    """
+    return make_response(jsonify(recArr))
 
 @app.route("/login", methods=['POST'])
 def logIn():
@@ -87,11 +117,14 @@ def logIn():
     validUser = MSSql.funcionLogin('Usuario',usuario,password)
 
     if validUser:
-        return make_response(jsonify({"nombre": validUser["nombre"], "idRol": validUser["idRol"]}))
+        return make_response(jsonify({
+            "idUsuario": validUser["idUsuario"],
+            "nombre": validUser["nombre"],
+            "idRol": validUser["idRol"]
+        }))
     else:
         return make_response(jsonify({"error": "Usuario Invalido"}))
 
 if __name__ == '__main__':
     print ("Running API...")
     app.run(host='0.0.0.0', port=10206, debug=True)
-

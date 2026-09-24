@@ -28,7 +28,7 @@ func verificarLogin(_ newLogin: LoginRequest) async throws -> LoginResponse{
       throw URLError(.badServerResponse)
   }
   
-    guard httpResponse.statusCode == 200 || httpResponse.statusCode == 201 else {
+    guard httpResponse.statusCode == 200 || httpResponse.statusCode == 201 || httpResponse.statusCode == 401 else {
       print("Código de error del API: \(httpResponse.statusCode)")
       throw URLError(.badServerResponse)
   }

@@ -33,7 +33,45 @@ def read_user_data(table_name, nombre):
 def sql_read_all(table_name):
     import pymssql
     global cnx, mssql_params
-    read = 'SELECT * FROM %s' % table_name
+    read = 'SELECT fecha FROM %s' % (table_name, table_name)
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def getRecProximas():
+    import pymssql
+    global cnx, mssql_params
+    read = 'SELECT FORMAT(Recoleccion.fecha , 'yyyy-MM-ddTHH:mm:ssZ') AS formatted_date, Promesa.monto, Donante.nombre, Donante.apellidoPaterno FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante'
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def getRecProximasByMonto():
+    import pymssql
+    global cnx, mssql_params
+    read = 'SELECT Recoleccion.fecha, Promesa.monto, Donante.nombre, Donante.apellidoPaterno FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante ORDER BY Promesa.monto DESC'
     try:
         try:
             cursor = cnx.cursor(as_dict=True)
@@ -52,8 +90,7 @@ def sql_read_all(table_name):
 def funcionLogin(table_name, userName, password):
     import pymssql
     global cnx, mssql_params
-    query = f"SELECT nombre, idRol, [userName], password_hash FROM {table_name} WHERE [userName] = %s"
-
+    query = f"SELECT idUsuario, nombre, idRol, [userName], password_hash FROM {table_name} WHERE [userName] = %s"
     try:
         cursor = cnx.cursor(as_dict=True)
         cursor.execute(query, (userName, ))
@@ -92,14 +129,30 @@ def getDetailedDonor(donorId):
             d.excluido,
             d.fechaExclusion,
             d.correo,
-            p.idPromesa,
+            d.estado, 
+            d.fechaNacimiento,
+            d.direccion,
+            p.idPromesa ,
             c.nombre as nombreCaso,
             p.frecuencia,
             p.monto,
-            p.idEstado 
+            p.idEstado,
+            pa.idPago,
+            pa.fechaPago,
+            pa.importe,
+            sp.estado as estadoPago,
+            MAX(pa.fechaPago) OVER (PARTITION BY d.idDonante) AS ultimaDonacion,
+            dbo.calcularRiesgo(
+                MAX(pa.fechaPago) OVER (PARTITION BY d.idDonante)
+            ) AS nivelRiesgo,
+            SUM(pa.importe) OVER (
+                PARTITION BY d.idDonante
+            ) AS totalDonado
         from donante d
         left join promesa p on d.idDonante = p.idDonante
         left join caso c on c.idCaso = p.idCaso
+        left join pago pa on p.idPromesa = pa.idPromesa
+        left join StatusPago sp on pa.idStatusPago = sp.idStatusPago  
         where d.idDonante = %s;
     """
 
@@ -109,6 +162,31 @@ def getDetailedDonor(donorId):
     answer = cursor.fetchall()
     cursor.close()
 
+    return answer
+
+#  -------------- Cristhian -------------------
+def getEstadosPromesa():
+    global cnx
+    query = "SELECT idEstado, nombre FROM EstadosPromesa"
+    cursor = cnx.cursor(as_dict=True)
+    cursor.execute(query)
+    answer = cursor.fetchall()
+    cursor.close()
+    return answer
+ 
+def getPromesaById(idPromesa):
+    global cnx
+    query = """
+        SELECT p.idPromesa, p.idUsuario, p.idDonante, p.idCaso, p.monto,
+               p.idEstado, e.nombre AS estadoNombre, p.fecha, p.frecuencia, p.formaPago
+        FROM Promesa p
+        INNER JOIN EstadosPromesa e ON p.idEstado = e.idEstado
+        WHERE p.idPromesa = %s
+    """
+    cursor = cnx.cursor(as_dict=True)
+    cursor.execute(query, (idPromesa,))
+    answer = cursor.fetchone()
+    cursor.close()
     return answer
 
 """ def sql_read_where(table_name, d_where):
@@ -251,6 +329,114 @@ def sql_delete_where(table_name, d_where):
         return a
     except Exception as e:
         raise TypeError("sql_delete_where:%s" % e) """
+
+
+#Rogelio
+RESUMEN = """
+    select d.idDonante, d.nombre, d.apellidoPaterno,
+           max(r.fecha) as ultimaDonacion,
+           sum(r.montoRecibido) as totalDonado,
+           datediff(month, max(r.fecha), getdate()) as mesesSinDonar
+    from Donante d
+    join Promesa p on p.idDonante = d.idDonante
+    join Recoleccion r on r.idPromesa = p.idPromesa
+    where r.montoRecibido > 0
+      and isnull(d.excluido, 0) = 0
+    group by d.idDonante, d.nombre, d.apellidoPaterno
+"""
+NIVEL = """
+    case
+        when mesesSinDonar >= 36 then 'inactivo'
+        when mesesSinDonar >= 12 then 'alto'
+        when mesesSinDonar >= 6  then 'medio'
+        else 'bajo'
+    end
+"""
+
+def _query(sql, params=()):
+    global cnx
+    cursor = cnx.cursor(as_dict=True)
+    if params:
+        cursor.execute(sql, params)
+    else:
+        cursor.execute(sql)
+    rows = cursor.fetchall()
+    cursor.close()
+    return rows
+
+def _nombre(r):
+    return f"{r['nombre']} {r['apellidoPaterno'] or ''}".strip()
+
+def getDashboard(idUsuario, metaDiaria=25):
+    llamadas = _query(
+        """select count(*) as total from Llamada
+           where idUsuario = %s
+             and fecha = cast(getdate() as date)""",
+        (idUsuario,))[0]["total"]
+
+    conteo = {r["nivel"]: r["total"] for r in _query(
+        f"""select {NIVEL} as nivel, count(*) as total
+            from ({RESUMEN}) x
+            group by {NIVEL}""")}
+
+    en_riesgo = _query(
+        f"""select top 4 idDonante, nombre, apellidoPaterno,
+                   mesesSinDonar, {NIVEL} as nivel
+            from ({RESUMEN}) x
+            where mesesSinDonar >= 6 and mesesSinDonar < 36
+            order by mesesSinDonar desc""")
+
+    potenciales = _query(
+        f"""select top 3 x.idDonante, x.nombre, x.apellidoPaterno,
+                   x.mesesSinDonar, s.casosSimilares
+            from ({RESUMEN}) x
+            outer apply (
+                select top 1 p2.idCaso
+                from Promesa p2
+                join Recoleccion r2 on r2.idPromesa = p2.idPromesa
+                where p2.idDonante = x.idDonante and r2.montoRecibido > 0
+                order by r2.fecha desc
+            ) ult
+            outer apply (
+                select count(distinct t2.idCaso) as casosSimilares
+                from CasoAreaTag t2
+                where t2.idCaso <> ult.idCaso
+                  and t2.idAreaTag in (
+                      select t1.idAreaTag from CasoAreaTag t1
+                      where t1.idCaso = ult.idCaso)
+            ) s
+            where x.mesesSinDonar >= 18
+            order by s.casosSimilares desc""")
+
+    alto_valor = _query(
+        f"""select top 4 idDonante, nombre, apellidoPaterno,
+                   mesesSinDonar, totalDonado
+            from ({RESUMEN}) x
+            order by totalDonado desc""")
+
+    return {
+        "meta": {"llamadasHoy": llamadas, "metaDiaria": metaDiaria},
+        "riesgo": {
+            "alto": conteo.get("alto", 0),
+            "medio": conteo.get("medio", 0),
+            "bajo": conteo.get("bajo", 0),
+            "inactivos": conteo.get("inactivo", 0),
+        },
+        "donantesEnRiesgo": [
+            {"idDonante": r["idDonante"], "nombre": _nombre(r),
+             "mesesSinDonar": r["mesesSinDonar"], "nivel": r["nivel"]}
+            for r in en_riesgo],
+        "donantesPotenciales": [
+            {"idDonante": r["idDonante"], "nombre": _nombre(r),
+             "mesesSinDonar": r["mesesSinDonar"],
+             "casosSimilares": r["casosSimilares"] or 0}
+            for r in potenciales],
+        "donantesAltoValor": [
+            {"idDonante": r["idDonante"], "nombre": _nombre(r),
+             "mesesSinDonar": r["mesesSinDonar"],
+             "totalDonado": float(r["totalDonado"] or 0)}
+            for r in alto_valor],
+    }
 
 
 if __name__ == '__main__':
