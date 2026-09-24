@@ -10,13 +10,13 @@ import Charts
 
 struct GraficaRecoleccionesSemanales: View {
     let listaRecoleccionesSemanales = [
-        RecoleccionesSemanales(numRecolecciones: 4, idDia: 1),
-        RecoleccionesSemanales(numRecolecciones: 2, idDia: 2),
-        RecoleccionesSemanales(numRecolecciones: 3, idDia: 3),
-        RecoleccionesSemanales(numRecolecciones: 5, idDia: 4),
-        RecoleccionesSemanales(numRecolecciones: 5, idDia: 5),
-        RecoleccionesSemanales(numRecolecciones: 2, idDia: 6),
-        RecoleccionesSemanales(numRecolecciones: 3, idDia: 7)
+        RecoleccionesSemanales(numRecolecciones: 4, idDia: "Lunes"),
+        RecoleccionesSemanales(numRecolecciones: 2, idDia: "Martes"),
+        RecoleccionesSemanales(numRecolecciones: 3, idDia: "Miercoles"),
+        RecoleccionesSemanales(numRecolecciones: 5, idDia: "Jueves"),
+        RecoleccionesSemanales(numRecolecciones: 5, idDia: "Viernes"),
+        RecoleccionesSemanales(numRecolecciones: 2, idDia: "Sabado"),
+        RecoleccionesSemanales(numRecolecciones: 3, idDia: "Domingo")
     ]
     var body: some View {
         VStack {

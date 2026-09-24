@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecoleccionRow: View {
-    
+        
     @State public var recoleccionSig: RecoleccionSiguiente
     
     var body: some View {
@@ -20,8 +20,9 @@ struct RecoleccionRow: View {
                         .font(.title)
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
-                    Text("Recoleccion en \(recoleccionSig.fecha)")
+                    Text("Recoleccion en \(formatDate(recoleccionSig.fecha))")
                         .font(.system(size: 20))
+                    
                 }
                 .padding(.trailing, 30)
                 VStack {

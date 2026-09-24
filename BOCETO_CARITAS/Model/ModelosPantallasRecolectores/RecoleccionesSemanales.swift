@@ -10,5 +10,5 @@ import Foundation
 struct RecoleccionesSemanales: Identifiable {
     let id = UUID()
     let numRecolecciones: Int
-    let idDia: Int
+    let idDia: String
 }
