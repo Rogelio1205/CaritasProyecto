@@ -17,7 +17,6 @@ struct DetallePagosSheet: View {
     @State private var mensajeError: String?
     
     var body: some View {
-        ScrollView {
             VStack {
                 if isLoading{
                     ProgressView("Cargando detalles de pago...")
@@ -45,7 +44,7 @@ struct DetallePagosSheet: View {
                                     subtitulo: pago.fechaReprogramacion ?? "N/A"
                                 )
                             }
-                        }
+                        }.frame(maxHeight: 100)
                     }
                 }
                 
@@ -55,8 +54,7 @@ struct DetallePagosSheet: View {
                 .padding(.top, 20)
             }
             .padding(30)
-        }
-        .frame(minWidth: 850, minHeight: 600)
+        .frame(minWidth: 850, minHeight: 250)
         .task {
             do{
                 pagoActual = try await obtenerPagoDetalle(idPago:idPago)
