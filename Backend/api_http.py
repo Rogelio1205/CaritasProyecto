@@ -73,6 +73,16 @@ def getNumRecolecciones():
     num = MSSql.numRecSemanal()
     return make_response(jsonify(num))
 
+@app.route("/numRecoleccionesHoy", methods=['GET'])
+def getNumRecoleccionesHoy():
+    num = MSSql.numRecHoy()
+    return make_response(jsonify(num))
+
+@app.route("/recPorDia", methods=['GET'])
+def getRecPorDia():
+    recArr = MSSql.recoleccionPorDia()
+    return make_response(jsonify(recArr))
+
 @app.route("/login", methods=['POST'])
 def logIn():
     """
