@@ -52,7 +52,7 @@ def sql_read_all(table_name):
 def getRecProximas():
     import pymssql
     global cnx, mssql_params
-    read = 'SELECT Recoleccion.fecha, Promesa.monto, Donante.nombre, Donante.apellidoPaterno FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante'
+    read = 'SELECT Recoleccion.fecha, Promesa.monto, Donante.nombre, Donante.apellidoPaterno FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante WHERE Recoleccion.fecha >= CAST(GETDATE() AS DATE) AND Recoleccion.fecha < DATEADD(WEEK, 1, CAST(GETDATE() AS DATE))'
     try:
         try:
             cursor = cnx.cursor(as_dict=True)
@@ -71,7 +71,83 @@ def getRecProximas():
 def getRecProximasByMonto():
     import pymssql
     global cnx, mssql_params
-    read = 'SELECT Recoleccion.fecha, Promesa.monto, Donante.nombre, Donante.apellidoPaterno FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante ORDER BY Promesa.monto DESC'
+    read = 'SELECT Recoleccion.fecha, Promesa.monto, Donante.nombre, Donante.apellidoPaterno FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante WHERE Recoleccion.fecha >= CAST(GETDATE() AS DATE) AND Recoleccion.fecha < DATEADD(WEEK, 1, CAST(GETDATE() AS DATE)) ORDER BY Promesa.monto DESC'
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def recMontoSum():
+    import pymssql
+    global cnx, mssql_params
+    read = 'SELECT SUM(Promesa.monto) AS montoSemanal FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante WHERE Recoleccion.fecha >= DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0) AND Recoleccion.fecha < DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()) + 1, 0)'
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def numRecSemanal():
+    import pymssql
+    global cnx, mssql_params
+    read = 'SELECT COUNT(*) AS recoleccionesSemanal FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante WHERE Recoleccion.fecha >= DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0) AND Recoleccion.fecha < DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()) + 1, 0)'
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def recoleccionPorDia():
+    import pymssql
+    global cnx, mssql_params
+    read = 'WITH Dias AS (SELECT DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0) AS Dia UNION ALL SELECT DATEADD(DAY, 1, Dia) FROM Dias WHERE Dia < DATEADD(WEEK, DATEDIFF(WEEK, 0, GETDATE()), 0) + 6) SELECT DATENAME(WEEKDAY, d.Dia) AS DiaSemana, COUNT(r.idRecoleccion) AS Total FROM Dias d LEFT JOIN Recoleccion r ON CAST(r.fecha AS DATE) = d.Dia GROUP BY d.Dia, DATENAME(WEEKDAY, d.Dia) ORDER BY d.Dia OPTION (MAXRECURSION 7)'
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def numRecHoy():
+    import pymssql
+    global cnx, mssql_params
+    read = 'SELECT COUNT(*) AS recoleccionesHoy FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante WHERE Recoleccion.fecha >= CAST(GETDATE() AS DATE) AND Recoleccion.fecha < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))'
     try:
         try:
             cursor = cnx.cursor(as_dict=True)

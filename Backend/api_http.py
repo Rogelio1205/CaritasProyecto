@@ -73,6 +73,26 @@ def getNumRecolecciones():
     num = MSSql.numRecSemanal()
     return make_response(jsonify(num))
 
+@app.route("/numRecoleccionesHoy", methods=['GET'])
+def getNumRecoleccionesHoy():
+    num = MSSql.numRecHoy()
+    return make_response(jsonify(num))
+
+@app.route("/recPorDia", methods=['GET'])
+def getRecPorDia():
+    recArr = MSSql.recoleccionPorDia()
+    return make_response(jsonify(recArr))
+
+@app.route("/recoleccionesMontoSum", methods=['GET'])
+def getRecoleccionesMontoSum():
+    suma = MSSql.recMontoSum()
+    return make_response(jsonify(suma))
+
+@app.route("/numRecolecciones", methods=['GET'])
+def getNumRecolecciones():
+    num = MSSql.numRecSemanal()
+    return make_response(jsonify(num))
+
 @app.route("/login", methods=['POST'])
 def logIn():
     """
