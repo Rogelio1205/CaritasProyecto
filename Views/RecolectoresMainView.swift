@@ -116,7 +116,7 @@ struct RecolectoresMainView: View {
                         Chart(listaRecSemanal){ item in
                             BarMark(
                                 x: .value("Día", item.diaSemana),
-                                y: .value("Número de asistentes", item.total)
+                                y: .value("Total", item.total)
                             )
                             .foregroundStyle(ColorConstants.mainColor)
                         }
