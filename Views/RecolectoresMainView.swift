@@ -9,6 +9,7 @@ import SwiftUI
 
 struct RecolectoresMainView: View {
     
+    @State private var Logout = false
     @State private var Filtro = 1
     @State private var listaRecolecciones: Array<RecoleccionSiguiente> = [
         RecoleccionSiguiente(apellidoPaterno: "Melanie", fecha: "30/09/2026", monto: 10236, nombre: "Rivera"),
@@ -18,7 +19,7 @@ struct RecolectoresMainView: View {
     let recoleccionesService = RecoleccionesService()
     
     var body: some View {
-        Header()
+        headerMobile(logout: $Logout)
             VStack {
                 HStack {
                     Spacer()
@@ -40,11 +41,11 @@ struct RecolectoresMainView: View {
                             .font(.largeTitle)
                             .padding(.bottom, 15)
                             .padding(.leading, 15)
-                            .padding(.trailing, 15)
                     }
+                    .padding(.trailing, 4)
                     .background(Color(.gray.opacity(0.2)))
                     .cornerRadius(20)
-                    .padding(.leading, 15)
+                    
                     VStack(alignment: .leading) {
                         Text("RECOLECCIONES EN PROCESO")
                             .bold()
@@ -56,11 +57,11 @@ struct RecolectoresMainView: View {
                             .font(.largeTitle)
                             .padding(.bottom, 15)
                             .padding(.leading, 15)
-                            .padding(.trailing, 15)
                     }
+                    .padding(.leading, 4)
                     .background(Color(.gray.opacity(0.2)))
                     .cornerRadius(20)
-                    .padding()
+                    
                 }
                 VStack {
                     VStack {
@@ -86,7 +87,7 @@ struct RecolectoresMainView: View {
                     .cornerRadius(20)
                     .background(Color(.white))
                     .cornerRadius(20)
-                    .padding(5)
+                    .padding(.horizontal, 15)
                     Picker(selection: $Filtro, label: Text("")){
                         Text("PRÓXIMAS").tag(1)
                         Text("MAYOR DONACIÓN").tag(2)
@@ -102,8 +103,7 @@ struct RecolectoresMainView: View {
                             }
                     Spacer()
                 }
-                .padding(.trailing, 15)
-                .padding(.leading, 15)
+                
             }.background(Color(.gray.opacity(0.05)))
         
     }
