@@ -52,7 +52,7 @@ def sql_read_all(table_name):
 def getRecProximas():
     import pymssql
     global cnx, mssql_params
-    read = 'SELECT FORMAT(Recoleccion.fecha , 'yyyy-MM-ddTHH:mm:ssZ') AS formatted_date, Promesa.monto, Donante.nombre, Donante.apellidoPaterno FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante'
+    read = 'SELECT Recoleccion.fecha, Promesa.monto, Donante.nombre, Donante.apellidoPaterno FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante'
     try:
         try:
             cursor = cnx.cursor(as_dict=True)
@@ -87,8 +87,47 @@ def getRecProximasByMonto():
     except Exception as e:
         raise TypeError("sql_read_where:%s" % e)
 
+def recMontoSum():
+    import pymssql
+    global cnx, mssql_params
+    read = 'SELECT SUM(Promesa.monto) AS montoSemanal FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante'
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def numRecSemanal():
+    import pymssql
+    global cnx, mssql_params
+    read = 'SELECT COUNT(*) AS recoleccionesSemanal FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante'
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
 def funcionLogin(table_name, userName, password):
     import pymssql
+    import hashlib
     global cnx, mssql_params
     query = f"SELECT idUsuario, nombre, idRol, [userName], password_hash FROM {table_name} WHERE [userName] = %s"
     try:
@@ -105,7 +144,9 @@ def funcionLogin(table_name, userName, password):
     answer = cursor.fetchone()
     #cnx.close()
 
-    if answer and answer["userName"] == userName and answer["password_hash"] == password:
+    contraHasehada = hashlib.sha256(password.encode('utf-8')).hexdigest()
+
+    if answer and answer["userName"] == userName and answer["password_hash"].lower() == contraHasehada.lower():
         return answer 
     else:
         return None  
@@ -124,7 +165,7 @@ def getDetailedDonor(donorId):
             d.telPersonal,
             d.telTmp,
             d.tipoDonante,
-            d.idClasificacion,
+            c2.nombreClas ,
             d.donanteEspecial,
             d.excluido,
             d.fechaExclusion,
@@ -153,6 +194,7 @@ def getDetailedDonor(donorId):
         left join caso c on c.idCaso = p.idCaso
         left join pago pa on p.idPromesa = pa.idPromesa
         left join StatusPago sp on pa.idStatusPago = sp.idStatusPago  
+        left join Clasificacion c2 on d.idClasificacion = c2.idClasificacion 
         where d.idDonante = %s;
     """
 
@@ -178,9 +220,11 @@ def getPromesaById(idPromesa):
     global cnx
     query = """
         SELECT p.idPromesa, p.idUsuario, p.idDonante, p.idCaso, p.monto,
-               p.idEstado, e.nombre AS estadoNombre, p.fecha, p.frecuencia, p.formaPago
+               p.idEstado, e.nombre AS estadoNombre, p.fecha, p.frecuencia, p.tipoFrecuencia, p.formaPago,
+               c.nombre AS nombreCaso
         FROM Promesa p
         INNER JOIN EstadosPromesa e ON p.idEstado = e.idEstado
+        INNER JOIN Caso c ON p.idCaso = c.idCaso
         WHERE p.idPromesa = %s
     """
     cursor = cnx.cursor(as_dict=True)
@@ -188,6 +232,53 @@ def getPromesaById(idPromesa):
     answer = cursor.fetchone()
     cursor.close()
     return answer
+ 
+def getAreaTagsByCaso(idCaso):
+    """
+    Un Caso puede tener varios AreaTag (relacion N a N via CasoAreaTag),
+    por eso regresa una lista y no un solo valor.
+    """
+    global cnx
+    query = """
+        SELECT at.idAreaTag, at.nombreAreaTag
+        FROM CasoAreaTag cat
+        INNER JOIN AreaTag at ON cat.idAreaTag = at.idAreaTag
+        WHERE cat.idCaso = %s
+    """
+    cursor = cnx.cursor(as_dict=True)
+    cursor.execute(query, (idCaso,))
+    answer = cursor.fetchall()
+    cursor.close()
+    return answer
+
+def getPagoById(idPago):
+    global cnx
+    query = """
+        SELECT 
+            pa.idPago,
+            c.nombre AS nombreCampana,
+            sp.estado AS estatusPago,
+            pa.formaPago,
+            pa.fechaConfirmacion,
+            CASE WHEN pa.cancelado = 1 THEN 'Sí' ELSE 'No' END AS cancelado,
+            CASE WHEN pa.reprogramado = 1 THEN 'Sí' ELSE 'No' END AS reprogramado,
+            pa.fechaReprogramacion,
+            pa.importe AS monto
+        FROM pago pa
+        INNER JOIN StatusPago sp ON pa.idStatusPago = sp.idStatusPago
+        INNER JOIN Promesa p ON pa.idPromesa = p.idPromesa
+        INNER JOIN Caso c ON p.idCaso = c.idCaso
+        WHERE pa.idPago = %s
+    """
+    try:
+        cursor = cnx.cursor(as_dict=True)
+        cursor.execute(query, (idPago,))
+        answer = cursor.fetchone()
+        cursor.close()
+        return answer
+    except Exception as e:
+        print(f"Error en getPagoById: {e}")
+        return None
 
 """ def sql_read_where(table_name, d_where):
     import pymssql
