@@ -7,8 +7,13 @@
 
 import Foundation
 
-struct RecoleccionesSemanales: Identifiable {
+struct RecoleccionesSemanales: Identifiable, Codable {
     let id = UUID()
-    let numRecolecciones: Int
-    let idDia: Int
+    let diaSemana: String
+    let total: Int
+    
+    enum CodingKeys: String, CodingKey {
+            case diaSemana = "DiaSemana"
+            case total = "Total"
+        }
 }
