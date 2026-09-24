@@ -71,9 +71,12 @@ struct DetallePromesas: View {
                 )
                 .padding(.top, 20)
             }
+            
             .padding(30)
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
             // 4. Eliminamos el .frame fijo y el .background original para que fluya nativo
         }
+        .frame(minWidth: 850, minHeight: 600)
         .task {
             do {
                 // Usamos el ID dinámico en lugar del 1 hardcodeado

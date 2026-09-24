@@ -62,7 +62,7 @@ struct PaymentsAndPromises: View {
                                     field2: formatDate(pago.fecha),
                                     field3: "$\(pago.importe)",
                                     onTap: {
-                                        // Aquí después puedes abrir PagoDetallado
+                                        
                                     }
                                 )
                                 
@@ -76,11 +76,14 @@ struct PaymentsAndPromises: View {
         }
         .sheet(item: $promesaSeleccionada) { promesa in
             DetallePromesas(idPromesa: promesa.id)
+                .presentationDetents([.large])
         }
     }
 }
 
 
 #Preview {
-    PaymentsAndPromises(promesas: [], pagos: [])
+    PaymentsAndPromises(promesas: [
+        Promesa(caso: "hola", frecuencia: "No", id: 1, idEstado: 1, monto: 2)
+    ], pagos: [])
 }
