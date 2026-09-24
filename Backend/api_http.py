@@ -5,6 +5,7 @@ import sys
 import mssql_functions as MSSql
 from endpoints.detailed_donor import donors_bp
 from endpoints.promesas import promesas_bp
+from endpoints.pagos import pagos_bp
 from flasgger import Swagger
 
 # Connect to mssql dB from start
@@ -32,6 +33,7 @@ swagger = Swagger(app, template= {
 
 app.register_blueprint(donors_bp)
 app.register_blueprint(promesas_bp)
+app.register_blueprint(pagos_bp)
 app.register_blueprint(dashboard_bp)
 
 @app.route("/hello")
@@ -59,14 +61,17 @@ def getRecolecciones():
 @app.route("/recoleccionesMonto", methods=['GET'])
 def getRecoleccionesMonto():
     recArr = MSSql.getRecProximasByMonto()
-    """
-    Regresa el monto, nombre y fecha recolecciones registradas en la base de datos, ordenadas de mayor donación a menor. Se usa en la pantalla de recolectoresView para construir la lista de recolecciones con el filtro de mayor a menor.
-    ---
-    responses:
-        200:
-            description: Un JSON con el monto, nombre y fecha de las recolecciones, con el monto de mayor a menor.
-    """
     return make_response(jsonify(recArr))
+
+@app.route("/recoleccionesMontoSum", methods=['GET'])
+def getRecoleccionesMontoSum():
+    suma = MSSql.recMontoSum()
+    return make_response(jsonify(suma))
+
+@app.route("/numRecolecciones", methods=['GET'])
+def getNumRecolecciones():
+    num = MSSql.numRecSemanal()
+    return make_response(jsonify(num))
 
 @app.route("/login", methods=['POST'])
 def logIn():
@@ -117,13 +122,9 @@ def logIn():
     validUser = MSSql.funcionLogin('Usuario',usuario,password)
 
     if validUser:
-        return make_response(jsonify({
-            "idUsuario": validUser["idUsuario"],
-            "nombre": validUser["nombre"],
-            "idRol": validUser["idRol"]
-        }))
+        return make_response(jsonify({"nombre": validUser["nombre"], "idRol": validUser["idRol"]}),200)
     else:
-        return make_response(jsonify({"error": "Usuario Invalido"}))
+        return make_response(jsonify({"error": "Usuario Invalido"}), 401)
 
 if __name__ == '__main__':
     print ("Running API...")
