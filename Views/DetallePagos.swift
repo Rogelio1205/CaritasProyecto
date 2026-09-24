@@ -10,6 +10,8 @@ import SwiftUI
 struct DetallePagosSheet: View {
     @Environment(\.dismiss) private var dismiss
     
+    let idPago: Int
+    
     @State private var pagoActual: PagoDetalle?
     @State private var isLoading: Bool = false
     @State private var mensajeError: String?
@@ -57,7 +59,7 @@ struct DetallePagosSheet: View {
         .frame(minWidth: 850, minHeight: 600)
         .task {
             do{
-                pagoActual = try await obtenerPagoDetalle(idPago:1)
+                pagoActual = try await obtenerPagoDetalle(idPago:idPago)
             } catch{
                 print("Error: \(error)")
             }
@@ -117,7 +119,7 @@ struct PagoStatusCard: View {
                     
                     Text(estatus)
                         .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(estatus == "Completado" ? mainColor : .orange)
+                        .foregroundStyle(estatus == "Aprobado" ? mainColor : .gray)
                 }
             }
             .padding(.trailing, 20)
@@ -193,5 +195,5 @@ struct BotonAceptarPago: View {
 }
 
 #Preview {
-    DetallePagosSheet()
+    DetallePagosSheet(idPago: 1)
 }

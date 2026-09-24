@@ -160,7 +160,7 @@ struct StatusCard: View {
                     }
                 }
             }
-            .padding(.trailing, 300)
+            .padding(.trailing, 350)
             HStack(spacing: 30){
                 DetailStack(label: "Numero de caso", value: String(numeroCaso))
                 DetailStack(label: "Forma de pago", value: FormaPago)
