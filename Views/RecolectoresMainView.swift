@@ -1,4 +1,3 @@
-//
 //  RecolectoresMainView.swift
 //  BOCETO_CARITAS
 //
@@ -17,17 +16,21 @@ struct RecolectoresMainView: View {
         RecoleccionSiguiente(apellidoPaterno: "Vargas", fecha: "12/10/2026", monto: 10236, nombre: "Hector")
     ]
     
-    let listaRecSemanal = [
-        RecoleccionesSemanales(numRecolecciones: 4, idDia: "L"),
-        RecoleccionesSemanales(numRecolecciones: 2, idDia: "M"),
-        RecoleccionesSemanales(numRecolecciones: 3, idDia: "X"),
-        RecoleccionesSemanales(numRecolecciones: 5, idDia: "J"),
-        RecoleccionesSemanales(numRecolecciones: 5, idDia: "V"),
-        RecoleccionesSemanales(numRecolecciones: 2, idDia: "S"),
-        RecoleccionesSemanales(numRecolecciones: 3, idDia: "D")
+    @State private var listaRecSemanal = [
+        RecoleccionesSemanales(diaSemana: "L", total: 4),
+        RecoleccionesSemanales(diaSemana: "M", total: 2),
+        RecoleccionesSemanales(diaSemana: "X", total: 3),
+        RecoleccionesSemanales(diaSemana: "J", total: 5),
+        RecoleccionesSemanales(diaSemana: "V", total: 5),
+        RecoleccionesSemanales(diaSemana: "S", total: 2),
+        RecoleccionesSemanales(diaSemana: "D", total: 3)
     ]
+    @State private var recPendientes = 0
+    @State private var recHoy = 0
+    @State private var montoProyectado = 0
     
     let recoleccionesService = RecoleccionesService()
+    
     
     var body: some View {
         VStack {
@@ -48,7 +51,10 @@ struct RecolectoresMainView: View {
                                 .padding(.top, 15)
                                 .padding(.leading, 15)
                                 .padding(.trailing, 15)
-                            Text("34")
+                            Text("\(recPendientes)")
+                                .task {
+                                    await cargarRecPendientes()
+                                }
                                 .bold()
                                 .font(.largeTitle)
                                 .padding(.bottom, 15)
@@ -64,7 +70,10 @@ struct RecolectoresMainView: View {
                                 .padding(.top, 15)
                                 .padding(.leading, 15)
                                 .padding(.trailing, 15)
-                            Text("5")
+                            Text("\(recHoy)")
+                                .task {
+                                    await cargarRecHoy()
+                                }
                                 .bold()
                                 .font(.largeTitle)
                                 .padding(.bottom, 15)
@@ -83,7 +92,10 @@ struct RecolectoresMainView: View {
                                 .foregroundStyle(ColorConstants.mainColor)
                             HStack {
                                 Spacer()
-                                Text("$31,761")
+                                Text("\(montoProyectado)")
+                                    .task {
+                                        await cargarMontoProyectado()
+                                    }
                                     .font(.system(size: 60))
                                     .bold()
                                     .foregroundStyle(ColorConstants.mainColor)
@@ -102,10 +114,13 @@ struct RecolectoresMainView: View {
                         .padding(.horizontal, 15)
                         Chart(listaRecSemanal){ item in
                             BarMark(
-                                x: .value("Día", item.idDia),
-                                y: .value("Número de asistentes", item.numRecolecciones)
+                                x: .value("Día", item.diaSemana),
+                                y: .value("Número de asistentes", item.total)
                             )
                             .foregroundStyle(ColorConstants.mainColor)
+                        }
+                        .task {
+                            await cargarRecPorDia()
                         }
                         .padding()
                         Picker(selection: $Filtro, label: Text("")){
@@ -142,6 +157,38 @@ struct RecolectoresMainView: View {
                 }
             }
         }
+    
+    private func cargarRecPorDia() async {
+        do {
+            listaRecSemanal = try await RecoleccionesService.getListaRecPorDia()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    
+    private func cargarRecPendientes() async {
+        do {
+            recPendientes = try await RecoleccionesService.getNumRecSemanal()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    
+    private func cargarRecHoy() async {
+        do {
+            recHoy = try await RecoleccionesService.getNumRecHoy()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    
+    private func cargarMontoProyectado() async {
+        do {
+            montoProyectado = try await RecoleccionesService.getMontoSumRec()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
 }
 
 #Preview {
