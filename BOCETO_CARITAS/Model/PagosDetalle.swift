@@ -23,27 +23,4 @@ struct PagoDetalle: Codable, Identifiable {
     }
     
     var id: Int { idPago }
-    
-    var confirmacionCorta: String {
-        guard let fecha = fechaConfirmacion else { return "Pendiente" }
-        return formatearFecha(fecha)
-    }
-    
-    var reprogramacionCorta: String {
-        guard let fecha = fechaReprogramacion else { return "N/A" }
-        return formatearFecha(fecha)
-    }
-    
-    private func formatearFecha(_ textoFecha: String) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "E, dd MMM yyyy HH:mm:ss 'GMT'"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        
-        if let date = formatter.date(from: textoFecha) {
-            let formatterSalida = DateFormatter()
-            formatterSalida.dateFormat = "dd/MM/yyyy"
-            return formatterSalida.string(from: date)
-        }
-        return textoFecha
-    }
 }
