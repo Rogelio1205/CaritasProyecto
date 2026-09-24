@@ -33,8 +33,7 @@ struct ContentView: View {
 
                         Color.clear.frame(height: 120)
                     }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 12)
+                
                 }
 
                 NavBar(tabSeleccionado: $tabSeleccionado)
@@ -51,16 +50,16 @@ struct PantallaPrincipal: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 24) {
-            TopBar()
+            Header().padding(.bottom, 42).padding(.top,-30)
 
             if let dashboard = viewmodel.data {
-                Resumen(meta: dashboard.meta, riesgo: dashboard.riesgo)
+                Resumen(meta: dashboard.meta, riesgo: dashboard.riesgo).padding(.horizontal,16)
                 DonantesEnRiesgoComp(tabSeleccionado: $tabSeleccionado,
-                                     donantes: dashboard.donantesEnRiesgo)
+                                     donantes: dashboard.donantesEnRiesgo).padding(.horizontal,16)
                 DonantesPotencialesComp(tabSeleccionado: $tabSeleccionado,
-                                        donantes: dashboard.donantesPotenciales)
+                                        donantes: dashboard.donantesPotenciales).padding(.horizontal,16)
                 DonantesAltoValorComp(tabSeleccionado: $tabSeleccionado,
-                                      donantes: dashboard.donantesAltoValor)
+                                      donantes: dashboard.donantesAltoValor).padding(.horizontal,16)
             } else if viewmodel.isLoading {
                 ProgressView()
                     .frame(maxWidth: .infinity)
@@ -72,6 +71,7 @@ struct PantallaPrincipal: View {
             }
         }
         .task { await viewmodel.cargar(idUsuario: idUsuario) }
+        
     }
 }
 

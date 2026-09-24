@@ -9,7 +9,7 @@ import SwiftUI
 import Combine
 
 @MainActor
-final class DashboardViewModel: ObservableObject {
+class DashboardViewModel: ObservableObject {
     @Published var data: DashboardScreen?
     @Published var errorMessage: String?
     @Published var isLoading = false

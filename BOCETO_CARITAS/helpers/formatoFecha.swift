@@ -7,8 +7,6 @@
 
 import Foundation
 
-import Foundation
-
 func formatoFecha(_ meses: Int) -> String {
     if meses >= 12 && meses % 12 == 0 {
         let años = meses / 12
