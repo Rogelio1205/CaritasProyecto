@@ -70,6 +70,7 @@ struct DetallePromesas: View {
             .padding(30)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
+        .frame(minWidth: 850, minHeight: 600)
         .task {
             do {
                 promesaActual = try await ObtenerPromesaDetalle(idPromesa: idPromesa)
