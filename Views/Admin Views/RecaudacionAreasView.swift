@@ -10,7 +10,6 @@ import Charts
 
 struct RecaudacionAreasView: View {
     var body: some View {
-        NavigationStack {
             VStack{ // VStack principal
                 Header()
                 Text("Reacaudación por área")
@@ -130,20 +129,30 @@ struct RecaudacionAreasView: View {
                     .padding( .top, 5)
                     
                 } // VSTACK Carta Graficas
-                .padding(.top, 35)
+                .padding(.top, 20)
+                .padding( .horizontal, 30)
                 .background(. gray)
+                .clipShape(RoundedRectangle(cornerRadius: 35))
                 .padding(.horizontal, 60)
+                .padding(.top, 35)
+                
+                
                 
                 VStack(alignment: .leading){
                     Text("Casos activos")
                         .font(.system(size: 40))
                 }
-            }
-            Spacer()
+                Spacer()
+            } // Vstack Principal
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color(red:244/255, green: 244/255, blue: 244/255))
+            .ignoresSafeArea()
             
             
             
-        } // Vstack principal
+            
+            
+       
     }
 }
 
