@@ -152,7 +152,7 @@ struct RecaudacionAreasView: View {
                             .padding(.bottom, 10)
                         
                         VStack{
-                            foreach(CasosAcitvosRow) { casoitem in}
+                            //foreach(CasosAcitvosRow) { casoitem in}
                         }
                     }
                     .padding(.trailing, 580)
