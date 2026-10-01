@@ -9,6 +9,14 @@ import SwiftUI
 import Charts
 
 struct RecaudacionAreasView: View {
+    @State private var listaCasos: Array<CasosActivos> = [
+        CasosActivos(id: 1, nombreCampaña: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", sumaCampaña: "48,200"),
+        CasosActivos(id: 2, nombreCampaña: "Hambre Cero", descripcion: "Despensas para familias vulnerables", sumaCampaña: "36,750"),
+        CasosActivos(id: 3, nombreCampaña: "Educacion Integral", descripcion: "Becas y utiles escolares", sumaCampaña: "32,470"),
+        CasosActivos(id: 4, nombreCampaña: "Adultos Mayores", descripcion: "Medicaciones y atencion en asilos", sumaCampaña: "27,900"),
+        CasosActivos(id: 5, nombreCampaña: "Campaña Karla", descripcion: "Cirugia y rehabilitacion", sumaCampaña: "21,300"),
+        CasosActivos(id: 1, nombreCampaña: "Vivienda Digna", descripcion: "Mejoras de viviendas en colonias", sumaCampaña: "19,800")
+    ]
     var body: some View {
         ZStack { //ZStack
             
@@ -20,7 +28,7 @@ struct RecaudacionAreasView: View {
                 VStack{ // VStack principal
                     Header()
                     Text("RECAUDACIÓN POR ÁREAS")
-                        .padding(.top, 50)
+                        .padding(.top, 30)
                         .padding(.leading, 250)
                         .font(.system(size: 45))
                         .fontWeight(.heavy)
@@ -28,13 +36,13 @@ struct RecaudacionAreasView: View {
                     
                     HStack {
                         
-                        BubbleWidget(title: "AREAS ACTIVAS", value: "6", valueFontSize: 40, subtitle: "AREAS")
-                            .frame(width:200)
+                        BubbleWidget(title: "AREAS ACTIVAS", titleFontSize: 14 , value: "6", valueFontSize: 40, subtitle: "AREAS", subtitleFontSize: 13)
+                            .frame(width:250)
                         
-                        BubbleWidget(backgroundColor: Color(red: 124/255, green: 28/255, blue: 14/255).opacity(0.1), textColor: Color(red: 124/255, green: 28/255, blue: 14/255), title: "POR RECAUDAR", value: "$72, 480", valueFontSize: 40, subtitle: "PESOS")
+                        BubbleWidget(backgroundColor: Color(red: 124/255, green: 28/255, blue: 14/255).opacity(0.1), textColor: Color(red: 124/255, green: 28/255, blue: 14/255), title: "POR RECAUDAR", titleFontSize: 14, value: "$72, 480", valueFontSize: 40, subtitle: "PESOS", subtitleFontSize: 13)
                             .frame(width:300)
                             .padding(.horizontal, 20)
-                        BubbleWidget(backgroundColor: Color(red: 0/255, green: 113/255, blue: 130/255).opacity(0.1), textColor: Color(red: 0/255, green: 113/255, blue: 130/255), title: "TOTAL RECAUDADO", value: "$186, 420", valueFontSize: 40, subtitle: "PESOS")
+                        BubbleWidget(backgroundColor: Color(red: 0/255, green: 113/255, blue: 130/255).opacity(0.1), textColor: Color(red: 0/255, green: 113/255, blue: 130/255), title: "TOTAL RECAUDADO", titleFontSize: 14, value: "$186, 420", valueFontSize: 40, subtitle: "PESOS", subtitleFontSize: 13)
                             .frame(width:300)
                         
                     }
@@ -44,40 +52,46 @@ struct RecaudacionAreasView: View {
                     VStack(alignment: .leading) { // VSTACK Carta Graficas
                         Text("RECAUDADO VS META POR AREA")
                             .font(.system(size: 30))
+                            .fontWeight(.bold)
                         
                         HStack { // HSTACK Grafica 1
                             
                             Text("Campña Cancer")
                                 .font(.system(size: 25))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                             
                             ProgressView(value: 78, total: 100)
                                 .scaleEffect(x: 1, y: 6)
                                 .padding(.bottom, 20)
                                 .padding(.horizontal, 30)
-                                .tint(Color(red: 0/255, green: 113/255, blue: 130/255))
+                                .tint(ColorConstants.mainColor)
                             
                             Text("$48,200 / $60,000")
-                                .font(.system(size: 25))
+                                .font(.system(size: 20))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                         } // HSTACK Grafica 1
-                        .padding( .top, 15)
+                        .padding( .top, 5)
                         
                         HStack { // HSTACK Grafica 2
                             
                             Text("Campña Cancer")
                                 .font(.system(size: 25))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
+                                .fontWeight(.semibold)
                             
                             ProgressView(value: 78, total: 100)
                                 .scaleEffect(x: 1, y: 6)
                                 .padding(.bottom, 20)
                                 .padding(.horizontal, 30)
-                                .tint(Color(red: 0/255, green: 113/255, blue: 130/255))
+                                .tint(ColorConstants.mainColor)
                             
                             Text("$48,200 / $60,000")
-                                .font(.system(size: 25))
+                                .font(.system(size: 20))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                         } // HSTACK Grafica 2
                         .padding( .top, 5)
                         
@@ -86,16 +100,18 @@ struct RecaudacionAreasView: View {
                             Text("Campña Cancer")
                                 .font(.system(size: 25))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                             
                             ProgressView(value: 78, total: 100)
                                 .scaleEffect(x: 1, y: 6)
                                 .padding(.bottom, 20)
                                 .padding(.horizontal, 30)
-                                .tint(Color(red: 0/255, green: 113/255, blue: 130/255))
+                                .tint(ColorConstants.mainColor)
                             
                             Text("$48,200 / $60,000")
-                                .font(.system(size: 25))
+                                .font(.system(size: 20))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                         } // HSTACK Grafica 3
                         .padding( .top, 5)
                         
@@ -104,16 +120,18 @@ struct RecaudacionAreasView: View {
                             Text("Campña Cancer")
                                 .font(.system(size: 25))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                             
                             ProgressView(value: 78, total: 100)
                                 .scaleEffect(x: 1, y: 6)
                                 .padding(.bottom, 20)
                                 .padding(.horizontal, 30)
-                                .tint(Color(red: 0/255, green: 113/255, blue: 130/255))
+                                .tint(ColorConstants.mainColor)
                             
                             Text("$48,200 / $60,000")
-                                .font(.system(size: 25))
+                                .font(.system(size: 20))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                         } // HSTACK Grafica 4
                         .padding( .top, 5)
                         
@@ -122,41 +140,71 @@ struct RecaudacionAreasView: View {
                             Text("Campña Cancer")
                                 .font(.system(size: 25))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                             
                             ProgressView(value: 78, total: 100)
                                 .scaleEffect(x: 1, y: 6)
                                 .padding(.bottom, 20)
                                 .padding(.horizontal, 30)
-                                .tint(Color(red: 0/255, green: 113/255, blue: 130/255))
+                                .tint(ColorConstants.mainColor)
                             
                             Text("$48,200 / $60,000")
-                                .font(.system(size: 25))
+                                .font(.system(size: 20))
                                 .padding(.bottom, 20)
+                                .fontWeight(.semibold)
                         } // HSTACK Grafica 5
                         .padding( .top, 5)
+                        
+                        HStack {
+                            HStack {
+                                Circle()
+                                    .fill(ColorConstants.mainColor)
+                                    .frame(width: 10, height: 25)
+                                    
+                                Text("Recaudado")
+                                    .fontWeight(.semibold)
+                            }
+                            
+                            
+                            HStack {
+                                Circle()
+                                    .fill(ColorConstants.mainColor.opacity(0.5))
+                                    .frame(width: 10, height: 25)
+                                
+                                Text("Falta por recaudar")
+                                    .fontWeight(.semibold)
+                            }
+                            .padding(.leading, 35)
+                        }
+                        .padding(.bottom, 20)
                         
                     } // VSTACK Carta Graficas
                     .padding(.top, 20)
                     .padding( .horizontal, 30)
-                    .background(. gray)
+                    .background(. white)
                     .clipShape(RoundedRectangle(cornerRadius: 35))
                     .padding(.horizontal, 60)
                     .padding(.top, 35)
                     
                     
                     
-                    VStack(alignment: .leading){
+                    VStack{
                         Text("CASOS ACTIVOS")
-                            .font(.system(size: 38))
+                            .font(.system(size: 35))
                             .fontWeight(.bold)
-                            .padding(.bottom, 10)
+                            .padding(.trailing, 580)
+                            .padding(.bottom,-10)
                         
-                        VStack{
-                            //foreach(CasosAcitvosRow) { casoitem in}
+                        
+                        List(listaCasos) {casositem in
+                            CasosAcitvosRow(casosAct: casositem)
                         }
+                        .scrollContentBackground(.hidden) // Esconde la parte superior blanca de la pantalla
+                        .listStyle(.sidebar)
+                        
                     }
-                    .padding(.trailing, 580)
-                    . background(.purple)
+                    .padding(.horizontal, 50)
+                    //. background(.purple)
                     .padding( .top, 20)
                     
                     Spacer()

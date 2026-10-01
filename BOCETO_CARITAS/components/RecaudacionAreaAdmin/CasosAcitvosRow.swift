@@ -8,15 +8,18 @@
 import SwiftUI
 
 struct CasosAcitvosRow: View {
+    
+    @State var casosAct: CasosActivos
+    
     var body: some View {
         VStack{ // VSTACK principal
             HStack{ // HSTACK
                 VStack(alignment: .leading) { // VSTACK CAMP y DES
-                    Text("Campaña Cancer ")
+                    Text("\(casosAct.nombreCampaña)")
                         .font(.title)
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
-                    Text("Apoyo a Tratamientos oncologicos")
+                    Text("\(casosAct.descripcion)")
                         .foregroundStyle(Color(red: 164/255, green: 164/255, blue: 164/255))
                 } // VSTACK CAMP y DES
                 
@@ -24,13 +27,13 @@ struct CasosAcitvosRow: View {
                 
                 VStack {
                     Text("Recaudado")
-                    Text("$36,750 pesos")
+                    Text("$\(casosAct.sumaCampaña) pesos")
                 }
                 
                 
                 
             } // HSTACK
-            .padding(.leading, 70)
+            .padding(.leading, 10)
             .padding(.trailing, 50)
             .padding(.vertical, 10)
             
@@ -41,5 +44,6 @@ struct CasosAcitvosRow: View {
 }
 
 #Preview {
-    CasosAcitvosRow()
+    let casosPrueba = CasosActivos(id: 1, nombreCampaña: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", sumaCampaña: "48,200")
+    CasosAcitvosRow(casosAct: casosPrueba)
 }
