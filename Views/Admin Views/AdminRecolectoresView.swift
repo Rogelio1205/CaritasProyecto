@@ -18,55 +18,57 @@ struct AdminRecolectoresView: View {
         VStack{
             Header()
             VStack {
-                HStack {
-                    Spacer()
-                    Text("RECOLECCIONES")
-                        .font(.system(size: 65))
-                        .bold()
-                        .foregroundStyle(ColorConstants.mainColor)
-                        .padding(.vertical, 25)
-                        .padding(.trailing, 85)
-                }
-                RecoleccionesInfoTexts()
-                HStack {
-                    Text("ESTADO DE RECOLECCIONES")
-                        .padding()
-                        .padding(.leading, 60)
-                        .font(.system(size: 40))
-                        .bold()
-                    Spacer()
-                }
-                VStack(alignment: .leading) {
+                ScrollView {
                     HStack {
-                        Chart(listaPromesas) { item in
-                            SectorMark(angle: .value("Valor", item.estado), innerRadius: .ratio(0.7))
-                                .foregroundStyle(by: .value("Categoría", item.estado))
-                        }.chartLegend(position: .bottom, alignment: .center)
+                        Spacer()
+                        Text("RECOLECCIONES")
+                            .font(.system(size: 65))
+                            .bold()
+                            .foregroundStyle(ColorConstants.mainColor)
+                            .padding(.vertical, 25)
+                            .padding(.trailing, 85)
+                    }
+                    RecoleccionesInfoTexts()
+                    HStack {
+                        Text("ESTADO DE RECOLECCIONES")
                             .padding()
-                        VStack{
-                            Text("Exitosas")
-                                .bold()
-                            Text("Parciales")
-                                .bold()
-                            Text("No recolectadas")
-                                .bold()
+                            .padding(.leading, 60)
+                            .font(.system(size: 40))
+                            .bold()
+                        Spacer()
+                    }
+                    VStack(alignment: .leading) {
+                        HStack {
+                            Chart(listaPromesas) { item in
+                                SectorMark(angle: .value("Valor", item.estado), innerRadius: .ratio(0.7))
+                                    .foregroundStyle(by: .value("Categoría", item.estado))
+                            }.chartLegend(position: .bottom, alignment: .center)
+                                .padding()
+                            VStack{
+                                Text("Exitosas")
+                                    .bold()
+                                Text("Parciales")
+                                    .bold()
+                                Text("No recolectadas")
+                                    .bold()
+                            }
                         }
                     }
-                }
-                .padding()
-                .cornerRadius(20)
-                .background(Color(.white))
-                .cornerRadius(20)
-                .padding(.horizontal, 15)
-                HStack {
-                    Text("RECOLECCIONES DE HOY")
-                        .padding()
-                        .padding(.leading, 60)
-                        .font(.system(size: 40))
-                        .bold()
+                    .padding()
+                    .cornerRadius(20)
+                    .background(Color(.white))
+                    .cornerRadius(20)
+                    .padding(.horizontal, 15)
+                    HStack {
+                        Text("RECOLECCIONES DE HOY")
+                            .padding()
+                            .padding(.leading, 60)
+                            .font(.system(size: 40))
+                            .bold()
+                        Spacer()
+                    }
                     Spacer()
                 }
-                Spacer()
             }
         }.background(Color(.gray.opacity(0.05)))
     }
