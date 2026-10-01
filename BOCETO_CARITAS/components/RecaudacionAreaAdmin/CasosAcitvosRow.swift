@@ -35,7 +35,7 @@ struct CasosAcitvosRow: View {
             .padding(.vertical, 10)
             
         } // VSTACK principal
-        .background(.gray.opacity(0.5))
+        .background(.white)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
