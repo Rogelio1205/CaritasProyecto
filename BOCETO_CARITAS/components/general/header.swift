@@ -3,7 +3,7 @@ import SwiftUI
 struct Header: View {
     @State private var logout = false
     var body: some View {
-        NavigationStack {
+        
             HStack {
                 HStack {
                     Image("Caritas-Photoroom")
@@ -18,6 +18,7 @@ struct Header: View {
                      */
                     
                     // Borrar despues de la presentacion
+                    
                     Button{
                         logout = true
                     }
@@ -43,13 +44,13 @@ struct Header: View {
                 Rectangle()
                     .fill(.white)
                     .shadow(radius: 5, y: 10)
+                    .ignoresSafeArea(edges: .top)
             }
-        }
-        .navigationDestination(isPresented: $logout)
-        {
-            LoginView()
-                .navigationBarBackButtonHidden(true)
-        }
+            .fullScreenCover(isPresented: $logout) {
+                LoginView()
+                    .navigationBarBackButtonHidden()
+            }
+        
     }
 }
 
