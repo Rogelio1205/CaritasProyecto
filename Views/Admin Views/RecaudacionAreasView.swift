@@ -29,7 +29,7 @@ struct RecaudacionAreasView: View {
                     Header()
                     Text("RECAUDACIÓN POR ÁREAS")
                         .padding(.top, 30)
-                        .padding(.leading, 250)
+                        .padding(.leading, 290)
                         .font(.system(size: 45))
                         .fontWeight(.heavy)
                         .foregroundStyle(Color(red:0, green: 152/255, blue: 174/255))
