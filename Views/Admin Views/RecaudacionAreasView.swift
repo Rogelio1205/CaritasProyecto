@@ -9,6 +9,8 @@ import SwiftUI
 import Charts
 
 struct RecaudacionAreasView: View {
+    let recaudacionService = RecaudacionAreaService()
+    @State private var listaCasosAct: [CasosActivos] = []
     @State private var listaCasos: Array<CasosActivos> = [
         CasosActivos(id: 1, nombreCampaña: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", sumaCampaña: "48,200"),
         CasosActivos(id: 2, nombreCampaña: "Hambre Cero", descripcion: "Despensas para familias vulnerables", sumaCampaña: "36,750"),
@@ -196,7 +198,7 @@ struct RecaudacionAreasView: View {
                             .padding(.bottom,-10)
                         
                         
-                        List(listaCasos) {casositem in
+                        List(listaCasosAct) {casositem in
                             CasosAcitvosRow(casosAct: casositem)
                         }
                         .scrollContentBackground(.hidden) // Esconde la parte superior blanca de la pantalla

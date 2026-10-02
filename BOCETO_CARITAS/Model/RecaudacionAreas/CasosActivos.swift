@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CasosActivos: Identifiable {
+struct CasosActivos: Identifiable, Codable {
     let id: Int
     let nombreCampaña: String
     let descripcion: String
