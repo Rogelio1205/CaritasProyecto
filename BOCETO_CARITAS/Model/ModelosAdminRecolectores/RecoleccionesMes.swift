@@ -9,5 +9,6 @@ import Foundation
 
 struct RecoleccionesMes : Identifiable, Codable {
     let id = UUID()
-    let estado: Int
+    let cantidad: Int
+    let estado: String
 }

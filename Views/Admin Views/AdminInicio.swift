@@ -12,7 +12,7 @@ struct AdminInicio: View {
         VStack {
             Header()
             VStack {
-                RecaudacionProgWidget()
+                RecaudacionProgWidget(progress: 0.72)
             }.padding()
         }
     }
