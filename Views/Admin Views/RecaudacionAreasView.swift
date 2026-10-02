@@ -11,14 +11,14 @@ import Charts
 struct RecaudacionAreasView: View {
     let recaudacionService = RecaudacionAreaService()
     @State private var listaCasosAct: [CasosActivos] = []
-    @State private var listaCasos: Array<CasosActivos> = [
+    /*@State private var listaCasos: Array<CasosActivos> = [
         CasosActivos(idCaso: 1, nombre: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", totalPagado: 48200),
         CasosActivos(idCaso: 2, nombre: "Hambre Cero", descripcion: "Despensas para familias vulnerables", totalPagado: 36750),
         CasosActivos(idCaso: 3, nombre: "Educacion Integral", descripcion: "Becas y utiles escolares", totalPagado: 32470),
         CasosActivos(idCaso: 4, nombre: "Adultos Mayores", descripcion: "Medicaciones y atencion en asilos", totalPagado: 27900),
         CasosActivos(idCaso: 5, nombre: "Campaña Karla", descripcion: "Cirugia y rehabilitacion", totalPagado: 21300),
         CasosActivos(idCaso: 6, nombre: "Vivienda Digna", descripcion: "Mejoras de viviendas en colonias", totalPagado: 19800)
-    ]
+    ] */
     var body: some View {
         ZStack { //ZStack
             

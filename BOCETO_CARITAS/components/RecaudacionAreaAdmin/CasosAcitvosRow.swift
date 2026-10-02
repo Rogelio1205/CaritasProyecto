@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CasosAcitvosRow: View {
     
-    @State var casosAct: CasosActivos
+    let casosAct: CasosActivos
     
     var body: some View {
         VStack{ // VSTACK principal

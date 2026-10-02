@@ -35,7 +35,7 @@ class RecaudacionAreaService {
     }
     
     func getRecaudado() async  throws -> [RecaudadoArea]{
-        guard let url = URL(string: "\(urlBase)caosActivos") else {
+        guard let url = URL(string: "\(urlBase)graficasInfo") else {
             print("URL incorrecto")
             throw URLError(.badURL)
         }
