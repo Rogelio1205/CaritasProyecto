@@ -12,12 +12,12 @@ struct RecaudacionAreasView: View {
     let recaudacionService = RecaudacionAreaService()
     @State private var listaCasosAct: [CasosActivos] = []
     @State private var listaCasos: Array<CasosActivos> = [
-        CasosActivos(id: 1, nombreCampaña: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", sumaCampaña: "48,200"),
-        CasosActivos(id: 2, nombreCampaña: "Hambre Cero", descripcion: "Despensas para familias vulnerables", sumaCampaña: "36,750"),
-        CasosActivos(id: 3, nombreCampaña: "Educacion Integral", descripcion: "Becas y utiles escolares", sumaCampaña: "32,470"),
-        CasosActivos(id: 4, nombreCampaña: "Adultos Mayores", descripcion: "Medicaciones y atencion en asilos", sumaCampaña: "27,900"),
-        CasosActivos(id: 5, nombreCampaña: "Campaña Karla", descripcion: "Cirugia y rehabilitacion", sumaCampaña: "21,300"),
-        CasosActivos(id: 1, nombreCampaña: "Vivienda Digna", descripcion: "Mejoras de viviendas en colonias", sumaCampaña: "19,800")
+        CasosActivos(idCaso: 1, nombre: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", totalPagado: 48200),
+        CasosActivos(idCaso: 2, nombre: "Hambre Cero", descripcion: "Despensas para familias vulnerables", totalPagado: 36750),
+        CasosActivos(idCaso: 3, nombre: "Educacion Integral", descripcion: "Becas y utiles escolares", totalPagado: 32470),
+        CasosActivos(idCaso: 4, nombre: "Adultos Mayores", descripcion: "Medicaciones y atencion en asilos", totalPagado: 27900),
+        CasosActivos(idCaso: 5, nombre: "Campaña Karla", descripcion: "Cirugia y rehabilitacion", totalPagado: 21300),
+        CasosActivos(idCaso: 6, nombre: "Vivienda Digna", descripcion: "Mejoras de viviendas en colonias", totalPagado: 19800)
     ]
     var body: some View {
         ZStack { //ZStack
@@ -212,15 +212,16 @@ struct RecaudacionAreasView: View {
                     Spacer()
                     
                 } // Vstack Principal
-                
             
         } //ZStack
-            
-            
-            
-            
-            
-       
+        .task{
+            do{
+                listaCasosAct = try await recaudacionService.getCasosActivos()
+            }
+            catch {
+                print("Error en la llamada: \(error)")
+            }
+        }
     }
 }
 

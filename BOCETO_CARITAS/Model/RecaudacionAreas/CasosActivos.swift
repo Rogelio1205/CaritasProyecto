@@ -8,8 +8,11 @@
 import Foundation
 
 struct CasosActivos: Identifiable, Codable {
-    let id: Int
-    let nombreCampaña: String
+    var id: Int {
+        return idCaso
+    }
+    let idCaso: Int
+    let nombre: String
     let descripcion: String
-    let sumaCampaña: String
+    let totalPagado: Float
 }

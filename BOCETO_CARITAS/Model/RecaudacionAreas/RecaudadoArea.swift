@@ -8,8 +8,11 @@
 import Foundation
 
 struct RecaudadoArea: Identifiable, Codable {
-    let id: Int
+    var id: Int {
+        return idCaso
+    }
+    let idCaso: Int
     let nombre: String
-    let recaudado: Float
-    let montoTotal: Float
+    let totalPagado: Float
+    let montoSolicitado: Float
 }

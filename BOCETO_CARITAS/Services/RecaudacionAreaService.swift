@@ -10,8 +10,8 @@ import Foundation
 private let urlBase = "http://10.14.255.41:10206/"
 
 class RecaudacionAreaService {
-    func getCasosActivos() async  throws -> CasosActivos{
-        guard let url = URL(string: "\(urlBase)caosActivos") else {
+    func getCasosActivos() async  throws -> [CasosActivos]{
+        guard let url = URL(string: "\(urlBase)casosActivos") else {
             print("URL incorrecto")
             throw URLError(.badURL)
         }
@@ -29,12 +29,12 @@ class RecaudacionAreaService {
         }
         
         let jsonDecoder = JSONDecoder()
-        let casosActivos = try jsonDecoder.decode(CasosActivos.self, from: data)
+        let casosActivos = try jsonDecoder.decode([CasosActivos].self, from: data)
         
         return casosActivos
     }
     
-    func getRecaudado() async  throws -> RecaudadoArea{
+    func getRecaudado() async  throws -> [RecaudadoArea]{
         guard let url = URL(string: "\(urlBase)caosActivos") else {
             print("URL incorrecto")
             throw URLError(.badURL)
@@ -53,7 +53,7 @@ class RecaudacionAreaService {
         }
         
         let jsonDecoder = JSONDecoder()
-        let recaudado = try jsonDecoder.decode(RecaudadoArea.self, from: data)
+        let recaudado = try jsonDecoder.decode([RecaudadoArea].self, from: data)
         
         return recaudado
     }
