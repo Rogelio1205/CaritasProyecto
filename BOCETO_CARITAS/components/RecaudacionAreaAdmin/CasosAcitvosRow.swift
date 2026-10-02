@@ -9,13 +9,13 @@ import SwiftUI
 
 struct CasosAcitvosRow: View {
     
-    @State var casosAct: CasosActivos
+    let casosAct: CasosActivos
     
     var body: some View {
         VStack{ // VSTACK principal
             HStack{ // HSTACK
                 VStack(alignment: .leading) { // VSTACK CAMP y DES
-                    Text("\(casosAct.nombreCampaña)")
+                    Text("\(casosAct.nombre)")
                         .font(.title)
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
@@ -26,8 +26,10 @@ struct CasosAcitvosRow: View {
                 Spacer()
                 
                 VStack {
+                    var numSinFormato = casosAct.totalPagado
+                    var numFormateado = numSinFormato.formatted(.number.precision(.fractionLength(0)))
                     Text("Recaudado")
-                    Text("$\(casosAct.sumaCampaña) pesos")
+                    Text("$\(numFormateado) pesos")
                 }
                 
                 
@@ -44,6 +46,6 @@ struct CasosAcitvosRow: View {
 }
 
 #Preview {
-    let casosPrueba = CasosActivos(id: 1, nombreCampaña: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", sumaCampaña: "48,200")
+    let casosPrueba = CasosActivos(idCaso: 1, nombre: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", totalPagado: 48200)
     CasosAcitvosRow(casosAct: casosPrueba)
 }
