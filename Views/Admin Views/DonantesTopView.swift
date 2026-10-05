@@ -67,13 +67,16 @@ struct DonantesTopView: View {
                             .scaleEffect(x: 1, y: 6)
                             .padding(.bottom, 20)
                             .padding(.leading, 115)
-                            .padding(.trailing, 50)
+                            //.padding(.trailing, 50)
                             .tint(ColorConstants.mainColor)
                         
                         Text("$6,420")
                             .font(.system(size: 20))
                             .padding(.bottom, 20)
                             .fontWeight(.semibold)
+                            .minimumScaleFactor(0.8)
+                            .frame(width: 140, alignment: .trailing)
+                        
                     } //Hstack grafica top 10%
                     .padding(.top, 15)
                     
@@ -86,13 +89,15 @@ struct DonantesTopView: View {
                         ProgressView(value: 20, total: 100)
                             .scaleEffect(x: 1, y: 6)
                             .padding(.bottom, 20)
-                            .padding(.horizontal, 70)
+                            .padding(.leading, 70)
                             .tint(ColorConstants.mainColor)
                         
                         Text("$840")
                             .font(.system(size: 20))
                             .padding(.bottom, 20)
                             .fontWeight(.semibold)
+                            .minimumScaleFactor(0.8)
+                            .frame(width: 140, alignment: .trailing)
                     } //Hstack resto 90%
                     .padding(.top, 5)
                     
@@ -106,6 +111,7 @@ struct DonantesTopView: View {
                         .scaleEffect(x: 1, y: 6)
                         .padding(.bottom, 20)
                         .tint(ColorConstants.mainColor)
+                        
                     
                     HStack { //HStack puntos
                         HStack {
@@ -113,7 +119,7 @@ struct DonantesTopView: View {
                                 .fill(ColorConstants.mainColor.opacity(0.5))
                                 .frame(width: 10, height: 25)
                             
-                            Text("Top 10% de donantes")
+                            Text("Top 10% de donantes: 62%")
                                 .fontWeight(.semibold)
                         }
                         
@@ -122,7 +128,7 @@ struct DonantesTopView: View {
                                 .fill(ColorConstants.mainColor.opacity(0.5))
                                 .frame(width: 10, height: 25)
                             
-                            Text("Resto de donantes")
+                            Text("Resto de donantes: 38%")
                                 .fontWeight(.semibold)
                         }
                         .padding(.leading, 35)

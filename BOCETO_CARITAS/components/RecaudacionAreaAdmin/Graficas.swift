@@ -18,17 +18,22 @@ struct Graficas: View {
                 .padding(.bottom, 20)
                 .fontWeight(.semibold)
                 .lineLimit(1)
+                .minimumScaleFactor(0.8)
+                .frame(width: 220, alignment: .leading)
             
             ProgressView(value: 78, total: 100)
                 .scaleEffect(x: 1, y: 6)
                 .padding(.bottom, 20)
                 .padding(.horizontal, 30)
                 .tint(ColorConstants.mainColor)
+                .frame(minWidth: 50)
             
             Text("$48,200 / $60,000")
                 .font(.system(size: 20))
                 .padding(.bottom, 20)
                 .fontWeight(.semibold)
+                .minimumScaleFactor(0.8)
+                .frame(width: 230, alignment: .trailing)
         } // HSTACK Grafica 1
     }
 }
