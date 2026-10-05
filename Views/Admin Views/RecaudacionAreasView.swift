@@ -201,7 +201,7 @@ struct RecaudacionAreasView: View {
                         List(listaCasosAct) {casositem in
                             CasosAcitvosRow(casosAct: casositem)
                         }
-                        .scrollContentBackground(.hidden) // Esconde la parte superior blanca de la pantalla
+                        .scrollContentBackground(.hidden) 
                         .listStyle(.sidebar)
                         
                     }

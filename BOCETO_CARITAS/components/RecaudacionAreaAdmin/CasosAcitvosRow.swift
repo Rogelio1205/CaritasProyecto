@@ -30,6 +30,8 @@ struct CasosAcitvosRow: View {
                     var numFormateado = numSinFormato.formatted(.number.precision(.fractionLength(0)))
                     Text("Recaudado")
                     Text("$\(numFormateado) pesos")
+                        .font(.system(size: 17))
+                        .fontWeight(.bold)
                 }
                 
                 
