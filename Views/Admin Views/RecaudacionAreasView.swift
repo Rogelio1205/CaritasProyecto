@@ -38,7 +38,7 @@ struct RecaudacionAreasView: View {
                     
                     HStack {
                         
-                        BubbleWidget(title: "AREAS ACTIVAS", titleFontSize: 14 , value: "6", valueFontSize: 40, subtitle: "AREAS", subtitleFontSize: 13)
+                        BubbleWidget(textColor: Color(red:66/255,green:66/255, blue: 66/255),title: "AREAS ACTIVAS", titleFontSize: 14 , value: "6", valueFontSize: 40, subtitle: "AREAS", subtitleFontSize: 13)
                             .frame(width:250)
                         
                         BubbleWidget(backgroundColor: Color(red: 124/255, green: 28/255, blue: 14/255).opacity(0.1), textColor: Color(red: 124/255, green: 28/255, blue: 14/255), title: "POR RECAUDAR", titleFontSize: 14, value: "$72, 480", valueFontSize: 40, subtitle: "PESOS", subtitleFontSize: 13)
@@ -201,7 +201,7 @@ struct RecaudacionAreasView: View {
                         List(listaCasosAct) {casositem in
                             CasosAcitvosRow(casosAct: casositem)
                         }
-                        .scrollContentBackground(.hidden) // Esconde la parte superior blanca de la pantalla
+                        .scrollContentBackground(.hidden) 
                         .listStyle(.sidebar)
                         
                     }
