@@ -25,7 +25,7 @@ struct RecaudacionProgWidget: View {
                             .font(.system(size: 30))
                             .bold()
                             .foregroundStyle(.white)
-                            .padding(.bottom, 30)
+                            .padding(.bottom)
                         HStack {
                             VStack(alignment: .leading) {
                                 Text("$186K")
@@ -49,7 +49,8 @@ struct RecaudacionProgWidget: View {
                                     .rotationEffect(Angle(degrees: 270.0))
                                     .animation(.linear, value: progress)
                                 Text("\(Int(progress * 100))%")
-                                    .font(.system(size: 24, weight: .bold))
+                                    .foregroundStyle(.white)
+                                    .font(.system(size: 40, weight: .bold))
                             }
                             .frame(width: 150, height: 150)
                             .padding(.leading, 30)
