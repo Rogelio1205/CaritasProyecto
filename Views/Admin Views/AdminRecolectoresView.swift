@@ -83,6 +83,7 @@ struct AdminRecolectoresView: View {
                                     .foregroundStyle(ColorConstants.highRisk)
                                     .font(.largeTitle)
                             }
+                            .padding(.trailing, 150)
                         }
                     }
                     .padding()
