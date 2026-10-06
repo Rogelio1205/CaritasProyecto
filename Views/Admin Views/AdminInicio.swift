@@ -83,7 +83,7 @@ struct AdminInicio: View {
                                 width: 50
                                     )
                             .foregroundStyle(.cyan)
-                                    .position(by: .value("Data Type", "Current"), axis: .horizontal, span: 500)
+                                    .position(by: .value("Data Type", "Current"), axis: .horizontal, span: 100)
                             }
                             ForEach(listaRecaudacionesSemana) { item in
                                 BarMark(
@@ -92,19 +92,18 @@ struct AdminInicio: View {
                                     width: 50
                                     )
                                 .foregroundStyle(ColorConstants.mainColor)
-                                .position(by: .value("Data Type", "Average"), axis: .horizontal, span: -250)
+                                .position(by: .value("Data Type", "Average"), axis: .horizontal, span: 150)
                             }
                         }
                         .frame(height: 300)
                         .padding()
                         .chartXAxis {
-                            AxisMarks(values: listaRecaudacionesSemana.map { $0.semana }) { _ in
-                                    AxisTick()
-                                    AxisGridLine()
-                                    AxisValueLabel()
+                            AxisMarks(values: [0, 1, 2, 3, 4, 5]) { _ in
+                                AxisTick()
+                                AxisGridLine()
+                                AxisValueLabel()
                             }
                         }
-                        
                 }
                 .padding()
                 .cornerRadius(20)

@@ -49,7 +49,7 @@ struct AdminRecolectoresView: View {
                             Chart(listaRecMes) { item in
                                 SectorMark(angle: .value("Valor", item.cantidad), innerRadius: .ratio(0.7))
                                     .foregroundStyle(by: .value("Categoría", item.estado))
-                            }.chartLegend(position: .trailing, alignment: .center)
+                            }.chartLegend(position: .trailing, alignment: .leading, spacing: -00)
                                 .chartForegroundStyleScale([
                                     "Exitosas": ColorConstants.lowRisk,
                                     "Parciales": ColorConstants.midRisk,
@@ -69,6 +69,7 @@ struct AdminRecolectoresView: View {
                                         }
                                     }
                                 }
+                                .padding(.trailing, 200)
                             VStack{
                                 Text("68%")
                                     .bold()
@@ -83,7 +84,7 @@ struct AdminRecolectoresView: View {
                                     .foregroundStyle(ColorConstants.highRisk)
                                     .font(.largeTitle)
                             }
-                            .padding(.trailing, 150)
+                            .padding(.trailing, 100)
                         }
                     }
                     .padding()
