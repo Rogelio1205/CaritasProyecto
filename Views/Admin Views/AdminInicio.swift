@@ -28,69 +28,70 @@ struct AdminInicio: View {
         VStack {
             Header()
             VStack {
-                RecaudacionProgWidget(progress: progresoRecaudacion)
-                HStack {
-                    Text("RECAUDADO VS PREVISTO")
-                        .padding()
-                        .padding(.leading, 30)
-                        .font(.system(size: 40))
-                        .bold()
-                    Spacer()
-                }
-                VStack {
+                ScrollView {
+                    RecaudacionProgWidget(progress: progresoRecaudacion)
                     HStack {
-                        VStack(alignment: .leading) {
-                            Text("RECAUDADO")
-                                .padding(.horizontal)
-                            Text("$186,420")
-                                .foregroundStyle(ColorConstants.mainColor)
-                                .padding(.horizontal)
-                                .bold()
-                                .font(.title)
-                        }
-                        Spacer()
-                        VStack(alignment: .leading) {
-                            Text("PREVISTO")
-                                .padding(.horizontal)
-                            Text("$258,900")
-                                .padding(.horizontal)
-                                .bold()
-                                .font(.title)
-                        }
-                        Spacer()
-                        VStack(alignment: .leading) {
-                            Text("POR RECAUDAR")
-                                .padding(.horizontal)
-                            Text("$72,480")
-                                .foregroundStyle(ColorConstants.highRisk)
-                                .padding(.horizontal)
-                                .bold()
-                                .font(.title)
-                        }
-                    }
-                    HStack {
-                        Text("AVANCE SEMANAL")
+                        Text("RECAUDADO VS PREVISTO")
                             .padding()
-                            .font(.system(size: 25))
+                            .padding(.leading, 30)
+                            .font(.system(size: 40))
                             .bold()
                         Spacer()
                     }
-                    Chart {
-                        ForEach(listaRecaudacionesSemana) { item in
-                            BarMark(
-                                x: .value("Day", item.semana),
-                                y: .value("Current", item.recaudacion),
-                                width: 50
-                                    )
-                            .foregroundStyle(.cyan)
-                                    .position(by: .value("Data Type", "Current"), axis: .horizontal, span: 100)
+                    VStack {
+                        HStack {
+                            VStack(alignment: .leading) {
+                                Text("RECAUDADO")
+                                    .padding(.horizontal)
+                                Text("$186,420")
+                                    .foregroundStyle(ColorConstants.mainColor)
+                                    .padding(.horizontal)
+                                    .bold()
+                                    .font(.title)
+                            }
+                            Spacer()
+                            VStack(alignment: .leading) {
+                                Text("PREVISTO")
+                                    .padding(.horizontal)
+                                Text("$258,900")
+                                    .padding(.horizontal)
+                                    .bold()
+                                    .font(.title)
+                            }
+                            Spacer()
+                            VStack(alignment: .leading) {
+                                Text("POR RECAUDAR")
+                                    .padding(.horizontal)
+                                Text("$72,480")
+                                    .foregroundStyle(ColorConstants.highRisk)
+                                    .padding(.horizontal)
+                                    .bold()
+                                    .font(.title)
+                            }
+                        }
+                        HStack {
+                            Text("AVANCE SEMANAL")
+                                .padding()
+                                .font(.system(size: 25))
+                                .bold()
+                            Spacer()
+                        }
+                        Chart {
+                            ForEach(listaRecaudacionesSemana) { item in
+                                BarMark(
+                                    x: .value("Day", item.semana),
+                                    y: .value("Current", item.recaudacion),
+                                    width: 50
+                                )
+                                .foregroundStyle(.cyan)
+                                .position(by: .value("Data Type", "Current"), axis: .horizontal, span: 100)
                             }
                             ForEach(listaRecaudacionesSemana) { item in
                                 BarMark(
                                     x: .value("Day", item.semana),
                                     y: .value("Average", item.recPrevista),
                                     width: 50
-                                    )
+                                )
                                 .foregroundStyle(ColorConstants.mainColor)
                                 .position(by: .value("Data Type", "Average"), axis: .horizontal, span: 150)
                             }
@@ -104,22 +105,23 @@ struct AdminInicio: View {
                                 AxisValueLabel()
                             }
                         }
-                }
-                .padding()
-                .cornerRadius(20)
-                .background(Color(.white))
-                .cornerRadius(20)
-                .padding(.horizontal, 30)
-                HStack {
-                    Text("CASOS ACTIVOS")
-                        .padding()
-                        .padding(.leading, 30)
-                        .font(.system(size: 40))
-                        .bold()
-                    Spacer()
-                }
-                ForEach(listaCasosActivos) { casoActivo in
-                    CasosActivosRow(casoActivo:  casoActivo)
+                    }
+                    .padding()
+                    .cornerRadius(20)
+                    .background(Color(.white))
+                    .cornerRadius(20)
+                    .padding(.horizontal, 30)
+                    HStack {
+                        Text("CASOS ACTIVOS")
+                            .padding()
+                            .padding(.leading, 30)
+                            .font(.system(size: 40))
+                            .bold()
+                        Spacer()
+                    }
+                    ForEach(listaCasosActivos) { casoActivo in
+                        CasosActivosRow(casoActivo:  casoActivo)
+                    }
                 }
             }.padding()
         }.background(Color(.gray.opacity(0.05)))
