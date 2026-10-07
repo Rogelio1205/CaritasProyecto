@@ -14,6 +14,7 @@ enum FiltroRiesgo: CaseIterable, Hashable {
     case bajo
     case inactivo
 
+    
     var titulo: String {
         switch self {
         case .todos: return "TODOS"

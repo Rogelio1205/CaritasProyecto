@@ -567,6 +567,33 @@ def getDashboard(idUsuario, metaDiaria=25):
             for r in alto_valor],
     }
 
+#Endpoint 2
+
+def getDonantesRiesgo():
+    conteo = {r["nivel"]: r["total"] for r in _query(
+            f"""select {NIVEL} as nivel, count(*) as total
+                from ({RESUMEN}) x
+                group by {NIVEL}""")}
+    en_riesgo = _query(
+            f"""select idDonante, nombre, apellidoPaterno,
+                       mesesSinDonar, {NIVEL} as nivel
+                from ({RESUMEN}) x
+                where mesesSinDonar >= 1
+                order by mesesSinDonar desc""")
+    return {
+        "riesgo": {
+                    "alto": conteo.get("alto", 0),
+                    "medio": conteo.get("medio", 0),
+                    "bajo": conteo.get("bajo", 0),
+                    "inactivos": conteo.get("inactivo", 0),
+                },
+        "donantesEnRiesgo": [
+                    {"idDonante": r["idDonante"], "nombre": _nombre(r),
+                     "mesesSinDonar": r["mesesSinDonar"], "nivel": r["nivel"]}
+                    for r in en_riesgo]
+    }
+
+#FIN ROGELIO
 
 if __name__ == '__main__':
     import json
