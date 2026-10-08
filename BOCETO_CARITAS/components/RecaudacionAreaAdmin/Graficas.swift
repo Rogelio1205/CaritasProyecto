@@ -13,32 +13,56 @@ struct Graficas: View {
     var body: some View {
         HStack { // HSTACK Grafica 1
             
-            Text("Campña Cancer")
-                .font(.system(size: 25))
-                .padding(.bottom, 20)
-                .fontWeight(.semibold)
-                .lineLimit(1)
-                .minimumScaleFactor(0.8)
-                .frame(width: 220, alignment: .leading)
+            VStack(alignment: .leading) { // VStack de nombre y dinero
+                Text("\(caso.nombre)")
+                    .font(.system(size: 25))
+                    .padding(.bottom, 5)
+                    .fontWeight(.semibold)
+                    .lineLimit(1)
+                    //.minimumScaleFactor(0.8)
+                    .frame(width: 250, alignment: .leading)
+                
+                var totalPagadoSinFormat = caso.totalPagado
+                var montoSolSinFormtat = caso.montoSolicitado
+                
+                var totalPagadoFormatted = totalPagadoSinFormat.formatted(.number.precision(.fractionLength(0)))
+                var montoSolFormatted = montoSolSinFormtat.formatted(.number.precision(.fractionLength(0)))
+                
+                Text("$\(totalPagadoFormatted) / $\(montoSolFormatted)")
+                    .font(.system(size: 19))
+                    .padding(.bottom, 20)
+                    .fontWeight(.semibold)
+                    //.minimumScaleFactor(0.8)
+                    //.frame(width: 190, alignment: .trailing)
+                    .lineLimit(1)
+            } // VSTack nombre y dinero
+            .frame(width: 200, alignment: .leading)
             
-            ProgressView(value: 78, total: 100)
+            ProgressView(value: caso.totalPagado, total: caso.montoSolicitado)
                 .scaleEffect(x: 1, y: 6)
                 .padding(.bottom, 20)
                 .padding(.horizontal, 30)
+                .padding(.leading, 30)
                 .tint(ColorConstants.mainColor)
                 .frame(minWidth: 50)
             
-            Text("$48,200 / $60,000")
-                .font(.system(size: 20))
+            /*var totalPagadoSinFormat = caso.totalPagado
+            var montoSolSinFormtat = caso.montoSolicitado
+            
+            var totalPagadoFormatted = totalPagadoSinFormat.formatted(.number.precision(.fractionLength(0)))
+            var montoSolFormatted = montoSolSinFormtat.formatted(.number.precision(.fractionLength(0)))
+            
+            Text("$\(totalPagadoFormatted) / $\(montoSolFormatted)")
+                .font(.system(size: 19))
                 .padding(.bottom, 20)
                 .fontWeight(.semibold)
-                .minimumScaleFactor(0.8)
-                .frame(width: 230, alignment: .trailing)
+                //.minimumScaleFactor(0.8)
+                .frame(width: 190, alignment: .trailing) */
         } // HSTACK Grafica 1
     }
 }
 
 #Preview {
-    let graficaPrueba = RecaudadoArea(idCaso: 1, nombre: "Campaña Cancer", totalPagado: 500, montoSolicitado: 1000)
+    let graficaPrueba = RecaudadoArea(idCaso: 1, nombre: "Campaña Hambre Cero", totalPagado: 500, montoSolicitado: 1000)
     Graficas(caso: graficaPrueba)
 }
