@@ -5,11 +5,12 @@ struct Header: View {
     var body: some View {
         
             HStack {
-                HStack {
+                HStack { // Hstack
                     Image("Caritas-Photoroom")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 160)
+                        .frame(height: 140)
+                        .padding(.bottom, 10)
                     Spacer()
                     // Generar un log out con este icono
                     /*Image(systemName: "person.circle")
@@ -34,12 +35,13 @@ struct Header: View {
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.roundedRectangle(radius: 20))
                     .frame(maxWidth: 100)
-                    .padding(.top, 30)
+                    .padding(.top, 10)
                     .tint(Color(red:0, green: 152/255, blue: 174/255))
                     .font(.system(size: 20))
-                }
+                } // Hstack
                 .padding(.horizontal, 40)
             }
+            .padding(.bottom, -20)
             .background {
                 Rectangle()
                     .fill(.white)

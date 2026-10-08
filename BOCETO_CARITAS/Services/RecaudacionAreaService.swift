@@ -57,5 +57,29 @@ class RecaudacionAreaService {
         
         return recaudado
     }
+    
+    func getWidgets() async  throws -> Widgets {
+        guard let url = URL(string: "\(urlBase)widgets") else {
+            print("URL incorrecto")
+            throw URLError(.badURL)
+        }
+        
+        let (data,response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("Respuesta no valida del servidor")
+            throw URLError(.badServerResponse)
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            print("Codigo de error del API: \(httpResponse.statusCode)")
+            throw URLError(.badServerResponse)
+        }
+        
+        let jsonDecoder = JSONDecoder()
+        let areasActivas = try jsonDecoder.decode(Widgets.self, from: data)
+        
+        return areasActivas 
+    }
 }
 
