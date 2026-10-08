@@ -14,7 +14,15 @@ enum FiltroRiesgo: CaseIterable, Hashable {
     case bajo
     case inactivo
 
-    
+    init(api: String) {
+        switch api {
+        case "alto": self = .alto
+        case "medio": self = .medio
+        case "bajo": self = .bajo
+        default: self = .inactivo
+        }
+    }
+
     var titulo: String {
         switch self {
         case .todos: return "TODOS"
@@ -25,7 +33,17 @@ enum FiltroRiesgo: CaseIterable, Hashable {
         }
     }
 
-    var colorFondoInactivo: Color {
+    var colorTexto: Color {
+        switch self {
+        case .todos: return .black
+        case .alto: return Color(red: 0.55, green: 0.15, blue: 0.15)
+        case .medio: return Color(red: 0.53, green: 0.42, blue: 0.10)
+        case .bajo: return Color(red: 0.14, green: 0.33, blue: 0.14)
+        case .inactivo: return Color(red: 0.25, green: 0.25, blue: 0.25)
+        }
+    }
+
+    var colorFondo: Color {
         switch self {
         case .todos: return Color(red: 0.85, green: 0.85, blue: 0.85)
         case .alto: return Color(red: 0.93, green: 0.87, blue: 0.87)
@@ -34,61 +52,21 @@ enum FiltroRiesgo: CaseIterable, Hashable {
         case .inactivo: return Color(red: 0.88, green: 0.88, blue: 0.88)
         }
     }
-
-    var colorTextoInactivo: Color {
-        switch self {
-        case .todos: return .black
-        case .alto: return Color(red: 0.55, green: 0.15, blue: 0.15)
-        case .medio: return Color(red: 0.53, green: 0.42, blue: 0.10)
-        case .bajo: return Color(red: 0.14, green: 0.33, blue: 0.14)
-        case .inactivo: return .black
-        }
-    }
-
-    var colorFondoSeleccionado: Color {
-        switch self {
-        case .todos: return Color(red: 0.3, green: 0.3, blue: 0.3)
-        case .alto: return Color(red: 0.45, green: 0.12, blue: 0.12)
-        case .medio: return Color(red: 0.53, green: 0.42, blue: 0.10)
-        case .bajo: return Color(red: 0.14, green: 0.33, blue: 0.14)
-        case .inactivo: return Color(red: 0.3, green: 0.3, blue: 0.3)
-        }
-    }
-}
-
-struct DonanteRiesgoSimulado: Identifiable {
-    let id = UUID()
-    let nombre: String
-    let ultimaDonacion: String
-    let riesgo: FiltroRiesgo
 }
 
 struct FiltroDonantesRiesgo: View {
-    @State private var filtroSeleccionado: FiltroRiesgo = .alto
+    let donantes: [DonanteRiesgo]
+    @State private var filtroSeleccionado: FiltroRiesgo = .todos
 
-    let donantesSimulados: [DonanteRiesgoSimulado] = [
-        DonanteRiesgoSimulado(nombre: "Oscar Ramírez", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 2 AÑOS", riesgo: .alto),
-        DonanteRiesgoSimulado(nombre: "Danna Sepúlveda", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 1 AÑO", riesgo: .alto),
-        DonanteRiesgoSimulado(nombre: "Rogelio García", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 13 MESES", riesgo: .alto),
-        DonanteRiesgoSimulado(nombre: "Maricela Pacheco", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 13 MESES", riesgo: .alto),
-        DonanteRiesgoSimulado(nombre: "Lucía Medina", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 15 MESES", riesgo: .alto),
-        DonanteRiesgoSimulado(nombre: "Pablo Gomez", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 17 MESES", riesgo: .alto),
-        DonanteRiesgoSimulado(nombre: "María Estrada", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 6 MESES", riesgo: .medio),
-        DonanteRiesgoSimulado(nombre: "Carlos Nuñez", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 7 MESES", riesgo: .medio),
-        DonanteRiesgoSimulado(nombre: "Andrea Solís", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 2 MESES", riesgo: .bajo),
-        DonanteRiesgoSimulado(nombre: "Jorge Villareal", ultimaDonacion: "ÚLTIMA DONACIÓN HACE 3 MESES", riesgo: .bajo),
-        DonanteRiesgoSimulado(nombre: "Fernanda Ríos", ultimaDonacion: "SIN DONACIONES REGISTRADAS", riesgo: .inactivo)
-    ]
-
-    private var donantesFiltrados: [DonanteRiesgoSimulado] {
+    private var donantesFiltrados: [DonanteRiesgo] {
         if filtroSeleccionado == .todos {
-            return donantesSimulados
+            return donantes
         }
-        return donantesSimulados.filter { $0.riesgo == filtroSeleccionado }
+        return donantes.filter { FiltroRiesgo(api: $0.nivel) == filtroSeleccionado }
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(alignment: .leading, spacing: 24) {
 
             HStack(spacing: 12) {
                 Text("FILTRAR POR:")
@@ -107,12 +85,20 @@ struct FiltroDonantesRiesgo: View {
                             }
                         }
                     }
+                    .padding(.vertical, 2)
                 }
             }
 
-            VStack(spacing: 12) {
-                ForEach(donantesFiltrados) { donante in
+            if donantesFiltrados.isEmpty {
+                Text("Sin donantes en esta categoría")
+                    .font(.system(size: 16, weight: .medium))
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 4)
+            } else {
+                VStack(spacing: 16) {
+                    ForEach(donantesFiltrados) { donante in
                         MostrarDonanteRiesgo(donante: donante)
+                    }
                 }
             }
         }
@@ -126,50 +112,59 @@ struct FiltroDonanteRiesgo: View {
     var body: some View {
         Text(filtro.titulo)
             .font(.system(size: 13, weight: .bold))
-            .foregroundColor(isSelected ? .white : filtro.colorTextoInactivo)
+            .foregroundColor(filtro.colorTexto)
             .padding(.horizontal, 16)
             .padding(.vertical, 10)
             .background(
                 Capsule()
-                    .fill(isSelected ? filtro.colorFondoSeleccionado : filtro.colorFondoInactivo)
+                    .fill(isSelected ? filtro.colorFondo : Color.clear)
+            )
+            .overlay(
+                Capsule()
+                    .stroke(filtro.colorTexto, lineWidth: 1)
+                    .opacity(isSelected ? 0 : 1)
             )
     }
 }
 
 struct MostrarDonanteRiesgo: View {
-    let donante: DonanteRiesgoSimulado
+    let donante: DonanteRiesgo
+
+    private var nivel: FiltroRiesgo { FiltroRiesgo(api: donante.nivel) }
 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(donante.nombre.uppercased())
-                    .font(.system(size: 18, weight: .bold))
+            VStack(alignment: .leading, spacing: 6) {
+                Text(donante.nombre)
+                    .font(.system(size: 24, weight: .bold))
                     .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
 
-                Text(donante.ultimaDonacion)
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.gray)
+                Text(formatoFecha(donante.mesesUltimaDonacion))
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.gray.opacity(0.8))
             }
 
             Spacer()
 
-            VStack(alignment: .trailing, spacing: 2) {
-                Text("RIESGO")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(donante.riesgo.colorFondoSeleccionado.opacity(0.85))
-                Text(donante.riesgo.titulo.replacingOccurrences(of: "RIESGO ", with: ""))
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(donante.riesgo.colorFondoSeleccionado)
-            }
-            .padding(.trailing, 12)
+            Text(nivel.titulo)
+                .font(.system(size: 22, weight: .bold))
+                .foregroundColor(nivel.colorTexto)
+                .frame(width: 210)
+                .padding(.vertical, 12)
+                .background(
+                    RoundedRectangle(cornerRadius: 15)
+                        .fill(nivel.colorFondo)
+                )
+                .padding(.trailing, 24)
 
             Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(Color.gray.opacity(0.5))
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(Color.gray.opacity(0.4))
         }
-        .padding(18)
+        .padding(.vertical, 24)
+        .padding(.horizontal, 32)
         .background(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 28)
                 .fill(Color.white)
                 .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
         )
@@ -179,8 +174,13 @@ struct MostrarDonanteRiesgo: View {
 #Preview {
     NavigationStack {
         ScrollView {
-            FiltroDonantesRiesgo()
-                .padding()
+            FiltroDonantesRiesgo(donantes: [
+                DonanteRiesgo(idDonante: 1, nombre: "Oscar Ramírez", mesesUltimaDonacion: 24, nivel: "alto"),
+                DonanteRiesgo(idDonante: 2, nombre: "Danna Sepúlveda", mesesUltimaDonacion: 12, nivel: "alto"),
+                DonanteRiesgo(idDonante: 3, nombre: "María Estrada", mesesUltimaDonacion: 6, nivel: "medio"),
+                DonanteRiesgo(idDonante: 4, nombre: "Andrea Solís", mesesUltimaDonacion: 2, nivel: "bajo")
+            ])
+            .padding()
         }
         .background(Color(red: 0.96, green: 0.96, blue: 0.96))
     }
