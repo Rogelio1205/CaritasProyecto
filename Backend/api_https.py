@@ -6,6 +6,9 @@ import mssql_functions as MSSql
 from endpoints.detailed_donor import donors_bp
 from endpoints.promesas import promesas_bp
 from endpoints.pagos import pagos_bp
+from endpoints.recaudacionAreas import recaudacionArea_bp
+from endpoints.donante_riesgo import DonanteRiesgo_bp
+from endpoints.topDonantesAdmin import topDonantesAdmin_bp
 from flasgger import Swagger
 
 # Connect to mssql dB from start
@@ -35,6 +38,9 @@ app.register_blueprint(donors_bp)
 app.register_blueprint(promesas_bp)
 app.register_blueprint(pagos_bp)
 app.register_blueprint(dashboard_bp)
+app.register_blueprint(recaudacionArea_bp)
+app.register_blueprint(DonanteRiesgo_bp)
+app.register_blueprint(topDonantesAdmin_bp)
 
 @app.route("/hello")
 def hello():
@@ -82,16 +88,6 @@ def getNumRecoleccionesHoy():
 def getRecPorDia():
     recArr = MSSql.recoleccionPorDia()
     return make_response(jsonify(recArr))
-
-@app.route("/recoleccionesMontoSum", methods=['GET'])
-def getRecoleccionesMontoSum():
-    suma = MSSql.recMontoSum()
-    return make_response(jsonify(suma))
-
-@app.route("/numRecolecciones", methods=['GET'])
-def getNumRecolecciones():
-    num = MSSql.numRecSemanal()
-    return make_response(jsonify(num))
 
 @app.route("/login", methods=['POST'])
 def logIn():

@@ -163,44 +163,8 @@ def numRecHoy():
     except Exception as e:
         raise TypeError("sql_read_where:%s" % e)
 
-def recMontoSum():
-    import pymssql
-    global cnx, mssql_params
-    read = 'SELECT SUM(Promesa.monto) AS montoSemanal FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante'
-    try:
-        try:
-            cursor = cnx.cursor(as_dict=True)
-            cursor.execute(read)
-        except pymssql._pymssql.InterfaceError:
-            print("reconnecting...")
-            cnx = mssql_connect(mssql_params)
-            cursor = cnx.cursor(as_dict=True)
-            cursor.execute(read)
-        a = cursor.fetchall()
-        cursor.close()
-        return a
-    except Exception as e:
-        raise TypeError("sql_read_where:%s" % e)
-
-def numRecSemanal():
-    import pymssql
-    global cnx, mssql_params
-    read = 'SELECT COUNT(*) AS recoleccionesSemanal FROM Recoleccion INNER JOIN Promesa ON Recoleccion.idPromesa = Promesa.idPromesa INNER JOIN Donante ON Promesa.idDonante = Donante.idDonante'
-    try:
-        try:
-            cursor = cnx.cursor(as_dict=True)
-            cursor.execute(read)
-        except pymssql._pymssql.InterfaceError:
-            print("reconnecting...")
-            cnx = mssql_connect(mssql_params)
-            cursor = cnx.cursor(as_dict=True)
-            cursor.execute(read)
-        a = cursor.fetchall()
-        cursor.close()
-        return a
-    except Exception as e:
-        raise TypeError("sql_read_where:%s" % e)
-
+# -------------- Jaime -------------------
+# Log in
 def funcionLogin(table_name, userName, password):
     import pymssql
     import hashlib
@@ -225,7 +189,204 @@ def funcionLogin(table_name, userName, password):
     if answer and answer["userName"] == userName and answer["password_hash"].lower() == contraHasehada.lower():
         return answer 
     else:
-        return None  
+        return None 
+
+# Pantalla recaudacion por Areas
+def getrowcasosActivos():
+    import pymssql
+    global cnx, mssql_params
+    query = """
+            select c.idCaso, c.nombre, c.descripcion, cast(pagos.totalPagado AS FLOAT) as totalPagado FROM Caso c
+            cross APPLY(
+                select ISNULL(SUM(pg.importe),0) as totalPagado from promesa p 
+                inner join pago pg on pg.idPromesa =p.idPromesa
+                where p.idCaso = c.idCaso and pg.cancelado = 0) as pagos
+            where c.montoSolicitado > pagos.totalPagado
+            order by pagos.totalPagado DESC
+            """
+
+    cursor = cnx.cursor(as_dict=True)
+    cursor.execute(query)
+
+    answer = cursor.fetchall()
+    cursor.close()
+    return answer
+
+def getGraficas():
+    import pymssql
+    global cnx, mssql_params
+
+    query = """
+            select TOP 5 c.idCaso, c.nombre, cast(pagos.totalPagado AS FLOAT) AS totalPagado, c.montoSolicitado from Caso c
+            cross APPLY(
+                select ISNULL(SUM(pg.importe),0) as totalPagado from promesa p 
+                inner join pago pg on pg.idPromesa =p.idPromesa
+                where p.idCaso = c.idCaso and pg.cancelado = 0) as pagos
+            where c.montoSolicitado > pagos.totalPagado
+            order by pagos.totalPagado DESC;
+            """
+
+    cursor = cnx.cursor(as_dict=True)
+    cursor.execute(query)
+
+    answer = cursor.fetchall()
+    cursor.close()
+    return answer
+
+def infoWidgets():
+    import pymssql
+    global cnx, mssql_params
+
+    query = """
+            SELECT
+                (select COUNT(c.idCaso) from Caso c
+                where c.montoSolicitado > (select isnull(SUM(pg.importe), 0)
+                    from Promesa p
+                    inner join pago pg ON pg.idPromesa = p.idPromesa
+                    where p.idCaso = c.idCaso
+                and pg.cancelado = 0) ) AS areasActivas, 
+                        
+                (select CAST(ISNULL(SUM(c.montoSolicitado - pagos.totalPagado), 0) AS float) from Caso c
+                cross APPLY (
+                    select ISNULL(SUM(pg.importe), 0) AS totalPagado
+                    from Promesa p
+                    inner join pago pg ON pg.idPromesa = p.idPromesa
+                    where p.idCaso = c.idCaso AND pg.cancelado = 0
+                    ) as pagos where c.montoSolicitado > pagos.totalPagado
+                ) AS porRecaudar,
+                        
+                (select CAST(ISNULL(SUM(pg.importe),0) AS float) from pago pg 
+                    where pg.cancelado != 1 ) AS totalRecaudado
+            """
+    cursor = cnx.cursor(as_dict=True)
+    cursor.execute(query)
+
+    answer = cursor.fetchone()
+    cursor.close()
+    return answer
+
+# Donantes TOP 10%
+def getDonantesTopDiez ():
+    import pymssql
+    global cnx, mssql_params
+
+    query = """
+            select TOP (10) Percent d.nombre, d.apellidoPaterno, CAST(SUM(pg.importe) as float) as totalDonado,COUNT(pg.idPago) as numDonaciones,
+            CAST(AVG(pg.importe) as float) as montoPromedio
+            from Donante d 
+            inner join Promesa p on p.idDonante = d.idDonante 
+            inner join pago pg on pg.idPromesa = p.idPromesa
+            where pg.cancelado = 0
+            group by d.idDonante, d.nombre, d.apellidoPaterno
+            order by totalDonado DESC
+            """
+    cursor = cnx.cursor(as_dict = True)
+    cursor.execute(query)
+    
+    answer = cursor.fetchall()
+    cursor.close()
+    return answer
+
+def getMontoPromedioDonante(): 
+    import pymssql
+    global cnx, mssql_params
+
+    query = """
+            Select 
+                (select CAST(AVG(topDiez.totalDonado) as float) from 
+                    (select TOP (10) percent p.idDonante, SUM(pg.importe) as totalDonado from Promesa p 
+                        inner join pago pg on pg.idPromesa = p.idPromesa 
+                        where pg.cancelado = 0
+                        group by p.idDonante 
+                        order by totalDonado DESC
+                    ) as topDiez
+                ) as promedioTop,
+                
+                (select CAST(ISNULL(AVG(resto.totalDonado), 0) as float) FROM 
+                    (select p.idDonante, SUM(pg.importe) as totalDonado from Promesa p
+                        inner join pago pg on pg.idPromesa = p.idPromesa
+                        where pg.cancelado = 0
+                        and p.idDonante not in (select TOP (10) percent pp.idDonante from Promesa pp
+                                                    inner join pago	ppg on ppg.idPromesa = pp.idPromesa 
+                                                    where ppg.cancelado = 0
+                                                    group by pp.idDonante 
+                                                    order by SUM(ppg.importe) DESC) 
+                        group by p.idDonante) as resto	
+                ) as promedioResto
+            """
+    cursor = cnx.cursor(as_dict = True)
+    cursor.execute(query)
+
+    answer = cursor.fetchone()
+    cursor.close()
+    return answer
+
+def getAportacioinTotal():
+    import pymssql
+    global cnx, mssql_params
+
+    query = """
+            select CAST(ISNULL((select SUM(total.totalDonado) from 
+				(select TOP (10) percent p.idDonante, SUM(pg.importe) as totalDonado from Promesa p
+					inner join pago pg on pg.idPromesa = p.idPromesa
+					where pg.cancelado = 0
+					group by p.idDonante
+					order by totalDonado DESC) as total) * 100.0
+					
+				/NULLIF((select SUM(pg.importe) from Promesa p 
+					inner join pago pg on pg.idPromesa = p.idPromesa
+					where pg.cancelado = 0), 0)
+			,0) as FLOAT) as porcentajeTop
+            """
+    cursor = cnx.cursor(as_dict = True)
+    cursor.execute(query)
+
+    answer = cursor.fetchone()
+    cursor.close()
+    return answer
+
+def getTopDiezWidgets(): 
+    import pymssql
+    global cnx, mssql_params
+
+    query = """
+            Select 
+                (select CAST(AVG(topDiez.totalDonado) as float) from 
+                    (select TOP (10) percent p.idDonante, SUM(pg.importe) as totalDonado from Promesa p 
+                        inner join pago pg on pg.idPromesa = p.idPromesa 
+                        where pg.cancelado = 0
+                        group by p.idDonante 
+                        order by totalDonado DESC
+                    ) as topDiez
+                ) as promedioTop,
+                
+                (select CAST(ISNULL(AVG(resto.totalDonado), 0) as float) FROM 
+                    (select p.idDonante, SUM(pg.importe) as totalDonado from Promesa p
+                        inner join pago pg on pg.idPromesa = p.idPromesa
+                        where pg.cancelado = 0
+                        and p.idDonante not in (select TOP (10) percent pp.idDonante from Promesa pp
+                                                    inner join pago	ppg on ppg.idPromesa = pp.idPromesa 
+                                                    where ppg.cancelado = 0
+                                                    group by pp.idDonante 
+                                                    order by SUM(ppg.importe) DESC) 
+                        group by p.idDonante) as resto	
+                ) as promedioResto,
+                
+                (select COUNT(*) from 
+                    (select TOP (10) percent p.idDonante, SUM(pg.importe) as totalDonado from Promesa p 
+                        inner join pago pg on pg.idPromesa = p.idPromesa 
+                        where pg.cancelado = 0
+                        group by p.idDonante
+                        order by totalDonado DESC
+                    ) as TopDiez
+                ) as numDonantesTop
+            """
+    cursor = cnx.cursor(as_dict = True)
+    cursor.execute(query)
+
+    answer = cursor.fetchone()
+    cursor.close()
+    return answer
 
 #  -------------- Alex -------------------
 def getDetailedDonor(donorId):
@@ -310,10 +471,6 @@ def getPromesaById(idPromesa):
     return answer
  
 def getAreaTagsByCaso(idCaso):
-    """
-    Un Caso puede tener varios AreaTag (relacion N a N via CasoAreaTag),
-    por eso regresa una lista y no un solo valor.
-    """
     global cnx
     query = """
         SELECT at.idAreaTag, at.nombreAreaTag
@@ -332,14 +489,10 @@ def getPagoById(idPago):
     query = """
         SELECT 
             pa.idPago,
-            c.nombre AS nombreCampana,
-            sp.estado AS estatusPago,
-            pa.formaPago,
-            pa.fechaConfirmacion,
+            c.nombre AS nombreCampana, sp.estado AS estatusPago, pa.formaPago, pa.fechaConfirmacion,
             CASE WHEN pa.cancelado = 1 THEN 'Sí' ELSE 'No' END AS cancelado,
             CASE WHEN pa.reprogramado = 1 THEN 'Sí' ELSE 'No' END AS reprogramado,
-            pa.fechaReprogramacion,
-            pa.importe AS monto
+            pa.fechaReprogramacion, pa.importe AS monto
         FROM pago pa
         INNER JOIN StatusPago sp ON pa.idStatusPago = sp.idStatusPago
         INNER JOIN Promesa p ON pa.idPromesa = p.idPromesa
@@ -497,7 +650,6 @@ def sql_delete_where(table_name, d_where):
     except Exception as e:
         raise TypeError("sql_delete_where:%s" % e) """
 
-
 #Rogelio
 RESUMEN = """
     select d.idDonante, d.nombre, d.apellidoPaterno,
@@ -604,6 +756,34 @@ def getDashboard(idUsuario, metaDiaria=25):
              "totalDonado": float(r["totalDonado"] or 0)}
             for r in alto_valor],
     }
+
+#Endpoint 2
+
+def getDonantesRiesgo():
+    conteo = {r["nivel"]: r["total"] for r in _query(
+            f"""select {NIVEL} as nivel, count(*) as total
+                from ({RESUMEN}) x
+                group by {NIVEL}""")}
+    en_riesgo = _query(
+            f"""select idDonante, nombre, apellidoPaterno,
+                       mesesSinDonar, {NIVEL} as nivel
+                from ({RESUMEN}) x
+                where mesesSinDonar >= 1
+                order by mesesSinDonar desc""")
+    return {
+        "riesgo": {
+                    "alto": conteo.get("alto", 0),
+                    "medio": conteo.get("medio", 0),
+                    "bajo": conteo.get("bajo", 0),
+                    "inactivos": conteo.get("inactivo", 0),
+                },
+        "donantesEnRiesgo": [
+                    {"idDonante": r["idDonante"], "nombre": _nombre(r),
+                     "mesesSinDonar": r["mesesSinDonar"], "nivel": r["nivel"]}
+                    for r in en_riesgo]
+    }
+
+#FIN ROGELIO
 
 
 if __name__ == '__main__':
