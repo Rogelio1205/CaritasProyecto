@@ -9,15 +9,17 @@ import SwiftUI
 
 struct DonantesTopView: View {
     //@State private var listaDonTop: [InfoDonantesTop]
-    @State private var listaDonantesTop: Array<InfoDonantesTop> = [
-        InfoDonantesTop(id: 1, nombreDonante: "Laura", apellidoDonante: "Fuentes", totalDonado: 18459, numDonaciones: 2, promedioDonado: 9320),
-        InfoDonantesTop(id: 2, nombreDonante: "Carlos", apellidoDonante: "Méndez", totalDonado: 15200, numDonaciones: 4, promedioDonado: 3800),
-        InfoDonantesTop(id: 3, nombreDonante: "Sofía", apellidoDonante: "Ramírez", totalDonado: 12750, numDonaciones: 3, promedioDonado: 4250),
-        InfoDonantesTop(id: 4, nombreDonante: "Miguel", apellidoDonante: "Torres", totalDonado: 9800, numDonaciones: 5, promedioDonado: 1960),
-        InfoDonantesTop(id: 5, nombreDonante: "Valeria", apellidoDonante: "Castillo", totalDonado: 7600, numDonaciones: 2, promedioDonado: 3800),
-        InfoDonantesTop(id: 6, nombreDonante: "Diego", apellidoDonante: "Herrera", totalDonado: 5400, numDonaciones: 6, promedioDonado: 900),
-        InfoDonantesTop(id: 7, nombreDonante: "Andrea", apellidoDonante: "Morales", totalDonado: 3150, numDonaciones: 3, promedioDonado: 1050)
-    ]
+    let topDonantesService = DonantesTopAdminService()
+    @State private var listaDonantesTop: [InfoDonantesTop] = []
+    /*@State private var listaDonantesTop: Array<InfoDonantesTop> = [
+        InfoDonantesTop(id: 1, nombre: "Laura", apellidoPaterno: "Fuentes", totalDonado: 18459, numDonaciones: 2, montoPromedio: 9320),
+        InfoDonantesTop(id: 2, nombre: "Carlos", apellidoPaterno: "Méndez", totalDonado: 15200, numDonaciones: 4, montoPromedio: 3800),
+        InfoDonantesTop(id: 3, nombre: "Sofía", apellidoPaterno: "Ramírez", totalDonado: 12750, numDonaciones: 3, montoPromedio: 4250),
+        InfoDonantesTop(id: 4, nombre: "Miguel", apellidoPaterno: "Torres", totalDonado: 9800, numDonaciones: 5, montoPromedio: 1960),
+        InfoDonantesTop(id: 5, nombre: "Valeria", apellidoPaterno: "Castillo", totalDonado: 7600, numDonaciones: 2, montoPromedio: 3800),
+        InfoDonantesTop(id: 6, nombre: "Diego", apellidoPaterno: "Herrera", totalDonado: 5400, numDonaciones: 6, montoPromedio: 900),
+        InfoDonantesTop(id: 7, nombre: "Andrea", apellidoPaterno: "Morales", totalDonado: 3150, numDonaciones: 3, montoPromedio: 1050)
+    ]*/
     var body: some View {
         ZStack { // ZStack Fondo
             Color(red:244/255, green:244/255, blue:244/255)
@@ -152,7 +154,7 @@ struct DonantesTopView: View {
                         .padding(.bottom,-10)
                     
                     List(listaDonantesTop) { topitem in
-                           DonantesTopRow(topDonantes: topitem)
+                        DonantesTopRow(topDonantes: topitem)
                     }
                     .scrollContentBackground(.hidden)
                     .listStyle(.sidebar)
@@ -169,6 +171,14 @@ struct DonantesTopView: View {
             
             
         } // ZStack Fondo
+        .task {
+            do{
+                listaDonantesTop = try await topDonantesService.getInfoRows()
+            }
+            catch {
+                print("Error en TopDonanteRows: \(error) ")
+            }
+        }
     }
 }
 

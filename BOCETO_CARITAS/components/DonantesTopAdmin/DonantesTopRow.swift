@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct DonantesTopRow: View {
+    
     let topDonantes: InfoDonantesTop
     
     var body: some View {
         VStack{ // VSTACK principal
             HStack{ // HSTACK
                 VStack(alignment: .leading) { // VSTACK CAMP y DES
-                    Text("\(topDonantes.nombreDonante) \(topDonantes.apellidoDonante)")
+                    Text("\(topDonantes.nombre) \(topDonantes.apellidoPaterno)")
                         .font(.title)
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
@@ -33,7 +34,7 @@ struct DonantesTopRow: View {
                 Spacer()
                 
                 VStack {
-                    var numSinFormato = topDonantes.promedioDonado
+                    var numSinFormato = topDonantes.totalDonado
                     var numFormateado = numSinFormato.formatted(.number.precision(.fractionLength(0)))
                     Text("Monto Promedio")
                     Text("$\(numFormateado) pesos")
@@ -55,6 +56,6 @@ struct DonantesTopRow: View {
 }
 
 #Preview {
-    let listaPrueba = InfoDonantesTop(id: 2, nombreDonante: "Laura", apellidoDonante: "Fuentes", totalDonado: 18459, numDonaciones: 2, promedioDonado: 9320)
+    let listaPrueba = InfoDonantesTop(id: 1, nombre: "Laura", apellidoPaterno: "Fuentes", totalDonado: 18459, numDonaciones: 2, montoPromedio: 9320)
     DonantesTopRow(topDonantes: listaPrueba)
 }
