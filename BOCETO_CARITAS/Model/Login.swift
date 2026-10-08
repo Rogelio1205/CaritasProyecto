@@ -14,7 +14,8 @@ struct LoginRequest: Codable {
 }
 
 struct LoginResponse: Codable {
-    let nombre: String
-    let idRole: Int
+    let idUsuario: Int?
+    let nombre: String?
+    let idRol: Int?
     let error: String?
 }

@@ -19,19 +19,33 @@ struct LoginView: View {
     private func verificacionLogin() {
         Task{
             do{
-                let request = LoginRequest(userName: username, password_hash: password)
-                let response = try await verificarLogin(request)
-                
-                if(response.error != nil) {
+                if (username == "" || password == "") {
                     showAlert.toggle()
-                    messageAlert = "El correo o la contraseña son incorrectos"
-                }
-                else {
-                    usuarioLogquado = response
-                    estaLogueado = true
+                    messageAlert = "Favor de rellenar todos los campos"
+                    
+                } else {
+                    
+                    let request = LoginRequest(userName: username, password_hash: password)
+                    let response = try await verificarLogin(request)
+                    
+                    if(response.error != nil) {
+                        showAlert.toggle()
+                        messageAlert = "El correo o la contraseña son incorrectos"
+                    } else {
+                        usuarioLogquado = response
+                        
+                        if(response.idRol == 2) {
+                            estaLogueado = true
+                        } else {
+                            showAlert.toggle()
+                            messageAlert = "No cuentas con los permisos necesarios"
+                        }
+                    
+                    }
                 }
                     
             } catch {
+                print("\(error)")
                 showAlert.toggle()
                 messageAlert = "Error en la conexión"
             }
@@ -39,7 +53,7 @@ struct LoginView: View {
     }
     
     var body: some View {
-        NavigationStack {
+        NavigationStack { // Navigation Stack
             VStack { // VStack principal
                 HStack { // Barra de arriba
                     
@@ -130,10 +144,7 @@ struct LoginView: View {
                     
                     Button{
                         verificacionLogin()
-                        
-                        if (estaLogueado == true) {
-                            
-                        }
+                        print(username)
                     }
                     label: {
                         Text("INICIAR SESIÓN")
@@ -183,11 +194,11 @@ struct LoginView: View {
                 )
             ) // Degradado
             .ignoresSafeArea()
-        }
-        
-
-        
-        
+            .navigationDestination(isPresented: $estaLogueado)
+            {
+                ContentView(idUsuario: usuarioLogquado?.idUsuario ?? 0)
+            }
+        } // Navigation Stack       
     }
 }
 

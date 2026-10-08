@@ -1,5 +1,5 @@
 //
-//  DonantesPotenciales.swift
+//  DonantesPotencialesComp.swift
 //  BOCETO_CARITAS
 //
 //  Created by Rogelio Iram González Ortiz on 29/08/26.
@@ -7,21 +7,9 @@
 
 import SwiftUI
 
-struct DonantePotencial: Identifiable {
-    let id = UUID()
-    let nombre: String
-    let mesesUltimaDonacion: Int
-    let casosSimilares: Int
-}
-
 struct DonantesPotencialesComp: View {
     @Binding var tabSeleccionado: Tabs
-    let donantes: [DonantePotencial] = [
-        DonantePotencial(nombre: "Manuel Rodríguez", mesesUltimaDonacion: 25, casosSimilares: 7),
-        DonantePotencial(nombre: "Esperanza Lopez", mesesUltimaDonacion: 22,
-            casosSimilares: 5),
-        DonantePotencial(nombre: "Javier Herrera", mesesUltimaDonacion: 18, casosSimilares: 2)
-    ]
+    let donantes: [DonantePotencial]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -43,34 +31,45 @@ struct DonantesPotencialesComp: View {
             }
             .padding(.horizontal, 4)
 
-            HStack(alignment: .top, spacing: 16) {
-                ForEach(donantes) { donante in
-                        DonantePotencialCard(donante: donante)
+            if donantes.isEmpty {
+                Text("Sin donantes potenciales por ahora")
+                    .font(.system(size: 14, weight: .medium))
+                    .foregroundColor(.gray)
+                    .padding(.horizontal, 4)
+            } else {
+                HStack(alignment: .top, spacing: 16) {
+                    ForEach(donantes) { donante in
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            DonantePotencialCard(donante: donante)
+                        }
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
-            }.padding(20)
+            }
         }
-        
+        .padding(20)
     }
-
+}
 
 struct DonantePotencialCard: View {
     let donante: DonantePotencial
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 18) {
-            Text(donante.nombre.uppercased())
+        VStack(alignment: .leading, spacing: 12) {
+            Text(donante.nombre)
                 .font(.system(size: 22, weight: .bold))
                 .foregroundColor(Color(red: 0.13, green: 0.34, blue: 0.38))
+                .fixedSize(horizontal: false, vertical: true)
 
-            Text("ÚLTIMA DONACIÓN:\nHACE \(donante.mesesUltimaDonacion) MESES")
-                .font(.system(size: 13, weight: .semibold))
-                .foregroundColor(.white)
+            Text("Última donación:\nHace \(donante.mesesUltimaDonacion) meses")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(.black)
 
             Spacer()
 
-            Text("HAY \(donante.casosSimilares) CASOS SIMILARES A SU ÚLTIMA DONACIÓN")
+            Text("Hay \(donante.casosSimilares) casos similares a su última donación")
                 .font(.system(size: 13, weight: .bold))
                 .foregroundColor(Color(red: 0.13, green: 0.34, blue: 0.38))
         }
@@ -84,5 +83,14 @@ struct DonantePotencialCard: View {
 }
 
 #Preview {
-    DonantesPotencialesComp(tabSeleccionado: .constant(.inicio))
+    NavigationStack {
+        DonantesPotencialesComp(
+            tabSeleccionado: .constant(.inicio),
+            donantes: [
+                DonantePotencial(idDonante: 1, nombre: "Manuel Rodríguez", mesesUltimaDonacion: 25, casosSimilares: 7),
+                DonantePotencial(idDonante: 2, nombre: "Esperanza Lopez", mesesUltimaDonacion: 22, casosSimilares: 5),
+                DonantePotencial(idDonante: 3, nombre: "Javier Herrera", mesesUltimaDonacion: 18, casosSimilares: 2)
+            ]
+        )
+    }
 }
