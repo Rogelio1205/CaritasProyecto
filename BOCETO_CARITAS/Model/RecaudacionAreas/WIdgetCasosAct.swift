@@ -9,9 +9,6 @@ import Foundation
 
 
 struct Widgets: Codable {
-    var id: Int {
-        return areasActivas
-    }
     let areasActivas: Int
     let porRecaudar: Float
     let totalRecaudado: Float
