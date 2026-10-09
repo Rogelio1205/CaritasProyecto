@@ -34,7 +34,7 @@ struct DonantesTopRow: View {
                 Spacer()
                 
                 VStack {
-                    var numSinFormato = topDonantes.totalDonado
+                    var numSinFormato = topDonantes.montoPromedio
                     var numFormateado = numSinFormato.formatted(.number.precision(.fractionLength(0)))
                     Text("Monto Promedio")
                     Text("$\(numFormateado) pesos")
@@ -56,6 +56,6 @@ struct DonantesTopRow: View {
 }
 
 #Preview {
-    let listaPrueba = InfoDonantesTop(id: 1, nombre: "Laura", apellidoPaterno: "Fuentes", totalDonado: 18459, numDonaciones: 2, montoPromedio: 9320)
+    let listaPrueba = InfoDonantesTop(idDonante: 1, nombre: "Laura", apellidoPaterno: "Fuentes", totalDonado: 18459, numDonaciones: 2, montoPromedio: 9320)
     DonantesTopRow(topDonantes: listaPrueba)
 }

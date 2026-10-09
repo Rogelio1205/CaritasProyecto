@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let urlBase = "https://10.14.255.41:10206/"
+private let urlBase = "https://equipo4.tc2007b.tec.mx:10206/"
 
 class DonantesTopAdminService {
     func getInfoRows() async  throws -> [InfoDonantesTop]{

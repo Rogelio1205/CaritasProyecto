@@ -11,6 +11,9 @@ struct DonantesTopView: View {
     //@State private var listaDonTop: [InfoDonantesTop]
     let topDonantesService = DonantesTopAdminService()
     @State private var listaDonantesTop: [InfoDonantesTop] = []
+    @State private var montoPromedio = MontoPromedioGraphs(promedioTop: 0, promedioResto: 0)
+    @State private var aportacion = AportacionTotalGraph(porcentajeTop: 0)
+    @State private var widgets = WidgetsTopDiez(promedioTop: 0, promedioResto: 0, numDonantesTop: 0)
     /*@State private var listaDonantesTop: Array<InfoDonantesTop> = [
         InfoDonantesTop(id: 1, nombre: "Laura", apellidoPaterno: "Fuentes", totalDonado: 18459, numDonaciones: 2, montoPromedio: 9320),
         InfoDonantesTop(id: 2, nombre: "Carlos", apellidoPaterno: "Méndez", totalDonado: 15200, numDonaciones: 4, montoPromedio: 3800),
