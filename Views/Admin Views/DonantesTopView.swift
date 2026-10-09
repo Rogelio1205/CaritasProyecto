@@ -14,15 +14,7 @@ struct DonantesTopView: View {
     @State private var montoPromedio = MontoPromedioGraphs(promedioTop: 0, promedioResto: 0)
     @State private var aportacion = AportacionTotalGraph(porcentajeTop: 0)
     @State private var widgets = WidgetsTopDiez(promedioTop: 0, promedioResto: 0, numDonantesTop: 0)
-    /*@State private var listaDonantesTop: Array<InfoDonantesTop> = [
-        InfoDonantesTop(id: 1, nombre: "Laura", apellidoPaterno: "Fuentes", totalDonado: 18459, numDonaciones: 2, montoPromedio: 9320),
-        InfoDonantesTop(id: 2, nombre: "Carlos", apellidoPaterno: "Méndez", totalDonado: 15200, numDonaciones: 4, montoPromedio: 3800),
-        InfoDonantesTop(id: 3, nombre: "Sofía", apellidoPaterno: "Ramírez", totalDonado: 12750, numDonaciones: 3, montoPromedio: 4250),
-        InfoDonantesTop(id: 4, nombre: "Miguel", apellidoPaterno: "Torres", totalDonado: 9800, numDonaciones: 5, montoPromedio: 1960),
-        InfoDonantesTop(id: 5, nombre: "Valeria", apellidoPaterno: "Castillo", totalDonado: 7600, numDonaciones: 2, montoPromedio: 3800),
-        InfoDonantesTop(id: 6, nombre: "Diego", apellidoPaterno: "Herrera", totalDonado: 5400, numDonaciones: 6, montoPromedio: 900),
-        InfoDonantesTop(id: 7, nombre: "Andrea", apellidoPaterno: "Morales", totalDonado: 3150, numDonaciones: 3, montoPromedio: 1050)
-    ]*/
+    
     var body: some View {
         ZStack { // ZStack Fondo
             Color(red:244/255, green:244/255, blue:244/255)
@@ -37,14 +29,18 @@ struct DonantesTopView: View {
                     .foregroundStyle(ColorConstants.mainColor)
                 
                 HStack { //HStack bubble widgets
-                    BubbleWidget(textColor: Color(red:66/255,green:66/255, blue: 66/255),title: "MEJORES 10%", titleFontSize: 14 , value: "92", valueFontSize: 40, subtitle: "DONANTES", subtitleFontSize: 13)
+                    BubbleWidget(textColor: Color(red:66/255,green:66/255, blue: 66/255),title: "MEJORES 10%", titleFontSize: 14 , value: "\(widgets.numDonantesTop)", valueFontSize: 40, subtitle: "DONANTES", subtitleFontSize: 13)
                         .frame(width:250)
                     
-                    BubbleWidget(textColor: Color(red:66/255,green:66/255, blue: 66/255), title: "PROMEDIO RESTO", titleFontSize: 14, value: "$840", valueFontSize: 40, subtitle: "PESOS POR DONANTE", subtitleFontSize: 13)
+                    var promRestoSinFormat = widgets.promedioResto
+                    var promRestoFormatted = promRestoSinFormat.formatted(.number.precision(.fractionLength(0)))
+                    BubbleWidget(textColor: Color(red:66/255,green:66/255, blue: 66/255), title: "PROMEDIO RESTO", titleFontSize: 14, value: "$\(promRestoFormatted)", valueFontSize: 40, subtitle: "PESOS POR DONANTE", subtitleFontSize: 13)
                         .frame(width:300)
                         .padding(.horizontal, 20)
                     
-                    BubbleWidget(backgroundColor: Color(red: 0/255, green: 113/255, blue: 130/255).opacity(0.1), textColor: Color(red: 0/255, green: 113/255, blue: 130/255), title: "PROMEDIO TOP 10%", titleFontSize: 14, value: "$6,420", valueFontSize: 40, subtitle: "PESOS POR DONANTE", subtitleFontSize: 13)
+                    var promTopSinFormat = widgets.promedioTop
+                    var promTopFormatted = promTopSinFormat.formatted(.number.precision(.fractionLength(0)))
+                    BubbleWidget(backgroundColor: Color(red: 0/255, green: 113/255, blue: 130/255).opacity(0.1), textColor: Color(red: 0/255, green: 113/255, blue: 130/255), title: "PROMEDIO TOP 10%", titleFontSize: 14, value: "$\(promTopFormatted)", valueFontSize: 40, subtitle: "PESOS POR DONANTE", subtitleFontSize: 13)
                         .frame(width:300)
                 } // HSTAck bubble widgets
                 .frame(height: 119)
@@ -68,14 +64,17 @@ struct DonantesTopView: View {
                             .padding(.bottom, 20)
                             .fontWeight(.semibold)
                         
-                        ProgressView(value: 78, total: 100)
+                        var promTopSinFormat = widgets.promedioTop
+                        var promTopFormatted = promTopSinFormat.formatted(.number.precision(.fractionLength(0)))
+                        
+                        ProgressView(value: montoPromedio.promedioTop, total: 100)
                             .scaleEffect(x: 1, y: 6)
                             .padding(.bottom, 20)
                             .padding(.leading, 115)
                             //.padding(.trailing, 50)
                             .tint(ColorConstants.mainColor)
                         
-                        Text("$6,420")
+                        Text("$\(promTopFormatted)")
                             .font(.system(size: 20))
                             .padding(.bottom, 20)
                             .fontWeight(.semibold)
@@ -91,13 +90,15 @@ struct DonantesTopView: View {
                             .padding(.bottom, 20)
                             .fontWeight(.semibold)
                         
-                        ProgressView(value: 20, total: 100)
+                        ProgressView(value: montoPromedio.promedioResto, total: 100)
                             .scaleEffect(x: 1, y: 6)
                             .padding(.bottom, 20)
                             .padding(.leading, 70)
                             .tint(ColorConstants.mainColor)
                         
-                        Text("$840")
+                        var promRestoSinFormat = widgets.promedioResto
+                        var promRestoFormatted = promRestoSinFormat.formatted(.number.precision(.fractionLength(0)))
+                        Text("$\(promRestoFormatted)")
                             .font(.system(size: 20))
                             .padding(.bottom, 20)
                             .fontWeight(.semibold)
@@ -112,7 +113,7 @@ struct DonantesTopView: View {
                         .padding(.bottom, 20)
                         .padding(.top, 15)
                     
-                    ProgressView(value: 62, total: 100)
+                    ProgressView(value: aportacion.porcentajeTop, total: 100)
                         .scaleEffect(x: 1, y: 6)
                         .padding(.bottom, 20)
                         .tint(ColorConstants.mainColor)
@@ -180,6 +181,27 @@ struct DonantesTopView: View {
             }
             catch {
                 print("Error en TopDonanteRows: \(error) ")
+            }
+            
+            do{
+                montoPromedio = try await topDonantesService.getPromedioDonanteGraph()
+            }
+            catch {
+                print("Error graficas Monto promedio: \(error)")
+            }
+            
+            do {
+                aportacion = try await topDonantesService.getAportacionTotal()
+            }
+            catch {
+                print("Error en grafica aportacion: \(error)")
+            }
+            
+            do {
+                widgets = try await topDonantesService.getWidgetsTop()
+            }
+            catch {
+                print ("Error en widgetsTop: \(error)")
             }
         }
     }
