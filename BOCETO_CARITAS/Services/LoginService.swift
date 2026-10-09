@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let urlBase = "http://10.14.255.41:10206/login"
+private let urlBase = "https://equipo4.tc2007b.tec.mx:10206/"
 
 func verificarLogin(_ newLogin: LoginRequest) async throws -> LoginResponse{
     
