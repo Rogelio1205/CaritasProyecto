@@ -13,6 +13,8 @@ struct RecaudacionAreasView: View {
     @State private var listaCasosAct: [CasosActivos] = []
     @State private var listaRecaudado: [RecaudadoArea] = []
     @State private var widgets = Widgets(areasActivas: 0, porRecaudar: 0.0, totalRecaudado: 0.0)
+    @State private var sinConexionSeccionGraficas = false
+    @State private var sinConexionRowCasosActivos = false
     
     var body: some View {
         ZStack { //ZStack
@@ -56,48 +58,57 @@ struct RecaudacionAreasView: View {
                         .frame(height: 119)
                         .padding( .horizontal)
                         
-                        VStack(alignment: .leading) { // VSTACK Carta Graficas
-                            Text("RECAUDADO VS META POR AREA")
-                                .font(.system(size: 30))
-                                .fontWeight(.bold)
+                        if (sinConexionSeccionGraficas == true){ //Sinconexion plantilla
+                            SinConexionCard()                           
                                 .padding(.bottom, 20)
-                            
-                            ForEach(listaRecaudado) { recaudadoItem in
-                                Graficas(caso: recaudadoItem)
+                                .padding(.horizontal, 50)
+                                .padding(.top,35)
+                        } //Se muestra plantilla sin conexio
+                        
+                        else {
+                            VStack(alignment: .leading) { // VSTACK Carta Graficas
+                                Text("RECAUDADO VS META POR AREA")
+                                    .font(.system(size: 30))
+                                    .fontWeight(.bold)
+                                    .padding(.bottom, 20)
                                 
-                            }
-                            //.padding(.top,8)
-                            
-                            HStack {
-                                HStack {
-                                    Circle()
-                                        .fill(ColorConstants.mainColor)
-                                        .frame(width: 10, height: 25)
+                                ForEach(listaRecaudado) { recaudadoItem in
+                                    Graficas(caso: recaudadoItem)
                                     
-                                    Text("Recaudado")
-                                        .fontWeight(.semibold)
                                 }
-                                
+                                //.padding(.top,8)
                                 
                                 HStack {
-                                    Circle()
-                                        .fill(ColorConstants.mainColor.opacity(0.5))
-                                        .frame(width: 10, height: 25)
+                                    HStack {
+                                        Circle()
+                                            .fill(ColorConstants.mainColor)
+                                            .frame(width: 10, height: 25)
+                                        
+                                        Text("Recaudado")
+                                            .fontWeight(.semibold)
+                                    }
                                     
-                                    Text("Falta por recaudar")
-                                        .fontWeight(.semibold)
+                                    
+                                    HStack {
+                                        Circle()
+                                            .fill(ColorConstants.mainColor.opacity(0.5))
+                                            .frame(width: 10, height: 25)
+                                        
+                                        Text("Falta por recaudar")
+                                            .fontWeight(.semibold)
+                                    }
+                                    .padding(.leading, 35)
                                 }
-                                .padding(.leading, 35)
-                            }
-                            .padding(.bottom, 20)
-                            
-                        } // VSTACK Carta Graficas
-                        .padding(.top, 20)
-                        .padding( .horizontal, 30)
-                        .background(. white)
-                        .clipShape(RoundedRectangle(cornerRadius: 35))
-                        .padding(.horizontal, 60)
-                        .padding(.top, 35)
+                                .padding(.bottom, 20)
+                                
+                            } // VSTACK Carta Graficas
+                            .padding(.top, 20)
+                            .padding( .horizontal, 30)
+                            .background(. white)
+                            .clipShape(RoundedRectangle(cornerRadius: 35))
+                            .padding(.horizontal, 60)
+                            .padding(.top, 35)
+                        }
                         
                         
                         
@@ -108,20 +119,26 @@ struct RecaudacionAreasView: View {
                                 .padding(.trailing, 580)
                                 .padding(.bottom,-10)
                             
+                            if (sinConexionRowCasosActivos == true){ //Sinconexion plantilla
+                                SinConexionCard()
+                                    .padding(.top,35)
+                                    .padding(.bottom, 20)
+                            } //Se muestra plantilla sin conexion
                             
-                            List(listaCasosAct) {casositem in
-                                CasosAcitvosRow(casosAct: casositem)
-                            }
-                            .scrollContentBackground(.hidden)
-                            .listStyle(.sidebar)
-                            .frame(height: 450)
+                            else { // Plantilla normal
+                                
+                                List(listaCasosAct) {casositem in
+                                    CasosAcitvosRow(casosAct: casositem)
+                                }
+                                .scrollContentBackground(.hidden)
+                                .listStyle(.sidebar)
+                                .frame(height: 450)
+                            } // Plantilla Normal
                             
                         }
                         .padding(.horizontal, 50)
                         .padding( .top, 20)
-                        
-                        //Spacer()
-                        
+                                                
                     } // Vstack Principal
                 } // Scroll View
             } // VSTACK header
@@ -130,14 +147,20 @@ struct RecaudacionAreasView: View {
         .task{
             do{
                 listaCasosAct = try await recaudacionService.getCasosActivos()
+                sinConexionRowCasosActivos = false
             }
             catch {
-                print("Error en la llamada: \(error)")
+                sinConexionRowCasosActivos = true
+                print("Error en row casos activos: \(error)")
             }
             
             do {
                     listaRecaudado = try await recaudacionService.getRecaudado()
-                } catch {
+                    sinConexionSeccionGraficas = false
+                }
+            
+            catch {
+                    sinConexionSeccionGraficas = true
                     print("Error gráficas: \(error)")
                 }
             

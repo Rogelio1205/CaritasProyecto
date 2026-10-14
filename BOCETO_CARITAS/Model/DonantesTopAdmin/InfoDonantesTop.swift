@@ -8,7 +8,10 @@
 import Foundation
 
 struct InfoDonantesTop: Codable, Identifiable {
-    let id: Int
+    var id: Int {
+        return idDonante
+    }
+    let idDonante:Int
     let nombre: String
     let apellidoPaterno: String
     let totalDonado: Float

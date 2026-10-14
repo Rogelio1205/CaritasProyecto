@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let urlBase = "http://10.14.255.41:10206/"
+private let urlBase = "https://equipo4.tc2007b.tec.mx:10206/"
 
 class DonantesTopAdminService {
     func getInfoRows() async  throws -> [InfoDonantesTop]{
@@ -33,4 +33,78 @@ class DonantesTopAdminService {
         
         return infoRowDonantesTop
     }
+    
+    func getPromedioDonanteGraph() async  throws -> MontoPromedioGraphs{
+        guard let url = URL(string: "\(urlBase)promedioDonantes") else {
+            print("URL incorrecto")
+            throw URLError(.badURL)
+        }
+        
+        let (data,response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("Respuesta no valida del servidor")
+            throw URLError(.badServerResponse)
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            print("Codigo de error del API: \(httpResponse.statusCode)")
+            throw URLError(.badServerResponse)
+        }
+        
+        let jsonDecoder = JSONDecoder()
+        let promedioInfo = try jsonDecoder.decode(MontoPromedioGraphs.self, from: data)
+        
+        return promedioInfo
+    }
+    
+    func getAportacionTotal() async  throws -> AportacionTotalGraph{
+        guard let url = URL(string: "\(urlBase)aportacionesTotal") else {
+            print("URL incorrecto")
+            throw URLError(.badURL)
+        }
+        
+        let (data,response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("Respuesta no valida del servidor")
+            throw URLError(.badServerResponse)
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            print("Codigo de error del API: \(httpResponse.statusCode)")
+            throw URLError(.badServerResponse)
+        }
+        
+        let jsonDecoder = JSONDecoder()
+        let aportacionInfo = try jsonDecoder.decode(AportacionTotalGraph.self, from: data)
+        
+        return aportacionInfo
+    }
+    
+    func getWidgetsTop() async  throws -> WidgetsTopDiez{
+        guard let url = URL(string: "\(urlBase)widgetsTop") else {
+            print("URL incorrecto")
+            throw URLError(.badURL)
+        }
+        
+        let (data,response) = try await URLSession.shared.data(from: url)
+        
+        guard let httpResponse = response as? HTTPURLResponse else {
+            print("Respuesta no valida del servidor")
+            throw URLError(.badServerResponse)
+        }
+        
+        guard httpResponse.statusCode == 200 else {
+            print("Codigo de error del API: \(httpResponse.statusCode)")
+            throw URLError(.badServerResponse)
+        }
+        
+        let jsonDecoder = JSONDecoder()
+        let widgetsInfo = try jsonDecoder.decode(WidgetsTopDiez.self, from: data)
+        
+        return widgetsInfo
+    }
+    
+    
 }
