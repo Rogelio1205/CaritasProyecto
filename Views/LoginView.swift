@@ -33,6 +33,7 @@ struct LoginView: View {
                         messageAlert = "El correo o la contraseña son incorrectos"
                     } else {
                         usuarioLogquado = response
+                        Sesion.shared.token = response.token
                         
                         if(response.idRol == 2) {
                             estaLogueado = true
