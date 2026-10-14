@@ -163,6 +163,252 @@ def numRecHoy():
     except Exception as e:
         raise TypeError("sql_read_where:%s" % e)
 
+# ------------ Juan Pablo ----------------
+def datosGeneralesRecolecciones():
+    import pymssql
+    global cnx, mssql_params
+    read = """
+           SELECT (SELECT COUNT(*) FROM Promesa WHERE Promesa.fecha >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0)
+            AND Promesa.fecha < DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) + 1, 0)) AS totalPromesas,
+            (SELECT COUNT(*) FROM Promesa INNER JOIN Recoleccion ON Promesa.idPromesa = Recoleccion.idPromesa 
+            WHERE Promesa.fecha >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0)
+            AND Promesa.fecha < DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) + 1, 0) AND Recoleccion.idEstado = 2) AS exitosas,
+            (SELECT COUNT(*) FROM Promesa INNER JOIN Recoleccion ON Promesa.idPromesa = Recoleccion.idPromesa 
+            WHERE Promesa.fecha >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0)
+            AND Promesa.fecha < DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) + 1, 0) AND Recoleccion.idEstado = 6) AS parciales,
+            (SELECT COUNT(*) FROM Promesa INNER JOIN Recoleccion ON Promesa.idPromesa = Recoleccion.idPromesa 
+            WHERE Promesa.fecha >= DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()), 0)
+            AND Promesa.fecha < DATEADD(MONTH, DATEDIFF(MONTH, 0, GETDATE()) + 1, 0) AND Recoleccion.idEstado = 3) AS reprogramadas
+           """
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def statusHoyRec():
+    import pymssql
+    global cnx, mssql_params
+    read = """
+                   SELECT (SELECT COUNT(*) FROM Recoleccion WHERE Recoleccion.fecha >= CAST(GETDATE() AS DATE)
+            AND Recoleccion.fecha < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))
+            ) AS programadasHoy,
+            (SELECT COUNT(*) FROM Recoleccion WHERE Recoleccion.fecha >= CAST(GETDATE() AS DATE)
+            AND Recoleccion.fecha < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) AND Recoleccion.idEstado = 2
+            ) AS Completadas,
+            (SELECT COUNT(*) FROM Recoleccion WHERE Recoleccion.fecha >= CAST(GETDATE() AS DATE)
+            AND Recoleccion.fecha < DATEADD(DAY, 1, CAST(GETDATE() AS DATE)) AND Recoleccion.idEstado = 1
+            ) AS Pendientes
+           """
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def fondosRecaudados():
+    import pymssql
+    global cnx, mssql_params
+    read = """
+           WITH Totales AS (
+                SELECT
+                    ISNULL(SUM(CASE
+                        WHEN pg.fechaConfirmacion >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+                        AND pg.fechaConfirmacion <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
+                        THEN pg.importe END), 0) AS montoRecaudado,
+
+                    ISNULL(SUM(CASE
+                        WHEN COALESCE(pg.fechaReprogramacion, pg.fechaPago) >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+                        AND COALESCE(pg.fechaReprogramacion, pg.fechaPago) <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
+                        THEN pg.importe END), 0) AS montoPrevisto
+                FROM pago pg
+                WHERE ISNULL(pg.cancelado, 0) = 0
+            )
+            SELECT
+                montoRecaudado,
+                montoPrevisto,
+                montoPrevisto - montoRecaudado AS porRecaudar,
+                CAST(100.0 * montoRecaudado / NULLIF(montoPrevisto, 0) AS DECIMAL(5,1)) AS porcentajeRecaudado
+            FROM Totales;
+           """
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def widgetsAdmin():
+    import pymssql
+    global cnx, mssql_params
+    read = """
+                   WITH DonacionesMes AS (
+            SELECT pr.idDonante, SUM(pg.importe) AS totalDonado
+            FROM pago pg
+            JOIN Promesa pr ON pr.idPromesa = pg.idPromesa
+            WHERE ISNULL(pg.cancelado, 0) = 0
+            AND pg.fechaConfirmacion >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+            AND pg.fechaConfirmacion <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
+            GROUP BY pr.idDonante
+        ),
+        Ranking AS (
+            SELECT idDonante, NTILE(10) OVER (ORDER BY totalDonado DESC) AS decil
+            FROM DonacionesMes
+        )
+        SELECT
+            -- Llamadas del día
+            (SELECT COUNT(*) FROM Llamada
+            WHERE fecha >= CAST(GETDATE() AS DATE) AND fecha < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))) AS llamadasHoy,
+
+            -- Promesas del día
+            (SELECT COUNT(*) FROM Promesa
+            WHERE fecha >= CAST(GETDATE() AS DATE) AND fecha < DATEADD(DAY, 1, CAST(GETDATE() AS DATE))) AS promesasHoy,
+
+            -- % de recolecciones completadas en el mes
+            (SELECT CAST(100.0 * SUM(CASE WHEN er.nombre = 'Completada' THEN 1 ELSE 0 END)
+                        / NULLIF(COUNT(*), 0) AS DECIMAL(5,1))
+            FROM Recoleccion r
+            JOIN EstadosRecoleccion er ON er.idEstado = r.idEstado
+            WHERE r.fecha >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1) AND r.fecha < DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))) AS porcentajeRecolecciones,
+
+            -- Donantes dentro del 10% que más donó este mes
+            (SELECT COUNT(*) FROM Ranking WHERE decil = 1) AS top10Donantes;
+    """
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()        
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+    def adminMainGraphs():
+    import pymssql
+    global cnx, mssql_params
+    read = """
+           WITH Semanas AS (
+                SELECT n AS semana FROM (VALUES (1), (2), (3), (4)) v(n)
+            ),
+            Recaudado AS (
+                SELECT
+                    CASE WHEN DAY(pg.fechaConfirmacion) > 21 THEN 4
+                        ELSE (DAY(pg.fechaConfirmacion) - 1) / 7 + 1 END AS semana,
+                    SUM(pg.importe) AS total
+                FROM pago pg
+                WHERE ISNULL(pg.cancelado, 0) = 0
+                AND pg.fechaConfirmacion >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+                AND pg.fechaConfirmacion <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
+                GROUP BY CASE WHEN DAY(pg.fechaConfirmacion) > 21 THEN 4
+                            ELSE (DAY(pg.fechaConfirmacion) - 1) / 7 + 1 END
+            ),
+            PagosPrevistos AS (
+                SELECT pg.importe, COALESCE(pg.fechaReprogramacion, pg.fechaPago) AS fechaEsperada
+                FROM pago pg
+                WHERE ISNULL(pg.cancelado, 0) = 0
+            ),
+            Previsto AS (
+                SELECT
+                    CASE WHEN DAY(fechaEsperada) > 21 THEN 4
+                        ELSE (DAY(fechaEsperada) - 1) / 7 + 1 END AS semana,
+                    SUM(importe) AS total
+                FROM PagosPrevistos
+                WHERE fechaEsperada >= DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1)
+                AND fechaEsperada <  DATEADD(MONTH, 1, DATEFROMPARTS(YEAR(GETDATE()), MONTH(GETDATE()), 1))
+                GROUP BY CASE WHEN DAY(fechaEsperada) > 21 THEN 4
+                            ELSE (DAY(fechaEsperada) - 1) / 7 + 1 END
+            )
+            SELECT
+                s.semana,
+                CAST(ROUND(ISNULL(r.total, 0), 0) AS INT) AS recaudacion,
+                CAST(ROUND(ISNULL(p.total, 0), 0) AS INT) AS recPrevista
+            FROM Semanas s
+            LEFT JOIN Recaudado r ON r.semana = s.semana
+            LEFT JOIN Previsto  p ON p.semana = s.semana
+            ORDER BY s.semana;
+           """
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
+def adminMainListaActCasos():
+    import pymssql
+    global cnx, mssql_params
+    read = """
+           SELECT
+                c.nombre AS [nombreCampaña],
+                c.descripcion AS descripcion,
+                CAST(ROUND(ISNULL(SUM(pg.importe), 0), 0) AS INT) AS recaudado,
+                CAST(ROUND(c.montoSolicitado, 0) AS INT) AS meta
+            FROM Caso c
+            LEFT JOIN Promesa pr
+                ON pr.idCaso = c.idCaso
+            LEFT JOIN pago pg
+                ON pg.idPromesa = pr.idPromesa
+                AND ISNULL(pg.cancelado, 0) = 0
+                AND pg.fechaConfirmacion IS NOT NULL
+            GROUP BY c.idCaso, c.nombre, c.descripcion, c.montoSolicitado
+            HAVING ISNULL(SUM(pg.importe), 0) < c.montoSolicitado
+            ORDER BY recaudado DESC;
+           """
+    try:
+        try:
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        except pymssql._pymssql.InterfaceError:
+            print("reconnecting...")
+            cnx = mssql_connect(mssql_params)
+            cursor = cnx.cursor(as_dict=True)
+            cursor.execute(read)
+        a = cursor.fetchall()
+        cursor.close()
+        return a
+    except Exception as e:
+        raise TypeError("sql_read_where:%s" % e)
+
 # -------------- Jaime -------------------
 # Log in
 def funcionLogin(table_name, userName, password):
@@ -271,7 +517,7 @@ def getDonantesTopDiez ():
     global cnx, mssql_params
 
     query = """
-            select TOP (10) Percent d.nombre, d.apellidoPaterno, CAST(SUM(pg.importe) as float) as totalDonado,COUNT(pg.idPago) as numDonaciones,
+            select TOP (10) Percent d.idDonante, d.nombre, d.apellidoPaterno, CAST(SUM(pg.importe) as float) as totalDonado,COUNT(pg.idPago) as numDonaciones,
             CAST(AVG(pg.importe) as float) as montoPromedio
             from Donante d 
             inner join Promesa p on p.idDonante = d.idDonante 
@@ -443,6 +689,96 @@ def getDetailedDonor(donorId):
 
     return answer
 
+def getDetailedCollection(collectionId):
+    global cnx
+
+    query = """
+        select
+            r.idRecoleccion,
+            d.nombre,
+            d.apellidoPaterno,
+            d.apellidoMaterno,
+            er.nombre as estado,
+            r.fecha,
+            p.monto as montoARecolectar,
+            r.direccion,
+            p.idCaso,
+            c.nombre as nombreCaso,
+            r.formaPago,
+            p.frecuencia
+        from Recoleccion r
+        inner join Promesa p on r.idPromesa = p.idPromesa
+        inner join Donante d on p.idDonante = d.idDonante
+        left join Caso c on p.idCaso = c.idCaso
+        left join EstadosRecoleccion er on r.idEstado = er.idEstado
+        where r.idRecoleccion = %s;
+    """
+
+    tagsQuery = """
+        select t.nombreAreaTag
+        from CasoAreaTag ct
+        inner join AreaTag t on ct.idAreaTag = t.idAreaTag
+        where ct.idCaso = %s;
+    """
+
+    cursor = cnx.cursor(as_dict=True)
+    cursor.execute(query, (collectionId,))
+    collection = cursor.fetchone()
+
+    if collection is None:
+        cursor.close()
+        return None
+
+    tags = []
+    if collection["idCaso"] is not None:
+        cursor.execute(tagsQuery, (collection["idCaso"],))
+        tags = [row["nombreAreaTag"] for row in cursor.fetchall()]
+
+    cursor.close()
+
+    collection["tags"] = tags
+    return collection
+
+def updateCollectionState(collectionId, newStateId):
+    global cnx
+
+    # Validar que el estado exista en el catálogo
+    stateQuery = """
+        select idEstado
+        from EstadosRecoleccion
+        where idEstado = %s;
+    """
+
+    updateQuery = """
+        update Recoleccion
+        set idEstado = %s
+        where idRecoleccion = %s;
+    """
+
+    cursor = cnx.cursor(as_dict=True)
+
+    try:
+        cursor.execute(stateQuery, (newStateId,))
+        if cursor.fetchone() is None:
+            cursor.close()
+            return "invalid_state"
+
+        cursor.execute(updateQuery, (newStateId, collectionId))
+
+        if cursor.rowcount == 0:
+            cnx.rollback()
+            cursor.close()
+            return "not_found"
+
+        cnx.commit()
+        cursor.close()
+        return "ok"
+    
+    except Exception:
+        cnx.rollback()
+        cursor.close()
+        raise
+
 #  -------------- Cristhian -------------------
 def getEstadosPromesa():
     global cnx
@@ -469,7 +805,7 @@ def getPromesaById(idPromesa):
     answer = cursor.fetchone()
     cursor.close()
     return answer
- 
+
 def getAreaTagsByCaso(idCaso):
     global cnx
     query = """

@@ -3,12 +3,16 @@ from endpoints.dashboard import dashboard_bp
 import json
 import sys
 import mssql_functions as MSSql
+from auth import generar_token # <- Se agrego para el jwt
 from endpoints.detailed_donor import donors_bp
+from endpoints.detailed_collection import collections_bp
 from endpoints.promesas import promesas_bp
 from endpoints.pagos import pagos_bp
 from endpoints.recaudacionAreas import recaudacionArea_bp
 from endpoints.donante_riesgo import DonanteRiesgo_bp
 from endpoints.topDonantesAdmin import topDonantesAdmin_bp
+from endpoints.donante_potencial import DonantePotencial_bp
+from endpoints.adminRecolecciones import adminRecolecciones_bp
 from flasgger import Swagger
 
 # Connect to mssql dB from start
@@ -35,12 +39,15 @@ swagger = Swagger(app, template= {
 })
 
 app.register_blueprint(donors_bp)
+app.register_blueprint(collections_bp)
 app.register_blueprint(promesas_bp)
 app.register_blueprint(pagos_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(recaudacionArea_bp)
 app.register_blueprint(DonanteRiesgo_bp)
 app.register_blueprint(topDonantesAdmin_bp)
+app.register_blueprint(DonantePotencial_bp)
+app.register_blueprint(adminRecolecciones_bp)
 
 @app.route("/hello")
 def hello():
@@ -137,8 +144,8 @@ def logIn():
 
     validUser = MSSql.funcionLogin('Usuario',usuario,password)
 
-    if validUser:
-        return make_response(jsonify({"nombre": validUser["nombre"], "idRol": validUser["idRol"]}),200)
+    if validUser:                  #-----Se agrego para el jwt---------
+        return make_response(jsonify({"token": generar_token(validUser), "nombre": validUser["nombre"], "idRol": validUser["idRol"]}),200)
     else:
         return make_response(jsonify({"error": "Usuario Invalido"}), 401)
 

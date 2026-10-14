@@ -2,21 +2,78 @@ from flask import Blueprint, Flask, jsonify, make_response, request, send_file
 import json
 import sys
 import mssql_functions as MSSql
+from auth import token_required, role_required # <- Se agrego para el JWT
 
 recaudacionArea_bp = Blueprint("recaudacionArea", __name__)
 
 @recaudacionArea_bp.route("/casosActivos", methods=['GET'])
-def getCasosActivos():
+@token_required # <- Se agrego para el jwt
+@role_required('admin') # <- Se agrego para el jwt
+def getCasosActivos(current_user):
+    """
+    Se obtiene la informacion del top 10 de donantes que mas han donado
+    ---
+    description: Retorna una lista con la informaicon de los donantes
+    responses:
+       200:
+        description: Regresa una lista JSONs con la informacion de lso
+        shcema: 
+          type: object
+          properties:
+            idCaso:
+              type: string
+            nombre:
+              type: string
+            descripcion: 
+              type: string
+            totalPagado:
+              type: float
+        500:
+        description: No se pudo obtener la informacion de los casos activos
+        schema: 
+          type: object
+          properties:
+            error: 
+              type: string
+    """
     try:
         filaRecaudacionArea = MSSql.getrowcasosActivos()
         return jsonify(filaRecaudacionArea), 200
     except Exception:
         return jsonify({"error": "Casos activos not found"}), 500
 
-    return jsonify(filaRecaudacionArea), 200
+    #return jsonify(filaRecaudacionArea), 200
 
 @recaudacionArea_bp.route("/graficasInfo", methods=['GET'])
-def getInfoGraficas():
+@token_required # <- Se agrego para el jwt
+@role_required('admin') # <- Se agrego para el jwt
+def getInfoGraficas(current_user):
+    """
+    Se obtiene la informacion de las graficas 
+    ---
+    description: Retorna una lista del top cinco de los casos que mas han recaudado
+    responses:
+       200:
+        description: Regresa una lista JSONs con la informacion del top 5 de casps en los que mas se han recaudado
+        shcema: 
+          type: object
+          properties:
+            idCaso:
+              type: string
+            nombre:
+              type: string
+            montoSolicitado: 
+              type: float
+            totalPagado:
+              type: float
+        500:
+        description: No se pudo obtener la informacion de los casosd e las graficas
+        schema: 
+          type: object
+          properties:
+            error: 
+              type: string
+    """
     try:
         infoGraficas = MSSql.getGraficas()
         return jsonify(infoGraficas), 200
@@ -24,7 +81,33 @@ def getInfoGraficas():
         return jsonify({"error": "Info Graphs not found"}), 500
 
 @recaudacionArea_bp.route("/widgets", methods=['GET'])
-def getInfoWidgets():
+@token_required # <- Se agrego para el jwt
+@role_required('admin') # <- Se agrego para el jwt
+def getInfoWidgets(current_user):
+    """
+    Se obtiene la informacion de los widgets
+    ---
+    description: Retorna la informacion para los 3 widgets
+    responses:
+       200:
+        description: Retorna un JSON con la informaicon de los tres widgets
+        shcema: 
+          type: object
+          properties:
+            areasActivas:
+              type: int
+            porRecaudar:
+              type: float
+            totalRecaudado: 
+              type: float
+        500:
+        description: No se pudo obtener la informacion de los widgets
+        schema: 
+          type: object
+          properties:
+            error: 
+              type: string
+    """
     try:
         widgets = MSSql.infoWidgets()
         return jsonify(widgets), 200
