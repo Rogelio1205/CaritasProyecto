@@ -13,4 +13,8 @@ struct CasosActivos : Identifiable, Codable {
     let descripcion: String
     let recaudado: Int
     let meta: Int
+    
+    enum CodingKeys: String, CodingKey {
+            case nombreCampaña, descripcion, recaudado, meta
+        }
 }

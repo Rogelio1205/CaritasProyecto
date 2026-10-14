@@ -12,4 +12,8 @@ struct RecaudacionPorSemana : Identifiable, Codable {
     var semana: Int
     var recaudacion: Int
     var recPrevista: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case semana, recaudacion, recPrevista
+    }
 }
