@@ -195,11 +195,11 @@ struct LoginView: View {
                 )
             ) // Degradado
             .ignoresSafeArea()
-            .navigationDestination(isPresented: $estaLogueado)
+            .fullScreenCover(isPresented: $estaLogueado)
             {
                 ContentView(idUsuario: usuarioLogquado?.idUsuario ?? 0)
             }
-        } // Navigation Stack       
+        } // Navigation Stack
     }
 }
 
