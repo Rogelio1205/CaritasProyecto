@@ -2,118 +2,104 @@
 //  FiltroDonantesPotenciales.swift
 //  BOCETO_CARITAS
 //
-//  Created by Rogelio Iram González Ortiz on 29/08/26.
-//
 
 import SwiftUI
-
+ 
 enum ModoFiltroPotencial: CaseIterable, Hashable {
-    case casosSimilares
+    case cantidadDonaciones
     case donacionPotencial
-
+ 
     var titulo: String {
         switch self {
-        case .casosSimilares: return "CASOS SIMILARES"
+        case .cantidadDonaciones: return "CANTIDAD DE DONACIONES"
         case .donacionPotencial: return "DONACIÓN POTENCIAL"
         }
     }
 }
-
+ 
 enum OrdenPotencial {
     case mayorAMenor
     case menorAMayor
-
+ 
     mutating func alternar() {
         self = self == .mayorAMenor ? .menorAMayor : .mayorAMenor
     }
 }
-
-struct DonantePotencialSimulado: Identifiable {
-    let id = UUID()
-    let nombre: String
-    let casosSimilares: Int
-    let donacionPotencial: Double
-}
-
+ 
 struct FiltroDonantesPotenciales: View {
-    @State private var modoSeleccionado: ModoFiltroPotencial = .casosSimilares
+    let donantes: [DonantesPotenciales]
+ 
+    @State private var modoSeleccionado: ModoFiltroPotencial = .donacionPotencial
     @State private var orden: OrdenPotencial = .mayorAMenor
-
-    let donantesSimulados: [DonantePotencialSimulado] = [
-        DonantePotencialSimulado(nombre: "Miguel Rodríguez", casosSimilares: 7, donacionPotencial: 10236),
-        DonantePotencialSimulado(nombre: "Esperanza Lopez", casosSimilares: 5, donacionPotencial: 15234),
-        DonantePotencialSimulado(nombre: "Javier Herrera", casosSimilares: 2, donacionPotencial: 8306),
-        DonantePotencialSimulado(nombre: "Samuel Mendez", casosSimilares: 2, donacionPotencial: 7906),
-        DonantePotencialSimulado(nombre: "Sergio Carrillo", casosSimilares: 1, donacionPotencial: 4690),
-        DonantePotencialSimulado(nombre: "Rocío Gutierrez", casosSimilares: 1, donacionPotencial: 6840),
-        DonantePotencialSimulado(nombre: "Carlos Vázquez", casosSimilares: 1, donacionPotencial: 1230)
-    ]
-
-    private var donantesOrdenados: [DonantePotencialSimulado] {
-        let criterio: (DonantePotencialSimulado) -> Double = modoSeleccionado == .casosSimilares
-            ? { Double($0.casosSimilares) }
-            : { $0.donacionPotencial }
-
+ 
+    private var donantesOrdenados: [DonantesPotenciales] {
+        let criterio: (DonantesPotenciales) -> Int = modoSeleccionado == .cantidadDonaciones
+            ? { $0.cantidadDonaciones }
+        : { Int($0.donacionPotencial) }
+ 
         switch orden {
         case .mayorAMenor:
-            return donantesSimulados.sorted { criterio($0) > criterio($1) }
+            return donantes.sorted { criterio($0) > criterio($1) }
         case .menorAMayor:
-            return donantesSimulados.sorted { criterio($0) < criterio($1) }
+            return donantes.sorted { criterio($0) < criterio($1) }
         }
     }
-
+ 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-
+        VStack(alignment: .leading, spacing: 24) {
+ 
             HStack(spacing: 12) {
                 Text("FILTRAR POR:")
                     .font(.system(size: 13, weight: .bold))
                     .foregroundColor(.black)
-
+ 
                 FiltroPotencial(seleccion: $modoSeleccionado)
-
-                Spacer()
-
+ 
                 Button {
                     orden.alternar()
                 } label: {
-                    Image(systemName: "line.3.horizontal.decrease")
-                        .font(.system(size: 15, weight: .semibold))
+                    Image(systemName: orden == .mayorAMenor
+                          ? "arrow.down.to.line"
+                          : "arrow.up.to.line")
+                        .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.black.opacity(0.7))
-                        .frame(width: 40, height: 40)
+                        .frame(width: 32, height: 32)
                         .background(
                             Circle()
                                 .fill(Color(red: 0.88, green: 0.88, blue: 0.88))
                         )
                 }
             }
-
-            VStack(spacing: 12) {
-                ForEach(donantesOrdenados) { donante in
-                    MostrarDonantePotencial(donante: donante)
-                    
+ 
+            ScrollView(showsIndicators: true) {
+                VStack(spacing: 16) {
+                    ForEach(donantesOrdenados) { donante in
+                        MostrarDonantePotencial(donante: donante)
+                    }
                 }
+                .padding(.vertical, 4)
             }
         }
     }
 }
-
+ 
 struct FiltroPotencial: View {
     @Binding var seleccion: ModoFiltroPotencial
-
+ 
     var body: some View {
         HStack(spacing: 0) {
             ForEach(ModoFiltroPotencial.allCases, id: \.self) { modo in
                 Text(modo.titulo)
-                    .font(.system(size: 13, weight: .bold))
+                    .font(.system(size: 14, weight: .bold))
                     .foregroundColor(.black)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 10)
                     .frame(maxWidth: .infinity)
                     .background(
                         Capsule()
-                            .fill(seleccion == modo ? Color(red: 0.85, green: 0.85, blue: 0.85) : Color.clear)
+                            .fill(seleccion == modo ? Color(red: 0.88, green: 0.88, blue: 0.88) : Color.clear)
                     )
+                    .contentShape(Capsule())
                     .onTapGesture {
                         seleccion = modo
                     }
@@ -121,66 +107,81 @@ struct FiltroPotencial: View {
         }
         .background(
             Capsule()
-                .fill(Color(red: 0.93, green: 0.93, blue: 0.93))
+                .fill(Color.white)
         )
     }
 }
-
+ 
 struct MostrarDonantePotencial: View {
-    let donante: DonantePotencialSimulado
-
+    let donante: DonantesPotenciales
+ 
     private var montoFormateado: String {
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.groupingSeparator = ","
         formatter.maximumFractionDigits = 0
-        let numero = formatter.string(from: NSNumber(value: donante.donacionPotencial)) ?? "\(Int(donante.donacionPotencial))"
-        return "$\(numero) PESOS"
+        let numero = formatter.string(from: NSNumber(value: donante.donacionPotencial)) ?? "\(donante.donacionPotencial)"
+        return "$\(numero)"
     }
-
+ 
+    private var textoDonaciones: String {
+        if donante.cantidadDonaciones == 1 {
+            return "Ha donado 1 vez"
+        } else {
+            return "Ha donado \(donante.cantidadDonaciones) veces"
+        }
+    }
+ 
     var body: some View {
         HStack {
-            VStack(alignment: .leading, spacing: 4) {
-                Text(donante.nombre.uppercased())
-                    .font(.system(size: 18, weight: .bold))
+            VStack(alignment: .leading, spacing: 6) {
+                Text(donante.nombre)
+                    .font(.system(size: 24, weight: .bold))
                     .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
-
-                Text("HAY \(donante.casosSimilares) CASOS SIMILARES A SU ÚLTIMA DONACIÓN")
-                    .font(.system(size: 13, weight: .medium))
-                    .foregroundColor(.gray)
+ 
+                Text(textoDonaciones)
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundColor(.gray.opacity(0.8))
             }
-
+ 
             Spacer()
-
-            VStack(alignment: .trailing, spacing: 2) {
+ 
+            VStack(alignment: .center, spacing: -2) {
                 Text("DONACIÓN POTENCIAL")
-                    .font(.system(size: 11, weight: .semibold))
-                    .foregroundColor(.black.opacity(0.6))
+                    .font(.system(size: 14, weight: .regular))
+                    .foregroundColor(Color(red: 0.25, green: 0.25, blue: 0.25))
                 Text(montoFormateado)
-                    .font(.system(size: 15, weight: .bold))
-                    .foregroundColor(.black)
+                    .font(.system(size: 40, weight: .bold))
+                    .foregroundColor(Color(red: 0.25, green: 0.25, blue: 0.25))
             }
-            .padding(.trailing, 12)
-
+            .padding(.trailing, 24)
+ 
             Image(systemName: "chevron.right")
-                .font(.system(size: 14, weight: .semibold))
-                .foregroundColor(Color.gray.opacity(0.5))
+                .font(.system(size: 18, weight: .semibold))
+                .foregroundColor(Color.gray.opacity(0.4))
         }
-        .padding(18)
+        .padding(.vertical, 24)
+        .padding(.horizontal, 32)
         .background(
-            RoundedRectangle(cornerRadius: 18)
+            RoundedRectangle(cornerRadius: 28)
                 .fill(Color.white)
                 .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
         )
     }
 }
-
+ 
 #Preview {
     NavigationStack {
-        ScrollView {
-            FiltroDonantesPotenciales()
-                .padding()
-        }
+        FiltroDonantesPotenciales(donantes: [
+            DonantesPotenciales(cantidadDonaciones: 1, donacionPotencial: 8000, idDonante: 12, nombre: "Gabriela Moreno"),
+            DonantesPotenciales(cantidadDonaciones: 1, donacionPotencial: 2500, idDonante: 14, nombre: "Alejandra Paz"),
+            DonantesPotenciales(cantidadDonaciones: 1, donacionPotencial: 2500, idDonante: 1, nombre: "Oscar Ramirez"),
+            DonantesPotenciales(cantidadDonaciones: 2, donacionPotencial: 2000, idDonante: 9, nombre: "Jorge Cantu"),
+            DonantesPotenciales(cantidadDonaciones: 1, donacionPotencial: 1000, idDonante: 3, nombre: "Santiago Reyes"),
+            DonantesPotenciales(cantidadDonaciones: 2, donacionPotencial: 500, idDonante: 17, nombre: "Miguel Angel Soto")
+        ])
+        .padding()
         .background(Color(red: 0.96, green: 0.96, blue: 0.96))
     }
 }
+ 

@@ -28,6 +28,3 @@ class DonanteRiesgoViewModel: ObservableObject {
         }
     }
 }
-
-
-

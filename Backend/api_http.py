@@ -7,6 +7,8 @@ from endpoints.detailed_donor import donors_bp
 from endpoints.promesas import promesas_bp
 from endpoints.pagos import pagos_bp
 from endpoints.donante_riesgo import DonanteRiesgo_bp
+from endpoints.donante_potencial import DonantePotencial_bp
+from endpoints.donante_altovalor import DonanteAltoValor_bp
 from flasgger import Swagger
 
 # Connect to mssql dB from start
@@ -37,6 +39,8 @@ app.register_blueprint(promesas_bp)
 app.register_blueprint(pagos_bp)
 app.register_blueprint(dashboard_bp)
 app.register_blueprint(DonanteRiesgo_bp)
+app.register_blueprint(DonantePotencial_bp)
+app.register_blueprint(DonanteAltoValor_bp)
 
 @app.route("/hello")
 def hello():

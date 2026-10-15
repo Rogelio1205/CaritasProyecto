@@ -76,12 +76,12 @@ struct DonantesEnRiesgoComp: View {
                     .foregroundColor(.gray)
                     .padding(.horizontal, 4)
             } else {
-                VStack(spacing: 12) {
+                VStack(spacing: 16) {
                     ForEach(donantes) { donante in
                         NavigationLink {
                             DonanteDetallado(id: donante.idDonante)
                         } label: {
-                            MuestraDonante(donante: donante)
+                            MostrarDonanteRiesgo(donante: donante)
                         }
                         .buttonStyle(.plain)
                     }

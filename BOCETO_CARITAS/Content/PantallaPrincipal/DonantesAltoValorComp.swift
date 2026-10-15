@@ -38,12 +38,12 @@ struct DonantesAltoValorComp: View {
                     .foregroundColor(.gray)
                     .padding(.horizontal, 4)
             } else {
-                VStack(spacing: 12) {
+                VStack(spacing: 16) {
                     ForEach(donantes) { donante in
                         NavigationLink {
                             DonanteDetallado(id: donante.idDonante)
                         } label: {
-                            MuestraDonanteAltoValor(donante: donante)
+                            MostrarAltoValor(donante: donante)
                         }
                         .buttonStyle(.plain)
                     }
@@ -107,9 +107,9 @@ struct MuestraDonanteAltoValor: View {
         DonantesAltoValorComp(
             tabSeleccionado: .constant(.inicio),
             donantes: [
-                DonanteAltoValor(idDonante: 1, nombre: "Laura Fuentes", mesesUltimaDonacion: 5, totalDonado: 18459),
-                DonanteAltoValor(idDonante: 2, nombre: "Gustavo Gutierrez", mesesUltimaDonacion: 6, totalDonado: 14395),
-                DonanteAltoValor(idDonante: 3, nombre: "Octavio Castro", mesesUltimaDonacion: 2, totalDonado: 9503)
+                DonanteAltoValor(idDonante: 1, nombre: "Laura Fuentes", mesesUltimaDonacion: 5, diasSinDonar: 10, totalDonado: 18459),
+                DonanteAltoValor(idDonante: 2, nombre: "Gustavo Gutierrez", mesesUltimaDonacion: 6, diasSinDonar: 10, totalDonado: 14395),
+                DonanteAltoValor(idDonante: 3, nombre: "Octavio Castro", mesesUltimaDonacion: 1, diasSinDonar: 10, totalDonado: 9503)
             ]
         )
     }

@@ -7,22 +7,34 @@
 
 import SwiftUI
 
-struct DonantesPotenciales: View {
+struct DonantesPotencialesVista: View {
+    @StateObject private var viewModel = DonantePotencialViewModel()
     var body: some View {
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                TopBar()
-                ResumenPotenciales()
-                    .padding(10)
-                FiltroDonantesPotenciales()
-                    .padding(.vertical, 30)
+        VStack(alignment: .leading, spacing: 24) {
+            Header().padding(.bottom, 42).padding(.top,-30)
+
+            if let donantePotencial = viewModel.data {
+                ResumenPotenciales(resumen: donantePotencial.resumen).padding(.horizontal,16)
+
+                FiltroDonantesPotenciales(donantes: donantePotencial.donantesPotenciales)
+                    .padding(.vertical, 30).padding(.horizontal,16)
             }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
+            else if viewModel.isLoading {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+            }
+            else if let error = viewModel.errorMessage {
+                Text(error)
+                    .foregroundColor(.red)
+                    .padding()
+            }
+        }
+        .task {
+            await viewModel.cargar()
         }
     }
 }
 
 #Preview {
-    DonantesPotenciales()
+    DonantesPotencialesVista()
 }

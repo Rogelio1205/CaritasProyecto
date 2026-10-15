@@ -510,36 +510,38 @@ def getDashboard(idUsuario, metaDiaria=25):
 
     en_riesgo = _query(
         f"""select top 4 idDonante, nombre, apellidoPaterno,
-                   mesesSinDonar, {NIVEL} as nivel
+                   mesesSinDonar,
+                   datediff(day, ultimaDonacion, getdate()) as diasSinDonar,
+                   {NIVEL} as nivel
             from ({RESUMEN}) x
             where mesesSinDonar >= 6 and mesesSinDonar < 36
             order by mesesSinDonar desc""")
 
-    potenciales = _query(
-        f"""select top 3 x.idDonante, x.nombre, x.apellidoPaterno,
-                   x.mesesSinDonar, s.casosSimilares
-            from ({RESUMEN}) x
-            outer apply (
-                select top 1 p2.idCaso
-                from Promesa p2
-                join Recoleccion r2 on r2.idPromesa = p2.idPromesa
-                where p2.idDonante = x.idDonante and r2.montoRecibido > 0
-                order by r2.fecha desc
-            ) ult
-            outer apply (
-                select count(distinct t2.idCaso) as casosSimilares
-                from CasoAreaTag t2
-                where t2.idCaso <> ult.idCaso
-                  and t2.idAreaTag in (
-                      select t1.idAreaTag from CasoAreaTag t1
-                      where t1.idCaso = ult.idCaso)
-            ) s
-            where x.mesesSinDonar >= 18
-            order by s.casosSimilares desc""")
+    potenciales = _query("""
+        SELECT TOP 3
+            d.idDonante,
+            d.nombre,
+            d.apellidoPaterno,
+            COUNT(r.idRecoleccion) AS cantidadDonaciones,
+            CAST(AVG(r.montoRecibido) AS FLOAT) AS donacionPotencial
+        FROM Donante d
+        INNER JOIN Promesa p
+            ON p.idDonante = d.idDonante
+        INNER JOIN Recoleccion r
+            ON r.idPromesa = p.idPromesa
+        WHERE r.montoRecibido > 0
+        GROUP BY
+            d.idDonante,
+            d.nombre,
+            d.apellidoPaterno
+        ORDER BY donacionPotencial DESC
+    """)
 
     alto_valor = _query(
         f"""select top 4 idDonante, nombre, apellidoPaterno,
-                   mesesSinDonar, totalDonado
+                   mesesSinDonar,
+                   datediff(day, ultimaDonacion, getdate()) as diasSinDonar,
+                   totalDonado
             from ({RESUMEN}) x
             order by totalDonado desc""")
 
@@ -553,16 +555,20 @@ def getDashboard(idUsuario, metaDiaria=25):
         },
         "donantesEnRiesgo": [
             {"idDonante": r["idDonante"], "nombre": _nombre(r),
-             "mesesSinDonar": r["mesesSinDonar"], "nivel": r["nivel"]}
+             "mesesSinDonar": r["mesesSinDonar"],
+             "diasSinDonar": r["diasSinDonar"],
+             "nivel": r["nivel"]}
             for r in en_riesgo],
         "donantesPotenciales": [
-            {"idDonante": r["idDonante"], "nombre": _nombre(r),
-             "mesesSinDonar": r["mesesSinDonar"],
-             "casosSimilares": r["casosSimilares"] or 0}
+            {"idDonante": r["idDonante"],
+             "nombre": _nombre(r),
+             "cantidadDonaciones": r["cantidadDonaciones"],
+             "donacionPotencial": round(r["donacionPotencial"] or 0, 2)}
             for r in potenciales],
         "donantesAltoValor": [
             {"idDonante": r["idDonante"], "nombre": _nombre(r),
              "mesesSinDonar": r["mesesSinDonar"],
+             "diasSinDonar": r["diasSinDonar"],
              "totalDonado": float(r["totalDonado"] or 0)}
             for r in alto_valor],
     }
@@ -592,6 +598,110 @@ def getDonantesRiesgo():
                      "mesesSinDonar": r["mesesSinDonar"], "nivel": r["nivel"]}
                     for r in en_riesgo]
     }
+#Endpoint 3
+
+
+def getDonantesPotencial():
+    potenciales = _query("""
+        SELECT
+            d.idDonante,
+            d.nombre,
+            d.apellidoPaterno,
+            COUNT(r.idRecoleccion) AS cantidadDonaciones,
+            CAST(AVG(r.montoRecibido) AS FLOAT) AS donacionPotencial
+        FROM Donante d
+        INNER JOIN Promesa p
+            ON p.idDonante = d.idDonante
+        INNER JOIN Recoleccion r
+            ON r.idPromesa = p.idPromesa
+        WHERE r.montoRecibido > 0
+        GROUP BY
+            d.idDonante,
+            d.nombre,
+            d.apellidoPaterno
+        ORDER BY donacionPotencial DESC
+    """)
+
+    totalDonantes = len(potenciales)
+
+    prioritarios = sum(
+        1 for r in potenciales
+        if r["donacionPotencial"] >= 5000
+    )
+
+    potencialRecaudacion = sum(
+        r["donacionPotencial"] or 0
+        for r in potenciales
+    )
+
+    return {
+        "resumen": {
+            "donantesPotenciales": totalDonantes,
+            "donantesPrioritarios": prioritarios,
+            "potencialRecaudacion": round(
+                potencialRecaudacion, 2
+            )
+        },
+
+        "donantesPotenciales": [
+            {
+                "idDonante": r["idDonante"],
+                "nombre": _nombre(r),
+                "cantidadDonaciones": r["cantidadDonaciones"],
+                "donacionPotencial": round(
+                    r["donacionPotencial"] or 0, 2
+                )
+            }
+            for r in potenciales
+        ]
+    }
+#Endpoint 4
+def getDonantesAltoValor():
+    alto_valor = _query(
+        f"""select idDonante, nombre, apellidoPaterno,
+                mesesSinDonar,
+                datediff(day, ultimaDonacion, getdate()) as diasSinDonar,
+                totalDonado
+            from (
+                select x.*,
+                    row_number() over (order by totalDonado desc) as rn,
+                    count(*) over () as total
+                from ({RESUMEN}) x
+            ) y
+            where rn <= 4 or rn <= ceiling(total * 0.10)
+            order by totalDonado desc""")
+
+    totalDonantes = len(alto_valor)
+
+    totalRecaudado = sum(
+        r["totalDonado"] or 0
+        for r in alto_valor
+    )
+
+    ultimaActividad = min(
+        (r["diasSinDonar"] for r in alto_valor),
+        default=0
+    )
+
+    return {
+        "resumen": {
+            "donantesAltoValor": totalDonantes,
+            "ultimaActividadDias": ultimaActividad,
+            "totalRecaudado": round(totalRecaudado, 2)
+        },
+
+        "donantesAltoValor": [
+            {
+                "idDonante": r["idDonante"],
+                "nombre": _nombre(r),
+                "mesesSinDonar": r["mesesSinDonar"],
+                "diasSinDonar": r["diasSinDonar"],
+                "totalDonado": round(float(r["totalDonado"] or 0), 2)
+            }
+            for r in alto_valor
+        ]
+    }
+
 
 #FIN ROGELIO
 

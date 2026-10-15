@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let urlBaseDonanteRiesgo = "http://10.14.255.41:10206/donanteRiesgo"
+private let urlBaseDonanteRiesgo = "https://equipo4.tc2007b.tec.mx:10207/donanteRiesgo"
 
 func obtenerDonanteRiesgo() async throws -> DonanteRiesgoScreen {
 

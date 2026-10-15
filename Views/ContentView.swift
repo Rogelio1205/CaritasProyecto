@@ -26,9 +26,9 @@ struct ContentView: View {
                         case .riesgo:
                             DonantesEnRiesgo()
                         case .donantes:
-                            DonantesPotenciales()
+                            DonantesPotencialesVista()
                         case .potenciales:
-                            DonantesAltoValor()
+                            DonantesAltoValorVista()
                         }
 
                         Color.clear.frame(height: 120)
