@@ -16,7 +16,7 @@ struct AdminInicio: View {
         CasosActivos(nombreCampaña: "Hambre Cero", descripcion: "Despensas para familias vulnerables", recaudado: 36750, meta: 50000),
         CasosActivos(nombreCampaña: "Campaña Karla Valdéz", descripcion: "Cirugía y rehabilitación", recaudado: 21300, meta: 40000)
     ]
-    let listaRecaudacionesSemana = [
+    @State private var listaRecaudacionesSemana = [
         RecaudacionPorSemana(semana: 1, recaudacion: 64700, recPrevista: 58200),
         RecaudacionPorSemana(semana: 2, recaudacion: 64700, recPrevista: 61900),
         RecaudacionPorSemana(semana: 3, recaudacion: 64700, recPrevista: 49300),

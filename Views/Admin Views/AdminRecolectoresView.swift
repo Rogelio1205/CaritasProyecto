@@ -9,18 +9,19 @@ import SwiftUI
 import Charts
 
 struct AdminRecolectoresView: View {
+    
+    @State private var datosRecMes = RecoleccionesMes(exitosas: 122, parciales: 32, reprogramadas: 26)
+    @State private var listaRecHoy = [
+                RecoleccionesHoy(cantidad: 8, estado: "Exitosas"),
+                RecoleccionesHoy(cantidad: 2, estado: "Parciales"),
+                RecoleccionesHoy(cantidad: 1, estado: "No recolectadas")
+            ]
+    let adminRecoleccionesService = AdminRecoleccionesService()
+    
     var body: some View {
-        let listaRecMes = [
-            RecoleccionesMes(cantidad: 122, estado: "Exitosas"),
-            RecoleccionesMes(cantidad: 32, estado: "Parciales"),
-            RecoleccionesMes(cantidad: 26, estado: "No recolectadas")
-        ]
         
-        let listaRecHoy = [
-            RecoleccionesHoy(cantidad: 7, estado: "Exitosas"),
-            RecoleccionesHoy(cantidad: 2, estado: "Parciales"),
-            RecoleccionesHoy(cantidad: 1, estado: "No recolectadas")
-        ]
+        @State var totalPromesas = datosRecMes.exitosas + datosRecMes.parciales + datosRecMes.reprogramadas
+
         
         VStack{
             Header()
@@ -34,7 +35,10 @@ struct AdminRecolectoresView: View {
                             .padding(.vertical, 15)
                             .padding(.trailing, 85)
                     }
-                    RecoleccionesInfoTexts()
+                    RecoleccionesInfoTexts(datosRecoleccionesMes: datosRecMes, totalPromesas: totalPromesas)
+                    .task {
+                        await cargarDatosRecMes()
+                    }
                     .padding(.horizontal, 30)
                     HStack {
                         Text("ESTADO DE RECOLECCIONES")
@@ -46,10 +50,18 @@ struct AdminRecolectoresView: View {
                     }
                 VStack {
                         HStack {
-                            Chart(listaRecMes) { item in
-                                SectorMark(angle: .value("Valor", item.cantidad), innerRadius: .ratio(0.7))
-                                    .foregroundStyle(by: .value("Categoría", item.estado))
-                            }.chartLegend(position: .trailing, alignment: .leading, spacing: -00)
+                            Chart {
+                                SectorMark(angle: .value("Valor", datosRecMes.exitosas), innerRadius: .ratio(0.7))
+                                    .foregroundStyle( ColorConstants.lowRisk)
+                                SectorMark(angle: .value("Valor", datosRecMes.parciales), innerRadius: .ratio(0.7))
+                                    .foregroundStyle( ColorConstants.midRisk)
+                                SectorMark(angle: .value("Valor", datosRecMes.reprogramadas), innerRadius: .ratio(0.7))
+                                    .foregroundStyle( ColorConstants.highRisk)
+                            }
+                            .task {
+                                await cargarDatosRecMes()
+                            }
+                            .chartLegend(position: .trailing, alignment: .leading, spacing: -00)
                                 .chartForegroundStyleScale([
                                     "Exitosas": ColorConstants.lowRisk,
                                     "Parciales": ColorConstants.midRisk,
@@ -60,7 +72,7 @@ struct AdminRecolectoresView: View {
                                         if let anchor = chartProxy.plotFrame {
                                             let frame = geometry[anchor]
                                             VStack {
-                                                Text("180")
+                                                Text("\(totalPromesas)")
                                                     .position(x: frame.midX, y: frame.midY)
                                                     .font(.largeTitle)
                                                     .bold()
@@ -71,15 +83,15 @@ struct AdminRecolectoresView: View {
                                 }
                                 .padding(.trailing, 200)
                             VStack{
-                                Text("68%")
+                                Text("\((Float(datosRecMes.exitosas) / Float(totalPromesas)) * 100, specifier: "%.0f")%")
                                     .bold()
                                     .foregroundStyle(ColorConstants.lowRisk)
                                     .font(.largeTitle)
-                                Text("18%")
+                                Text("\((Float(datosRecMes.parciales) / Float(totalPromesas)) * 100, specifier: "%.0f")%")
                                     .bold()
                                     .foregroundStyle(Color(red: 0.53, green: 0.42, blue: 0.10))
                                     .font(.largeTitle)
-                                Text("14%")
+                                Text("\((Float(datosRecMes.reprogramadas) / Float(totalPromesas)) * 100, specifier: "%.0f")%")
                                     .bold()
                                     .foregroundStyle(ColorConstants.highRisk)
                                     .font(.largeTitle)
@@ -153,6 +165,23 @@ struct AdminRecolectoresView: View {
                 }
         }.background(Color(.gray.opacity(0.05)))
     }
+    
+    func cargarDatosRecMes() async {
+        do {
+            datosRecMes = try await AdminRecoleccionesService.getDatosRecoleccionesMes()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    
+    func cargarDatosRecHoy() async {
+        do {
+            listaRecHoy = try await AdminRecoleccionesService.getDatosRecoleccionesHoy()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    
 }
 
 #Preview {
