@@ -11,11 +11,7 @@ import Charts
 struct AdminRecolectoresView: View {
     
     @State private var datosRecMes = RecoleccionesMes(exitosas: 122, parciales: 32, reprogramadas: 26)
-    @State private var listaRecHoy = [
-                RecoleccionesHoy(cantidad: 8, estado: "Exitosas"),
-                RecoleccionesHoy(cantidad: 2, estado: "Parciales"),
-                RecoleccionesHoy(cantidad: 1, estado: "No recolectadas")
-            ]
+    @State private var recoleccionesDeHoy = RecoleccionesHoy(Completadas: 10, Pendientes: 2, parciales: 3, programadasHoy: 15)
     let adminRecoleccionesService = AdminRecoleccionesService()
     
     var body: some View {
@@ -117,7 +113,7 @@ struct AdminRecolectoresView: View {
                             VStack(alignment: .leading) {
                                 Text("PROGRAMADAS HOY")
                                     .padding(.horizontal)
-                                Text("12")
+                                Text("\(recoleccionesDeHoy.programadasHoy)")
                                     .padding(.horizontal)
                                     .bold()
                                     .font(.title)
@@ -126,7 +122,7 @@ struct AdminRecolectoresView: View {
                             VStack(alignment: .leading) {
                                 Text("COMPLETADAS")
                                     .padding(.horizontal)
-                                Text("10")
+                                Text("\(recoleccionesDeHoy.Completadas)")
                                     .padding(.horizontal)
                                     .bold()
                                     .font(.title)
@@ -135,18 +131,34 @@ struct AdminRecolectoresView: View {
                             VStack(alignment: .leading) {
                                 Text("PENDIENTES")
                                     .padding(.horizontal)
-                                Text("2")
+                                Text("\(recoleccionesDeHoy.Pendientes)")
                                     .padding(.horizontal)
                                     .bold()
                                     .font(.title)
                             }
                         }
-                    Chart(listaRecHoy){ item in
+                        .task {
+                            await cargarDatosRecHoy()
+                        }
+                    Chart{
                         BarMark(
-                            x: .value("Estado", item.estado),
-                            y: .value("Cantidad", item.cantidad)
+                            x: .value("Estado", "EXITOSAS"),
+                            y: .value("Cantidad", recoleccionesDeHoy.Completadas)
                         )
-                        .foregroundStyle(by: .value("Estado", item.estado))
+                        .foregroundStyle(ColorConstants.lowRisk)
+                        BarMark(
+                            x: .value("Estado", "PARCIALES"),
+                            y: .value("Cantidad", recoleccionesDeHoy.parciales)
+                        )
+                        .foregroundStyle(ColorConstants.midRisk)
+                        BarMark(
+                            x: .value("Estado", "NO RECOLECTADAS"),
+                            y: .value("Cantidad", recoleccionesDeHoy.Pendientes)
+                        )
+                        .foregroundStyle(ColorConstants.highRisk)
+                    }
+                    .task {
+                        await cargarDatosRecHoy()
                     }
                     .chartLegend(position: .bottom, alignment: .center)
                     .chartForegroundStyleScale([
@@ -176,7 +188,7 @@ struct AdminRecolectoresView: View {
     
     func cargarDatosRecHoy() async {
         do {
-            listaRecHoy = try await AdminRecoleccionesService.getDatosRecoleccionesHoy()
+            recoleccionesDeHoy = try await AdminRecoleccionesService.getDatosRecoleccionesHoy()
         } catch {
             print("Error en llamada: \(error)")
         }

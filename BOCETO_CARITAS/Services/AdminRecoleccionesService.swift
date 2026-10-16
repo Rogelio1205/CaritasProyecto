@@ -29,7 +29,6 @@ class AdminRecoleccionesService {
           
             
         let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
           let datosRecolecciones = try jsonDecoder.decode([RecoleccionesMes].self, from: data)
         guard let datos = datosRecolecciones.first else {
             throw URLError(.cannotParseResponse)
@@ -38,7 +37,7 @@ class AdminRecoleccionesService {
         return datos
       }
     
-    static func getDatosRecoleccionesHoy() async throws -> Array<RecoleccionesHoy>{
+    static func getDatosRecoleccionesHoy() async throws -> RecoleccionesHoy{
         
         guard let url = URL(string: "https://equipo4.tc2007b.tec.mx:10207/RecHoyStatus") else{
             print("URL incorrecto")
@@ -60,9 +59,10 @@ class AdminRecoleccionesService {
             
         let jsonDecoder = JSONDecoder()
           let arregloRecolecciones = try jsonDecoder.decode([RecoleccionesHoy].self, from: data)
-          for recoleccionX in arregloRecolecciones {
-              print(recoleccionX)
-          }
-        return arregloRecolecciones
+        guard let datos = arregloRecolecciones.first else {
+            throw URLError(.cannotParseResponse)
+        }
+        print(datos)
+        return datos
       }
 }

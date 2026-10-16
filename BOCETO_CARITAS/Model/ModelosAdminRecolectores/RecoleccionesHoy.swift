@@ -9,10 +9,12 @@ import Foundation
 
 struct RecoleccionesHoy : Identifiable, Codable {
     let id = UUID()
-    let cantidad: Int
-    let estado: String
+    let Completadas: Int
+    let Pendientes: Int
+    let parciales: Int
+    let programadasHoy: Int
     
     enum CodingKeys: String, CodingKey {
-            case cantidad, estado
+            case Completadas, Pendientes, parciales, programadasHoy
         }
 }
