@@ -74,7 +74,12 @@ struct FiltroDonantesPotenciales: View {
             ScrollView(showsIndicators: true) {
                 VStack(spacing: 16) {
                     ForEach(donantesOrdenados) { donante in
-                        MostrarDonantePotencial(donante: donante)
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            MostrarDonantePotencial(donante: donante)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.vertical, 4)

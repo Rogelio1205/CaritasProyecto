@@ -82,14 +82,20 @@ struct FiltroDonantesAltoValor: View {
             ScrollView(showsIndicators: true) {
                 VStack(spacing: 16) {
                     ForEach(donantesOrdenados) { donante in
-                        MostrarAltoValor(donante: donante)
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            MostrarAltoValor(donante: donante)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
                 .padding(.vertical, 4)
             }
+            }
         }
     }
-}
+
 
 struct FiltroAltoValor: View {
     @Binding var seleccion: ModoFiltroAltoValor

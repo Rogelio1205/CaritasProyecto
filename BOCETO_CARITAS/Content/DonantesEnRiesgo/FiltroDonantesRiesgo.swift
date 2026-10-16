@@ -97,7 +97,12 @@ struct FiltroDonantesRiesgo: View {
             } else {
                 VStack(spacing: 16) {
                     ForEach(donantesFiltrados) { donante in
-                        MostrarDonanteRiesgo(donante: donante)
+                        NavigationLink {
+                            DonanteDetallado(id: donante.idDonante)
+                        } label: {
+                            MostrarDonanteRiesgo(donante: donante)
+                        }
+                        .buttonStyle(.plain)
                     }
                 }
             }
