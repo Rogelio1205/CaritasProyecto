@@ -5,8 +5,6 @@
 //  Created by Rogelio Iram González Ortiz on 15/10/26.
 //
 
-import Foundation
-
 import SwiftUI
 import Combine
 

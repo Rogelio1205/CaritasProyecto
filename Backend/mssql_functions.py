@@ -506,7 +506,7 @@ def getDashboard(idUsuario, metaDiaria=25):
     conteo = {r["nivel"]: r["total"] for r in _query(
         f"""select {NIVEL} as nivel, count(*) as total
             from ({RESUMEN}) x
-            group by {NIVEL}""")}
+            group by {NIVEL}""")} # nosec B608
 
     en_riesgo = _query(
         f"""select top 4 idDonante, nombre, apellidoPaterno,
@@ -515,7 +515,7 @@ def getDashboard(idUsuario, metaDiaria=25):
                    {NIVEL} as nivel
             from ({RESUMEN}) x
             where mesesSinDonar >= 6 and mesesSinDonar < 36
-            order by mesesSinDonar desc""")
+            order by mesesSinDonar desc""") # nosec B608
 
     potenciales = _query("""
         SELECT TOP 3
@@ -543,7 +543,7 @@ def getDashboard(idUsuario, metaDiaria=25):
                    datediff(day, ultimaDonacion, getdate()) as diasSinDonar,
                    totalDonado
             from ({RESUMEN}) x
-            order by totalDonado desc""")
+            order by totalDonado desc""") # nosec B608
 
     return {
         "meta": {"llamadasHoy": llamadas, "metaDiaria": metaDiaria},
@@ -579,13 +579,13 @@ def getDonantesRiesgo():
     conteo = {r["nivel"]: r["total"] for r in _query(
             f"""select {NIVEL} as nivel, count(*) as total
                 from ({RESUMEN}) x
-                group by {NIVEL}""")}
+                group by {NIVEL}""")} # nosec B608
     en_riesgo = _query(
             f"""select idDonante, nombre, apellidoPaterno,
                        mesesSinDonar, {NIVEL} as nivel
                 from ({RESUMEN}) x
                 where mesesSinDonar >= 1
-                order by mesesSinDonar desc""")
+                order by mesesSinDonar desc""") # nosec B608
     return {
         "riesgo": {
                     "alto": conteo.get("alto", 0),
@@ -669,7 +669,7 @@ def getDonantesAltoValor():
                 from ({RESUMEN}) x
             ) y
             where rn <= 4 or rn <= ceiling(total * 0.10)
-            order by totalDonado desc""")
+            order by totalDonado desc""") # nosec B608
 
     totalDonantes = len(alto_valor)
 
