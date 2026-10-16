@@ -9,9 +9,13 @@ import SwiftUI
 
 struct RecaudacionProgWidget: View {
     
-    let progress: CGFloat
+    let datosMontos: MontosDelMes
+    let datosWidgetsAdmin: DatosGeneralesMain
     
     var body: some View {
+        
+        let progress: CGFloat = CGFloat(Float(datosMontos.montoRecaudado) / Float(datosMontos.montoPrevisto))
+        
         VStack {
             HStack {
                 HStack {
@@ -28,11 +32,11 @@ struct RecaudacionProgWidget: View {
                             .padding(.bottom)
                         HStack {
                             VStack(alignment: .leading) {
-                                Text("$186K")
+                                Text("$\(datosMontos.montoRecaudado / 1000)K")
                                     .font(.system(size: 75))
                                     .bold()
                                     .foregroundStyle(.white)
-                                Text("DE 259K PREVISTOS")
+                                Text("DE $\(datosMontos.montoPrevisto / 1000)K PREVISTOS")
                                     .font(.system(size: 30))
                                     .bold()
                                     .foregroundStyle(.white)
@@ -67,16 +71,16 @@ struct RecaudacionProgWidget: View {
                 .cornerRadius(20)
                 .padding(.horizontal, 15)
                 VStack {
-                    BubbleWidget(backgroundColor: Color(red: 0/255, green: 113/255, blue: 130/255).opacity(0.1), textColor: Color(red: 0/255, green: 113/255, blue: 130/255), title: "LLAMADAS HOY", value: "128", valueFontSize: 40, subtitle: "LLAMADAS")
+                    BubbleWidget(backgroundColor: Color(red: 0/255, green: 113/255, blue: 130/255).opacity(0.1), textColor: Color(red: 0/255, green: 113/255, blue: 130/255), title: "LLAMADAS HOY", value: "\(datosWidgetsAdmin.llamadasHoy)", valueFontSize: 40, subtitle: "LLAMADAS")
                         .frame(width:200)
-                    BubbleWidget(backgroundColor: ColorConstants.lightLowRisk, textColor: ColorConstants.lowRisk, title: "PROMESAS HOY", value: "34", valueFontSize: 40, subtitle: "PROMESAS")
+                    BubbleWidget(backgroundColor: ColorConstants.lightLowRisk, textColor: ColorConstants.lowRisk, title: "PROMESAS HOY", value: "\(datosWidgetsAdmin.promesasHoy)", valueFontSize: 40, subtitle: "PROMESAS")
                         .frame(width:200)
                         .padding()
                 }
                 VStack {
-                    BubbleWidget(backgroundColor: Color(red: 0/255, green: 113/255, blue: 130/255).opacity(0.1), textColor: Color(red: 0/255, green: 113/255, blue: 130/255), title: "RECOLECCIÓN", value: "68%", valueFontSize: 40, subtitle: "EXITOSA DEL MES")
+                    BubbleWidget(backgroundColor: Color(red: 0/255, green: 113/255, blue: 130/255).opacity(0.1), textColor: Color(red: 0/255, green: 113/255, blue: 130/255), title: "RECOLECCIÓN", value: "\(datosWidgetsAdmin.porcentajeRecolecciones)%", valueFontSize: 40, subtitle: "EXITOSA DEL MES")
                         .frame(width:200)
-                    BubbleWidget(backgroundColor: Color(red: 0.92, green: 0.90, blue: 0.83), textColor: Color(red: 0.53, green: 0.42, blue: 0.10), title: "TOP 10%", value: "92", valueFontSize: 40, subtitle: "DONANTES")
+                    BubbleWidget(backgroundColor: Color(red: 0.92, green: 0.90, blue: 0.83), textColor: Color(red: 0.53, green: 0.42, blue: 0.10), title: "TOP 10%", value: "\(datosWidgetsAdmin.top10Donantes)", valueFontSize: 40, subtitle: "DONANTES")
                         .frame(width:200)
                         .padding()
                 }
@@ -86,6 +90,7 @@ struct RecaudacionProgWidget: View {
 }
 
 #Preview {
-    let progressPrueba = 0.72
-    RecaudacionProgWidget(progress: progressPrueba)
+    let datosMontosPrueba = MontosDelMes(montoPrevisto: 258900, montoRecaudado: 186420, porRecaudar: 72480)
+    let datosWidgetsMainPrueba = DatosGeneralesMain(llamadasHoy: 128, porcentajeRecolecciones: 68, promesasHoy: 34, top10Donantes: 92)
+    RecaudacionProgWidget(datosMontos: datosMontosPrueba, datosWidgetsAdmin: datosWidgetsMainPrueba)
 }
