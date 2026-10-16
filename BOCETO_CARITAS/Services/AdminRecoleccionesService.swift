@@ -59,7 +59,6 @@ class AdminRecoleccionesService {
           
             
         let jsonDecoder = JSONDecoder()
-        jsonDecoder.dateDecodingStrategy = .iso8601
           let arregloRecolecciones = try jsonDecoder.decode([RecoleccionesHoy].self, from: data)
           for recoleccionX in arregloRecolecciones {
               print(recoleccionX)

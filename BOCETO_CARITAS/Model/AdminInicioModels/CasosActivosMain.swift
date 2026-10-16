@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct CasosActivos : Identifiable, Codable {
+struct CasosActivosMain : Identifiable, Codable {
     let id = UUID()
     let nombreCampaña: String
     let descripcion: String

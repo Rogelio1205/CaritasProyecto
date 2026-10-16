@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CasosActivosRow: View {
-    @State public var casoActivo: CasosActivos
+    @State public var casoActivo: CasosActivosMain
     var body: some View {
         VStack {
             HStack {
@@ -46,6 +46,6 @@ struct CasosActivosRow: View {
 }
 
 #Preview {
-    let casoActivoPrueba = CasosActivos(nombreCampaña: "Campaña Cáncer", descripcion: "Apoyo a tratamientos", recaudado: 48200, meta: 60000)
+    let casoActivoPrueba = CasosActivosMain(nombreCampaña: "Campaña Cáncer", descripcion: "Apoyo a tratamientos", recaudado: 48200, meta: 60000)
     CasosActivosRow(casoActivo: casoActivoPrueba)
 }

@@ -10,11 +10,12 @@ import Charts
 
 struct AdminInicio: View {
     
-    @State private var progresoRecaudacion = 0.72
-    let listaCasosActivos = [
-        CasosActivos(nombreCampaña: "Campaña Cáncer", descripcion: "Apoyo a tratamientos", recaudado: 48200, meta: 60000),
-        CasosActivos(nombreCampaña: "Hambre Cero", descripcion: "Despensas para familias vulnerables", recaudado: 36750, meta: 50000),
-        CasosActivos(nombreCampaña: "Campaña Karla Valdéz", descripcion: "Cirugía y rehabilitación", recaudado: 21300, meta: 40000)
+    let adminMainService = AdminMainService()
+    
+    @State private var listaCasosActivos = [
+        CasosActivosMain(nombreCampaña: "Campaña Cáncer", descripcion: "Apoyo a tratamientos", recaudado: 48200, meta: 60000),
+        CasosActivosMain(nombreCampaña: "Hambre Cero", descripcion: "Despensas para familias vulnerables", recaudado: 36750, meta: 50000),
+        CasosActivosMain(nombreCampaña: "Campaña Karla Valdéz", descripcion: "Cirugía y rehabilitación", recaudado: 21300, meta: 40000)
     ]
     @State private var listaRecaudacionesSemana = [
         RecaudacionPorSemana(semana: 1, recaudacion: 64700, recPrevista: 58200),
@@ -23,13 +24,21 @@ struct AdminInicio: View {
         RecaudacionPorSemana(semana: 4, recaudacion: 64800, recPrevista: 17000)
         ]
     
+    @State private var datosMontosAdminMain = MontosDelMes(montoPrevisto: 258900, montoRecaudado: 186420, porRecaudar: 72480)
+    
+    @State private var datosWidgetsAdminMain = DatosGeneralesMain(llamadasHoy: 128, porcentajeRecolecciones: 68, promesasHoy: 34, top10Donantes: 92)
+    
     var body: some View {
         
         VStack {
             Header()
             VStack {
                 ScrollView {
-                    RecaudacionProgWidget(progress: progresoRecaudacion)
+                    RecaudacionProgWidget(datosMontos: datosMontosAdminMain, datosWidgetsAdmin: datosWidgetsAdminMain)
+                        .task {
+                            await cargarDatosRecMes()
+                            await cargarDatosWidgetsMain()
+                        }
                     HStack {
                         Text("RECAUDADO VS PREVISTO")
                             .padding()
@@ -43,7 +52,7 @@ struct AdminInicio: View {
                             VStack(alignment: .leading) {
                                 Text("RECAUDADO")
                                     .padding(.horizontal)
-                                Text("$186,420")
+                                Text("$\(datosMontosAdminMain.montoRecaudado)")
                                     .foregroundStyle(ColorConstants.mainColor)
                                     .padding(.horizontal)
                                     .bold()
@@ -53,7 +62,7 @@ struct AdminInicio: View {
                             VStack(alignment: .leading) {
                                 Text("PREVISTO")
                                     .padding(.horizontal)
-                                Text("$258,900")
+                                Text("$\(datosMontosAdminMain.montoPrevisto)")
                                     .padding(.horizontal)
                                     .bold()
                                     .font(.title)
@@ -62,12 +71,15 @@ struct AdminInicio: View {
                             VStack(alignment: .leading) {
                                 Text("POR RECAUDAR")
                                     .padding(.horizontal)
-                                Text("$72,480")
+                                Text("$\(datosMontosAdminMain.porRecaudar)")
                                     .foregroundStyle(ColorConstants.highRisk)
                                     .padding(.horizontal)
                                     .bold()
                                     .font(.title)
                             }
+                        }
+                        .task {
+                            await cargarDatosRecMes()
                         }
                         HStack {
                             Text("AVANCE SEMANAL")
@@ -96,6 +108,9 @@ struct AdminInicio: View {
                                 .position(by: .value("Data Type", "Average"), axis: .horizontal, span: 150)
                             }
                         }
+                        .task {
+                            await cargarDatosGraficasAdminMain()
+                        }
                         .frame(height: 300)
                         .padding()
                         .chartXAxis {
@@ -122,9 +137,44 @@ struct AdminInicio: View {
                     ForEach(listaCasosActivos) { casoActivo in
                         CasosActivosRow(casoActivo:  casoActivo)
                     }
+                    .task {
+                        await cargarListaCasosActMain()
+                    }
                 }
             }.padding()
         }.background(Color(.gray.opacity(0.05)))
+    }
+    
+    func cargarDatosRecMes() async {
+        do {
+            datosMontosAdminMain = try await AdminMainService.getMontosDelMes()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    
+    func cargarDatosWidgetsMain() async {
+        do {
+            datosWidgetsAdminMain = try await AdminMainService.getDatosWidgetsMain()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    
+    func cargarListaCasosActMain() async {
+        do {
+            listaCasosActivos = try await AdminMainService.getListaCasosActMain()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    
+    func cargarDatosGraficasAdminMain() async {
+        do {
+            listaRecaudacionesSemana = try await AdminMainService.getListaRecSemana()
+        } catch {
+            print("Error en llamada: \(error)")
+        }
     }
 }
 
