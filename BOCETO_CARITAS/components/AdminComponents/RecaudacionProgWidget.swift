@@ -11,10 +11,18 @@ struct RecaudacionProgWidget: View {
     
     let datosMontos: MontosDelMes
     let datosWidgetsAdmin: DatosGeneralesMain
+    private var formatoMes: DateFormatter {
+                    let f = DateFormatter()
+                    f.dateFormat = "MMMM YYYY"
+                    f.locale = Locale(identifier: "es_MX")
+                    return f
+                }
     
     var body: some View {
         
         let progress: CGFloat = CGFloat(Float(datosMontos.montoRecaudado) / Float(datosMontos.montoPrevisto))
+        
+        
         
         VStack {
             HStack {
@@ -25,7 +33,7 @@ struct RecaudacionProgWidget: View {
                             .font(.system(size: 50))
                             .bold()
                             .foregroundStyle(.white)
-                        Text("SEPTIEMBRE 2026")
+                        Text(formatoMes.string(from: Date()).localizedUppercase)
                             .font(.system(size: 30))
                             .bold()
                             .foregroundStyle(.white)
@@ -90,7 +98,7 @@ struct RecaudacionProgWidget: View {
 }
 
 #Preview {
-    let datosMontosPrueba = MontosDelMes(montoPrevisto: 258900, montoRecaudado: 186420, porRecaudar: 72480)
+    let datosMontosPrueba = MontosDelMes(montoPrevisto: 258900, montoRecaudado: 186420)
     let datosWidgetsMainPrueba = DatosGeneralesMain(llamadasHoy: 128, porcentajeRecolecciones: 68, promesasHoy: 34, top10Donantes: 92)
     RecaudacionProgWidget(datosMontos: datosMontosPrueba, datosWidgetsAdmin: datosWidgetsMainPrueba)
 }

@@ -17,7 +17,7 @@ struct AdminRecolectoresView: View {
     
     private var formatoHoy: DateFormatter {
             let f = DateFormatter()
-            f.dateFormat = "dd/MMM"
+            f.dateFormat = "dd MMM"
             f.locale = Locale(identifier: "es_MX")
             return f
         }
@@ -34,9 +34,18 @@ struct AdminRecolectoresView: View {
                     HStack {
                         Menu {
                             Picker("Mes", selection: $mesSeleccionado) {
-                                ForEach(1...12, id: \.self) { numero in
-                                    Text(meses[numero - 1]).tag(numero)
-                                }
+                                Text("Enero").tag(1)
+                                Text("Febrero").tag(2)
+                                Text("Marzo").tag(3)
+                                Text("Abril").tag(4)
+                                Text("Mayo").tag(5)
+                                Text("Junio").tag(6)
+                                Text("Julio").tag(7)
+                                Text("Agosto").tag(8)
+                                Text("Septiembre").tag(9)
+                                Text("Octubre").tag(10)
+                                Text("Noviembre").tag(11)
+                                Text("Diciembre").tag(12)
                             }
                         } label: {
                             HStack(spacing: 6) {

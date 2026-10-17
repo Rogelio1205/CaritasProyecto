@@ -24,7 +24,9 @@ struct AdminInicio: View {
         RecaudacionPorSemana(semana: 4, recaudacion: 64800, recPrevista: 17000)
         ]
     
-    @State private var datosMontosAdminMain = MontosDelMes(montoPrevisto: 258900, montoRecaudado: 186420, porRecaudar: 72480)
+    @State private var datosMontosActualAdminMain = MontosDelMes(montoPrevisto: 258900, montoRecaudado: 186420)
+    
+    @State private var datosMontosAdminMain = MontosDelMes(montoPrevisto: 258900, montoRecaudado: 186420)
     
     @State private var datosWidgetsAdminMain = DatosGeneralesMain(llamadasHoy: 128, porcentajeRecolecciones: 68, promesasHoy: 34, top10Donantes: 92)
     
@@ -36,9 +38,9 @@ struct AdminInicio: View {
             Header()
             VStack {
                 ScrollView {
-                    RecaudacionProgWidget(datosMontos: datosMontosAdminMain, datosWidgetsAdmin: datosWidgetsAdminMain)
+                    RecaudacionProgWidget(datosMontos: datosMontosActualAdminMain, datosWidgetsAdmin: datosWidgetsAdminMain)
                         .task {
-                            await cargarDatosRecMes()
+                            await cargarDatosRecMesActual()
                             await cargarDatosWidgetsMain()
                         }
                     HStack {
@@ -88,14 +90,14 @@ struct AdminInicio: View {
                             VStack(alignment: .leading) {
                                 Text("POR RECAUDAR")
                                     .padding(.horizontal)
-                                Text("$\(datosMontosAdminMain.porRecaudar)")
+                                Text("$\(datosMontosAdminMain.montoPrevisto - datosMontosAdminMain.montoRecaudado)")
                                     .foregroundStyle(ColorConstants.highRisk)
                                     .padding(.horizontal)
                                     .bold()
                                     .font(.title)
                             }
                         }
-                        .task {
+                        .task(id: mesSeleccionado) {
                             await cargarDatosRecMes()
                         }
                         HStack {
@@ -125,7 +127,7 @@ struct AdminInicio: View {
                                 .position(by: .value("Data Type", "Average"), axis: .horizontal, span: 150)
                             }
                         }
-                        .task {
+                        .task(id: mesSeleccionado) {
                             await cargarDatosGraficasAdminMain()
                         }
                         .frame(height: 300)
@@ -164,7 +166,14 @@ struct AdminInicio: View {
     
     func cargarDatosRecMes() async {
         do {
-            datosMontosAdminMain = try await AdminMainService.getMontosDelMes()
+            datosMontosAdminMain = try await AdminMainService.getMontosDelMes(mes: mesSeleccionado)
+        } catch {
+            print("Error en llamada: \(error)")
+        }
+    }
+    func cargarDatosRecMesActual() async {
+        do {
+            datosMontosActualAdminMain = try await AdminMainService.getMontosDelMes(mes: mesSeleccionado)
         } catch {
             print("Error en llamada: \(error)")
         }
@@ -188,7 +197,7 @@ struct AdminInicio: View {
     
     func cargarDatosGraficasAdminMain() async {
         do {
-            listaRecaudacionesSemana = try await AdminMainService.getListaRecSemana()
+            listaRecaudacionesSemana = try await AdminMainService.getListaRecSemana(mes: mesSeleccionado)
         } catch {
             print("Error en llamada: \(error)")
         }

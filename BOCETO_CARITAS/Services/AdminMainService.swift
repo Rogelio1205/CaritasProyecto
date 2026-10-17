@@ -9,9 +9,9 @@ import Foundation
 
 class AdminMainService {
     
-    static func getMontosDelMes() async throws -> MontosDelMes{
+    static func getMontosDelMes(mes: Int) async throws -> MontosDelMes{
         
-        guard let url = URL(string: "https://equipo4.tc2007b.tec.mx:10207/adminMainMontosRecaudacion") else{
+        guard let url = URL(string: "https://equipo4.tc2007b.tec.mx:10207/adminMainMontosRecaudacion?mes=\(mes)") else{
             print("URL incorrecto")
             throw URLError(.badURL)
         }
@@ -95,9 +95,9 @@ class AdminMainService {
         return datosCasosActMain
       }
     
-    static func getListaRecSemana() async throws -> Array<RecaudacionPorSemana>{
+    static func getListaRecSemana(mes: Int) async throws -> Array<RecaudacionPorSemana>{
         
-        guard let url = URL(string: "https://equipo4.tc2007b.tec.mx:10207/graficasAdminMain") else{
+        guard let url = URL(string: "https://equipo4.tc2007b.tec.mx:10207/graficasAdminMain?mes=\(mes)") else{
             print("URL incorrecto")
             throw URLError(.badURL)
         }
