@@ -13,6 +13,14 @@ struct AdminRecolectoresView: View {
     @State private var datosRecMes = RecoleccionesMes(exitosas: 122, parciales: 32, reprogramadas: 26)
     @State private var recoleccionesDeHoy = RecoleccionesHoy(Completadas: 10, Pendientes: 2, parciales: 3, programadasHoy: 15)
     let adminRecoleccionesService = AdminRecoleccionesService()
+    @State private var mesSeleccionado = Calendar.current.component(.month, from: Date())
+    
+    private var formatoHoy: DateFormatter {
+            let f = DateFormatter()
+            f.dateFormat = "dd/MMM"
+            f.locale = Locale(identifier: "es_MX")
+            return f
+        }
     
     var body: some View {
         
@@ -20,9 +28,26 @@ struct AdminRecolectoresView: View {
 
         
         VStack{
+
             Header()
             VStack {
                     HStack {
+                        Menu {
+                            Picker("Mes", selection: $mesSeleccionado) {
+                                ForEach(1...12, id: \.self) { numero in
+                                    Text(meses[numero - 1]).tag(numero)
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Text(meses[mesSeleccionado - 1])
+                                    .font(.system(size: 38, weight: .semibold))
+                                Image(systemName: "chevron.down")
+                                    .font(.system(size: 20, weight: .semibold))
+                            }
+                            .foregroundStyle(ColorConstants.mainColor)
+                        }
+                        .padding(.leading, 50)
                         Spacer()
                         Text("RECOLECCIONES")
                             .font(.system(size: 65))
@@ -44,6 +69,7 @@ struct AdminRecolectoresView: View {
                             .bold()
                         Spacer()
                     }
+                    .padding(.top)
                 VStack {
                         HStack {
                             Chart {
@@ -54,10 +80,10 @@ struct AdminRecolectoresView: View {
                                 SectorMark(angle: .value("Valor", datosRecMes.reprogramadas), innerRadius: .ratio(0.7))
                                     .foregroundStyle( ColorConstants.highRisk)
                             }
-                            .task {
+                            .task(id: mesSeleccionado) {
                                 await cargarDatosRecMes()
                             }
-                            .chartLegend(position: .trailing, alignment: .leading, spacing: -00)
+                            .chartLegend(.hidden)
                                 .chartForegroundStyleScale([
                                     "Exitosas": ColorConstants.lowRisk,
                                     "Parciales": ColorConstants.midRisk,
@@ -68,7 +94,7 @@ struct AdminRecolectoresView: View {
                                         if let anchor = chartProxy.plotFrame {
                                             let frame = geometry[anchor]
                                             VStack {
-                                                Text("\(totalPromesas)")
+                                                Text("          \(totalPromesas) \n PROMESAS")
                                                     .position(x: frame.midX, y: frame.midY)
                                                     .font(.largeTitle)
                                                     .bold()
@@ -77,22 +103,22 @@ struct AdminRecolectoresView: View {
                                         }
                                     }
                                 }
-                                .padding(.trailing, 200)
-                            VStack{
-                                Text("\((Float(datosRecMes.exitosas) / Float(totalPromesas)) * 100, specifier: "%.0f")%")
+                                .padding(.trailing, 00)
+                            VStack(alignment: .leading){
+                                Text("\((Float(datosRecMes.exitosas) / Float(totalPromesas)) * 100, specifier: "%.0f")% EXITOSAS")
                                     .bold()
                                     .foregroundStyle(ColorConstants.lowRisk)
                                     .font(.largeTitle)
-                                Text("\((Float(datosRecMes.parciales) / Float(totalPromesas)) * 100, specifier: "%.0f")%")
+                                Text("\((Float(datosRecMes.parciales) / Float(totalPromesas)) * 100, specifier: "%.0f")% PARCIALES")
                                     .bold()
                                     .foregroundStyle(Color(red: 0.53, green: 0.42, blue: 0.10))
                                     .font(.largeTitle)
-                                Text("\((Float(datosRecMes.reprogramadas) / Float(totalPromesas)) * 100, specifier: "%.0f")%")
+                                Text("\((Float(datosRecMes.reprogramadas) / Float(totalPromesas)) * 100, specifier: "%.0f")% NO RECOLECTADAS")
                                     .bold()
                                     .foregroundStyle(ColorConstants.highRisk)
                                     .font(.largeTitle)
                             }
-                            .padding(.trailing, 100)
+                            .padding(.trailing, 30)
                         }
                     }
                     .padding()
@@ -107,6 +133,11 @@ struct AdminRecolectoresView: View {
                             .font(.system(size: 40))
                             .bold()
                         Spacer()
+                        Text(formatoHoy.string(from: Date()).localizedUppercase)
+                            .bold()
+                            .foregroundStyle(ColorConstants.mainColor)
+                            .font(.system(size: 40))
+                            .padding(.trailing, 50)
                     }
                 VStack {
                         HStack {
@@ -160,7 +191,7 @@ struct AdminRecolectoresView: View {
                     .task {
                         await cargarDatosRecHoy()
                     }
-                    .chartLegend(position: .bottom, alignment: .center)
+                    .chartLegend(.hidden)
                     .chartForegroundStyleScale([
                         "Exitosas": ColorConstants.lowRisk,
                         "Parciales": ColorConstants.midRisk,
@@ -180,7 +211,7 @@ struct AdminRecolectoresView: View {
     
     func cargarDatosRecMes() async {
         do {
-            datosRecMes = try await AdminRecoleccionesService.getDatosRecoleccionesMes()
+            datosRecMes = try await AdminRecoleccionesService.getDatosRecoleccionesMes(mes: mesSeleccionado)
         } catch {
             print("Error en llamada: \(error)")
         }

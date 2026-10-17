@@ -28,6 +28,8 @@ struct AdminInicio: View {
     
     @State private var datosWidgetsAdminMain = DatosGeneralesMain(llamadasHoy: 128, porcentajeRecolecciones: 68, promesasHoy: 34, top10Donantes: 92)
     
+    @State private var mesSeleccionado = Calendar.current.component(.month, from: Date())
+    
     var body: some View {
         
         VStack {
@@ -46,7 +48,22 @@ struct AdminInicio: View {
                             .font(.system(size: 40))
                             .bold()
                         Spacer()
-                    }
+                        Menu {
+                            Picker("Mes", selection: $mesSeleccionado) {
+                                ForEach(1...12, id: \.self) { numero in
+                                    Text(meses[numero - 1]).tag(numero)
+                                }
+                            }
+                        } label: {
+                            HStack(spacing: 6) {
+                                Text(meses[mesSeleccionado - 1])
+                                    .font(.system(size: 38, weight: .semibold))
+                                Image(systemName: "chevron.down")
+                                    .font(.system(size: 20, weight: .semibold))
+                            }
+                            .foregroundStyle(ColorConstants.mainColor)
+                        }
+                    }.padding(.trailing, 30)
                     VStack {
                         HStack {
                             VStack(alignment: .leading) {
