@@ -11,9 +11,8 @@ struct MontosDelMes : Identifiable, Codable {
     var id = UUID()
     var montoPrevisto: Int
     var montoRecaudado: Int
-    var porRecaudar: Int
     
     enum CodingKeys: String, CodingKey {
-        case montoPrevisto, montoRecaudado, porRecaudar
+        case montoPrevisto, montoRecaudado
     }
 }

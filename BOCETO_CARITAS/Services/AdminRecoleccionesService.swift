@@ -8,9 +8,9 @@
 import Foundation
 
 class AdminRecoleccionesService {
-    static func getDatosRecoleccionesMes() async throws -> RecoleccionesMes{
+    static func getDatosRecoleccionesMes(mes: Int) async throws -> RecoleccionesMes{
         
-        guard let url = URL(string: "https://equipo4.tc2007b.tec.mx:10207/adminRecDatos") else{
+        guard let url = URL(string: "https://equipo4.tc2007b.tec.mx:10207/adminRecDatos?mes=\(mes)") else{
             print("URL incorrecto")
             throw URLError(.badURL)
         }
