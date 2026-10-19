@@ -46,18 +46,6 @@ struct Graficas: View {
                 .tint(ColorConstants.mainColor)
                 .frame(minWidth: 50)
             
-            /*var totalPagadoSinFormat = caso.totalPagado
-            var montoSolSinFormtat = caso.montoSolicitado
-            
-            var totalPagadoFormatted = totalPagadoSinFormat.formatted(.number.precision(.fractionLength(0)))
-            var montoSolFormatted = montoSolSinFormtat.formatted(.number.precision(.fractionLength(0)))
-            
-            Text("$\(totalPagadoFormatted) / $\(montoSolFormatted)")
-                .font(.system(size: 19))
-                .padding(.bottom, 20)
-                .fontWeight(.semibold)
-                //.minimumScaleFactor(0.8)
-                .frame(width: 190, alignment: .trailing) */
         } // HSTACK Grafica 1
     }
 }

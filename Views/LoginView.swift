@@ -33,6 +33,7 @@ struct LoginView: View {
                         messageAlert = "El correo o la contraseña son incorrectos"
                     } else {
                         usuarioLogquado = response
+                        Sesion.shared.token = response.token
                         
                         if(response.idRol == 2) {
                             estaLogueado = true
@@ -87,7 +88,7 @@ struct LoginView: View {
                     .aspectRatio(contentMode: .fit)
                     .frame(height: 250)
                 
-                Text("CARA Y CRUZ")
+                Text("Cara y Cruz")
                     .font(.system(size: 65))
                     .fontWeight(.heavy)
                     .padding(.bottom, 55)
@@ -96,7 +97,7 @@ struct LoginView: View {
                 VStack { // VStack reucadro blanco
                     
                     VStack (alignment: .leading) { // VStack campus de captura
-                        Text("INICIAR SESIÓN")
+                        Text("Iniciar Sesión")
                             .font(.system(size: 50))
                             .fontWeight(.bold)
                         // .padding(.bottom, 35)
@@ -105,7 +106,7 @@ struct LoginView: View {
                         Divider()
                             .padding(.bottom, 10)
                         
-                        Text("USUARIO")
+                        Text("Usuario")
                             .font(.system(size: 36))
                             .fontWeight(.bold)
                             .padding(.leading, 45)
@@ -124,7 +125,7 @@ struct LoginView: View {
                             .padding(.horizontal, 45)
                             .padding(.bottom, 50)
                         
-                        Text("CONTRASEÑA")
+                        Text("Contraseña")
                             .font(.system(size: 36))
                             .fontWeight(.bold)
                             .padding(.leading, 45)
@@ -194,11 +195,12 @@ struct LoginView: View {
                 )
             ) // Degradado
             .ignoresSafeArea()
-            .navigationDestination(isPresented: $estaLogueado)
+            .fullScreenCover(isPresented: $estaLogueado)
             {
                 ContentView(idUsuario: usuarioLogquado?.idUsuario ?? 0)
+                //TabViewAdmin()
             }
-        } // Navigation Stack       
+        } // Navigation Stack
     }
 }
 
