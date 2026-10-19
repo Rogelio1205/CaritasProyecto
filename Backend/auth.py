@@ -1,11 +1,29 @@
+import os
+from dotenv import load_dotenv
 import datetime
+import logging
+import logging.handlers
 from functools import wraps
 
 import jwt     
 import pytz    
 from flask import jsonify, request, make_response
 
-TOKENS_SECRET_KEY = 'mi_llave_secretaEquipo4'
+load_dotenv()
+
+# --- SysLog ---
+logger = logging.getLogger('api_caritas')
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    syslog_handler = logging.handlers.SysLogHandler(
+        address=('localhost', 514),
+        facility=logging.handlers.SysLogHandler.LOG_LOCAL5
+    )
+    syslog_handler.setFormatter(logging.Formatter('api_caritas: %(levelname)s %(message)s'))
+    logger.addHandler(syslog_handler)
+
+
+TOKENS_SECRET_KEY = os.getenv('TOKENS_SECRET_KEY')
 ROLES = {1: 'admin', 2: 'telefonista', 3: 'recolector'}
 
 # Funcion para generar el token

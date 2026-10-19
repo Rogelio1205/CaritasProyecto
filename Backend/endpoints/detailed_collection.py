@@ -1,11 +1,12 @@
-from flask import Blueprint, Flask, jsonify, make_response, request, send_file
-import json
-import sys
+from flask import Blueprint, jsonify, request
 import mssql_functions as MSSql
+from auth import token_required, role_required
 
 collections_bp = Blueprint("collections", __name__)
 
 @collections_bp.route("/collection", methods=['GET'])
+#@token_required
+#@role_required('recolector')
 def getCollection():
     """
     Obtener Detalle de una Recolección
@@ -72,6 +73,7 @@ def getCollection():
         ) if part
     )
 
+
     return jsonify({
         "idRecoleccion": row["idRecoleccion"],
         "donante": nombreCompleto,
@@ -86,6 +88,8 @@ def getCollection():
     })
 
 @collections_bp.route("/collection/state", methods=['PUT'])
+#@token_required
+#@role_required('recolector')
 def updateCollectionState():
     """
     Actualizar Estado de una Recolección
@@ -137,3 +141,40 @@ def updateCollectionState():
         return jsonify({"error": "Collection not found"}), 404
 
     return jsonify({"message": "Collection state updated"}), 200
+
+@collections_bp.route("/collection/states", methods=['GET'])
+#@token_required
+#@role_required('recolector')
+def getCollectionStates():
+    """
+    Obtener Estados de Recolección
+    ---
+    description: |
+      **Nombre del End-Point:** /collection/states
+      **Descripción:** Devuelve el catálogo de estados de recolección disponibles (ids 2, 3, 4 y 6) con su nombre.
+      **Uso en la App:** Se utiliza para mostrar las opciones al cambiar el estado de una recolección (se combina con PUT /collection/state).
+      **Tipo:** GET
+    responses:
+      200:
+        description: Lista de estados de recolección.
+        schema:
+          type: array
+          items:
+            type: object
+            properties:
+              idEstado:
+                type: integer
+                example: 2
+              nombre:
+                type: string
+                example: "Completada"
+    """
+    states = MSSql.getCollectionStates()
+
+    return jsonify([
+        {
+            "idEstado": row["idEstado"],
+            "nombre": row["nombre"],
+        }
+        for row in states
+    ]), 200
