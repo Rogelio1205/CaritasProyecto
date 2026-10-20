@@ -102,13 +102,17 @@ struct AdminRecolectoresView: View {
                                     GeometryReader { geometry in
                                         if let anchor = chartProxy.plotFrame {
                                             let frame = geometry[anchor]
-                                            VStack {
-                                                Text("          \(totalPromesas) \n PROMESAS")
-                                                    .position(x: frame.midX, y: frame.midY)
+                                            VStack(spacing: 2) {
+                                                Text("\(totalPromesas)")
                                                     .font(.largeTitle)
                                                     .bold()
-                                                    .foregroundStyle(ColorConstants.lowRisk)
+                                                Text("PROMESAS")
+                                                    .font(.title)
+                                                    .bold()
                                             }
+                                            .multilineTextAlignment(.center)
+                                            .foregroundStyle(ColorConstants.lowRisk)
+                                            .position(x: frame.midX, y: frame.midY)
                                         }
                                     }
                                 }
