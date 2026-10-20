@@ -4,7 +4,7 @@
 //
 //  Created by Alumno on 29/09/26.
 //
-
+/*
 import SwiftUI
 
 struct CasosAcitvosRow: View {
@@ -51,3 +51,4 @@ struct CasosAcitvosRow: View {
     let casosPrueba = CasosActivos(idCaso: 1, nombre: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", totalPagado: 48200)
     CasosAcitvosRow(casosAct: casosPrueba)
 }
+ */

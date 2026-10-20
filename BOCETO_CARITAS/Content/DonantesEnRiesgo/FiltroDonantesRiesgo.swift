@@ -137,6 +137,13 @@ struct MostrarDonanteRiesgo: View {
 
     private var nivel: FiltroRiesgo { FiltroRiesgo(api: donante.nivel) }
 
+    /// Singular para 1 mes; el resto sigue usando tu formatoFecha existente.
+    private var textoUltimaDonacion: String {
+        donante.mesesUltimaDonacion == 1
+            ? "Última donación: hace 1 mes"
+            : formatoFecha(donante.mesesUltimaDonacion)
+    }
+
     var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 6) {
@@ -144,7 +151,7 @@ struct MostrarDonanteRiesgo: View {
                     .font(.system(size: 24, weight: .bold))
                     .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
 
-                Text(formatoFecha(donante.mesesUltimaDonacion))
+                Text(textoUltimaDonacion)
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.gray.opacity(0.8))
             }
@@ -183,7 +190,8 @@ struct MostrarDonanteRiesgo: View {
                 DonanteRiesgo(idDonante: 1, nombre: "Oscar Ramírez", mesesUltimaDonacion: 24, nivel: "alto"),
                 DonanteRiesgo(idDonante: 2, nombre: "Danna Sepúlveda", mesesUltimaDonacion: 12, nivel: "alto"),
                 DonanteRiesgo(idDonante: 3, nombre: "María Estrada", mesesUltimaDonacion: 6, nivel: "medio"),
-                DonanteRiesgo(idDonante: 4, nombre: "Andrea Solís", mesesUltimaDonacion: 2, nivel: "bajo")
+                DonanteRiesgo(idDonante: 4, nombre: "Andrea Solís", mesesUltimaDonacion: 2, nivel: "bajo"),
+                DonanteRiesgo(idDonante: 5, nombre: "Luis Treviño", mesesUltimaDonacion: 1, nivel: "bajo")
             ])
             .padding()
         }

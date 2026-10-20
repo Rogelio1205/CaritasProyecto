@@ -4,7 +4,7 @@
 //
 //  Created by Medios Tecnológicos on 05/10/26.
 //
-
+/*
 import SwiftUI
 
 struct DonantesTopRow: View {
@@ -59,3 +59,4 @@ struct DonantesTopRow: View {
     let listaPrueba = InfoDonantesTop(idDonante: 1, nombre: "Laura", apellidoPaterno: "Fuentes", totalDonado: 18459, numDonaciones: 2, montoPromedio: 9320)
     DonantesTopRow(topDonantes: listaPrueba)
 }
+ */
