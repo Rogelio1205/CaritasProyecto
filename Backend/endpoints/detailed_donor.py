@@ -5,9 +5,9 @@ import mssql_functions as MSSql
 donors_bp = Blueprint("donors", __name__)
 
 @donors_bp.route("/donor", methods=['GET'])
-@token_required
-@role_required('telefonista')
-def getDonor(current_user):
+#@token_required
+#@role_required('telefonista')
+def getDonor():
     ...
     """
     Obtener Detalle Completo de un Donante
