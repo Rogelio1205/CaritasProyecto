@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RecoleccionRow: View {
-    
+        
     @State public var recoleccionSig: RecoleccionSiguiente
     
     var body: some View {
@@ -16,18 +16,19 @@ struct RecoleccionRow: View {
             HStack {
                 Spacer()
                 VStack(alignment: .leading) {
-                    Text("\(recoleccionSig.nombreDonante)")
+                    Text("\(recoleccionSig.nombre) \(recoleccionSig.apellidoPaterno)")
                         .font(.title)
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
-                    Text("Recolecciones en \(recoleccionSig.diasHastaSigDonacion) días")
+                    Text("Recoleccion en \(formatDate(recoleccionSig.fecha))")
                         .font(.system(size: 20))
+                    
                 }
-                .padding(.trailing, 50)
+                .padding(.trailing, 30)
                 VStack {
                     Text("Donación")
                         .font(.system(size: 20))
-                    Text("$\(recoleccionSig.cantDonacion)")
+                    Text("$\(recoleccionSig.monto)")
                         .font(.title)
                         .bold()
                 }
@@ -41,6 +42,6 @@ struct RecoleccionRow: View {
 }
 
 #Preview {
-    let recoleccionSigPrueba = RecoleccionSiguiente(nombreDonante: "Melanie Rivera", diasHastaSigDonacion: 10, cantDonacion: 10236)
+    let recoleccionSigPrueba = RecoleccionSiguiente(apellidoPaterno: "Rivera", fecha: "12/09/2026", monto: 10236, nombre: "Melanie")
     RecoleccionRow(recoleccionSig: recoleccionSigPrueba)
 }

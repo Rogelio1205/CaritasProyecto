@@ -7,11 +7,11 @@
 
 import Foundation
 
-private let urlBase = "https://equipo4.tc2007b.tec.mx:10207/login"
+private let urlBase = "https://equipo4.tc2007b.tec.mx:10207/"
 
 func verificarLogin(_ newLogin: LoginRequest) async throws -> LoginResponse{
     
-  guard let url = URL(string: "\(urlBase)") else{
+  guard let url = URL(string: "\(urlBase)login") else{
       print("URL incorrecto")
       throw URLError(.badURL)
   }
@@ -28,7 +28,7 @@ func verificarLogin(_ newLogin: LoginRequest) async throws -> LoginResponse{
       throw URLError(.badServerResponse)
   }
   
-    guard httpResponse.statusCode == 200 || httpResponse.statusCode == 201 else {
+    guard httpResponse.statusCode == 200 || httpResponse.statusCode == 201 || httpResponse.statusCode == 401 else {
       print("Código de error del API: \(httpResponse.statusCode)")
       throw URLError(.badServerResponse)
   }

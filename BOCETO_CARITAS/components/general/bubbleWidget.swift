@@ -33,7 +33,7 @@ struct BubbleWidget: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
-                .font(.system(size: titleFontSize))
+                .font(.system(size: 18))
                 .bold()
                 .padding(.bottom, 3)
 
@@ -43,7 +43,7 @@ struct BubbleWidget: View {
 
             if let subtitle = subtitle {
                 Text(subtitle)
-                    .font(.system(size: subtitleFontSize))
+                    .font(.system(size: 14))
                     .bold()
             }
         }

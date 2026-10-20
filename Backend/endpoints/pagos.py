@@ -15,7 +15,7 @@ def getPago(idPago):
         required: true
     responses:
         200:
-            description: Detalles completos del pago incluyendo status
+            description: Detalles completos del pago incluyendo estado
         404:
             description: Id invalido
     """
