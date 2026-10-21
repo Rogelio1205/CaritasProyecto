@@ -7,16 +7,17 @@
 
 import SwiftUI
 
-import SwiftUI
+struct ResumenAltoValor: View {
 
-struct ResumenAltoValorPantalla: View {
-    let resumen: ResumenDonantesAltoValor
+    let mejoresPorcentaje = 92
+    let ultimaActividadDias = 22
+    let totalRecaudado = 248038.0
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 24) {
+        VStack(alignment: .leading, spacing: 16) {
 
             Text("DONANTES DE ALTO VALOR")
-                .font(.system(size: 36, weight: .bold))
+                .font(.system(size: 48, weight: .bold))
                 .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
                 .frame(maxWidth: .infinity, alignment: .trailing)
 
@@ -24,15 +25,15 @@ struct ResumenAltoValorPantalla: View {
                 HStack(spacing: 16) {
                     StatCardTexto(
                         title: "MEJORES 10%",
-                        value: resumen.donantesAltoValor,
+                        value: mejoresPorcentaje,
                         subtitulo: "DONANTES",
                         background: Color(red: 0.88, green: 0.88, blue: 0.88)
                     )
                     .frame(maxWidth: .infinity)
 
                     StatCardTexto(
-                        title: "ÚLTIMA ACTIVIDAD",
-                        value: resumen.ultimaActividadDias,
+                        title: "ÚLTIMA ACTIVIDAD:",
+                        value: ultimaActividadDias,
                         subtitulo: "DÍAS",
                         background: Color(red: 0.88, green: 0.88, blue: 0.88)
                     )
@@ -40,41 +41,38 @@ struct ResumenAltoValorPantalla: View {
                 }
                 .frame(maxWidth: .infinity)
 
-                TotalRecaudadoCard(monto: resumen.totalRecaudado)
+                TotalRecaudadoCard(monto: totalRecaudado)
                     .frame(maxWidth: .infinity)
             }
-            .fixedSize(horizontal: false, vertical: true)
         }
     }
 }
 
 struct TotalRecaudadoCard: View {
-    let monto: Int
+    let monto: Double
 
     private var montoFormateado: String {
         let formato = NumberFormatter()
         formato.numberStyle = .decimal
         formato.groupingSeparator = ","
         formato.maximumFractionDigits = 0
-        let numero = formato.string(from: NSNumber(value: monto)) ?? "\(monto)"
+        let numero = formato.string(from: NSNumber(value: monto)) ?? "\(Int(monto))"
         return "$\(numero)"
     }
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 6) {
             Text("TOTAL RECAUDADO")
-                .font(.system(size: 12, weight: .bold))
+                .font(.system(size: 22, weight: .bold))
                 .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
 
             Text(montoFormateado)
-                .font(.system(size: 50, weight: .bold))
-                .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
-                .minimumScaleFactor(0.5)
-                .lineLimit(1)
+                .font(.system(size: 40, weight: .bold))
+                .foregroundColor(Color(red: 0.13, green: 0.34, blue: 0.38))
 
             Text("PESOS")
-                .font(.system(size: 12, weight: .semibold))
-                .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
+                .font(.system(size: 20, weight: .semibold))
+                .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60).opacity(0.8))
         }
         .padding(18)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
@@ -86,13 +84,7 @@ struct TotalRecaudadoCard: View {
 }
 
 #Preview {
-    ResumenAltoValorPantalla(
-        resumen: ResumenDonantesAltoValor(
-            donantesAltoValor: 92,
-            totalRecaudado: 248038,
-            ultimaActividadDias: 22
-        )
-    )
-    .padding()
-    .background(Color(red: 0.96, green: 0.96, blue: 0.96))
+    ResumenAltoValor()
+        .padding()
+        .background(Color(red: 0.96, green: 0.96, blue: 0.96))
 }

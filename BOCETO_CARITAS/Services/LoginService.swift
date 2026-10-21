@@ -7,11 +7,11 @@
 
 import Foundation
 
-private let urlBase = "https://equipo4.tc2007b.tec.mx:10207/"
+private let urlBase = "http://10.14.255.41:10206/login"
 
 func verificarLogin(_ newLogin: LoginRequest) async throws -> LoginResponse{
     
-  guard let url = URL(string: "\(urlBase)login") else{
+  guard let url = URL(string: "\(urlBase)") else{
       print("URL incorrecto")
       throw URLError(.badURL)
   }

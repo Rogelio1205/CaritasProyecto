@@ -1,14 +1,12 @@
-from flask import Blueprint, jsonify, request
-from auth import token_required, role_required
+from flask import Blueprint, Flask, jsonify, make_response, request, send_file
+import json
+import sys
 import mssql_functions as MSSql
 
 donors_bp = Blueprint("donors", __name__)
 
 @donors_bp.route("/donor", methods=['GET'])
-#@token_required
-#@role_required('telefonista')
 def getDonor():
-    ...
     """
     Obtener Detalle Completo de un Donante
     ---

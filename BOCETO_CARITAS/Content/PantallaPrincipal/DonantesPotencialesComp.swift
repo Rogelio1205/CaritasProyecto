@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DonantesPotencialesComp: View {
     @Binding var tabSeleccionado: Tabs
-    let donantes: [DonantesPotenciales]
+    let donantes: [DonantePotencial]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -54,24 +54,7 @@ struct DonantesPotencialesComp: View {
 }
 
 struct DonantePotencialCard: View {
-    let donante: DonantesPotenciales
-
-    private var textoDonaciones: String {
-        if donante.cantidadDonaciones == 1 {
-            return "Ha donado: 1 vez"
-        } else {
-            return "Ha donado: \(donante.cantidadDonaciones) veces"
-        }
-    }
-
-    private var montoFormateado: String {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .decimal
-        formatter.groupingSeparator = ","
-        formatter.maximumFractionDigits = 0
-        let numero = formatter.string(from: NSNumber(value: donante.donacionPotencial)) ?? "\(Int(donante.donacionPotencial))"
-        return "$\(numero)"
-    }
+    let donante: DonantePotencial
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -80,14 +63,14 @@ struct DonantePotencialCard: View {
                 .foregroundColor(Color(red: 0.13, green: 0.34, blue: 0.38))
                 .fixedSize(horizontal: false, vertical: true)
 
-            Text(textoDonaciones)
-                .font(.system(size: 24, weight: .semibold))
+            Text("Última donación:\nHace \(donante.mesesUltimaDonacion) meses")
+                .font(.system(size: 14, weight: .semibold))
                 .foregroundColor(.black)
 
             Spacer()
 
-            Text("Donación potencial: \(montoFormateado)")
-                .font(.system(size: 18, weight: .bold))
+            Text("Hay \(donante.casosSimilares) casos similares a su última donación")
+                .font(.system(size: 13, weight: .bold))
                 .foregroundColor(Color(red: 0.13, green: 0.34, blue: 0.38))
         }
         .padding(20)
@@ -104,9 +87,9 @@ struct DonantePotencialCard: View {
         DonantesPotencialesComp(
             tabSeleccionado: .constant(.inicio),
             donantes: [
-                DonantesPotenciales(cantidadDonaciones: 1, donacionPotencial: 8000, idDonante: 12, nombre: "Gabriela Moreno"),
-                DonantesPotenciales(cantidadDonaciones: 2, donacionPotencial: 2000, idDonante: 9, nombre: "Jorge Cantu"),
-                DonantesPotenciales(cantidadDonaciones: 1, donacionPotencial: 2500, idDonante: 14, nombre: "Alejandra Paz")
+                DonantePotencial(idDonante: 1, nombre: "Manuel Rodríguez", mesesUltimaDonacion: 25, casosSimilares: 7),
+                DonantePotencial(idDonante: 2, nombre: "Esperanza Lopez", mesesUltimaDonacion: 22, casosSimilares: 5),
+                DonantePotencial(idDonante: 3, nombre: "Javier Herrera", mesesUltimaDonacion: 18, casosSimilares: 2)
             ]
         )
     }

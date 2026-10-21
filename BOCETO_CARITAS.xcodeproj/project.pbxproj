@@ -16,6 +16,11 @@
 			path = BOCETO_CARITAS;
 			sourceTree = "<group>";
 		};
+		FB807EEA3049DBC4008E3D57 /* Views */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Views;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +39,7 @@
 			children = (
 				22D7F1753043404F001D4AE4 /* BOCETO_CARITAS */,
 				22D7F1743043404F001D4AE4 /* Products */,
+				FB807EEA3049DBC4008E3D57 /* Views */,
 			);
 			sourceTree = "<group>";
 		};
@@ -62,6 +68,7 @@
 			);
 			fileSystemSynchronizedGroups = (
 				22D7F1753043404F001D4AE4 /* BOCETO_CARITAS */,
+				FB807EEA3049DBC4008E3D57 /* Views */,
 			);
 			name = BOCETO_CARITAS;
 			packageProductDependencies = (

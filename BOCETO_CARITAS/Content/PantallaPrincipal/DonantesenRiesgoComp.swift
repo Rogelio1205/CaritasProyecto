@@ -76,12 +76,12 @@ struct DonantesEnRiesgoComp: View {
                     .foregroundColor(.gray)
                     .padding(.horizontal, 4)
             } else {
-                VStack(spacing: 16) {
+                VStack(spacing: 12) {
                     ForEach(donantes) { donante in
                         NavigationLink {
                             DonanteDetallado(id: donante.idDonante)
                         } label: {
-                            MostrarDonanteRiesgo(donante: donante)
+                            MuestraDonante(donante: donante)
                         }
                         .buttonStyle(.plain)
                     }
@@ -92,6 +92,48 @@ struct DonantesEnRiesgoComp: View {
     }
 }
 
+struct MuestraDonante: View {
+    let donante: DonanteRiesgo
+
+    private var nivel: NivelRiesgo { NivelRiesgo(api: donante.nivel) }
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(donante.nombre)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
+
+                Text(formatoFecha(donante.mesesUltimaDonacion))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.gray)
+            }
+
+            Spacer()
+
+            Text(nivel.texto)
+                .font(.system(size: 13, weight: .bold))
+                .foregroundColor(nivel.colorTexto)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(
+                    Capsule()
+                        .fill(nivel.colorFondo)
+                )
+                .padding(.trailing, 12)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(Color.gray.opacity(0.4))
+        }
+        .padding(18)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+        )
+    }
+}
 
 #Preview {
     NavigationStack {

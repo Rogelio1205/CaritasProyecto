@@ -23,6 +23,42 @@ enum Tabs: CaseIterable {
     }
 }
 
+struct NavBar: View {
+    @Binding var tabSeleccionado: Tabs
+
+    private let colorFondo = Color(red: 0.79, green: 0.89, blue: 0.90)
+
+    var body: some View {
+        HStack {
+            ForEach(Tabs.allCases, id: \.self) { tab in
+                Spacer()
+                BotonTabs(tab: tab)
+                    .onTapGesture {
+                        tabSeleccionado = tab
+                    }
+                Spacer()
+            }
+        }
+        .padding(.vertical, 28)
+        .background(
+            Capsule()
+                .fill(colorFondo)
+        )
+        .padding(.horizontal, 20)
+    }
+}
+
+struct BotonTabs: View {
+    let tab: Tabs
+
+    var body: some View {
+        Image(systemName: tab.icono)
+            .font(.system(size: 34, weight: .semibold))
+            .foregroundColor(.black)
+            .frame(width: 44, height: 44)
+    }
+}
+
 #Preview {
     ContentView(idUsuario: 1)
 }

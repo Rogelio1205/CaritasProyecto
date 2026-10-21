@@ -38,12 +38,12 @@ struct DonantesAltoValorComp: View {
                     .foregroundColor(.gray)
                     .padding(.horizontal, 4)
             } else {
-                VStack(spacing: 16) {
+                VStack(spacing: 12) {
                     ForEach(donantes) { donante in
                         NavigationLink {
                             DonanteDetallado(id: donante.idDonante)
                         } label: {
-                            MostrarAltoValor(donante: donante)
+                            MuestraDonanteAltoValor(donante: donante)
                         }
                         .buttonStyle(.plain)
                     }
@@ -54,15 +54,62 @@ struct DonantesAltoValorComp: View {
     }
 }
 
+struct MuestraDonanteAltoValor: View {
+    let donante: DonanteAltoValor
+
+    private var totalFormateado: String {
+        let formato = NumberFormatter()
+        formato.numberStyle = .decimal
+        formato.groupingSeparator = ","
+        let numero = formato.string(from: NSNumber(value: donante.totalDonado)) ?? "\(Int(donante.totalDonado))"
+        return "$\(numero) pesos"
+    }
+
+    var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(donante.nombre)
+                    .font(.system(size: 18, weight: .bold))
+                    .foregroundColor(Color(red: 0.20, green: 0.53, blue: 0.60))
+
+                Text(formatoFecha(donante.mesesUltimaDonacion))
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundColor(.gray)
+            }
+
+            Spacer()
+
+            VStack(alignment: .trailing, spacing: 2) {
+                Text("Total donado")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.gray)
+                Text(totalFormateado)
+                    .font(.system(size: 16, weight: .bold))
+                    .foregroundColor(.black)
+            }
+            .padding(.trailing, 12)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundColor(Color.gray.opacity(0.5))
+        }
+        .padding(18)
+        .background(
+            RoundedRectangle(cornerRadius: 18)
+                .fill(Color.white)
+                .shadow(color: Color.black.opacity(0.04), radius: 4, x: 0, y: 2)
+        )
+    }
+}
 
 #Preview {
     NavigationStack {
         DonantesAltoValorComp(
             tabSeleccionado: .constant(.inicio),
             donantes: [
-                DonanteAltoValor(idDonante: 1, nombre: "Laura Fuentes", mesesUltimaDonacion: 5, diasSinDonar: 10, totalDonado: 18459),
-                DonanteAltoValor(idDonante: 2, nombre: "Gustavo Gutierrez", mesesUltimaDonacion: 6, diasSinDonar: 10, totalDonado: 14395),
-                DonanteAltoValor(idDonante: 3, nombre: "Octavio Castro", mesesUltimaDonacion: 1, diasSinDonar: 10, totalDonado: 9503)
+                DonanteAltoValor(idDonante: 1, nombre: "Laura Fuentes", mesesUltimaDonacion: 5, totalDonado: 18459),
+                DonanteAltoValor(idDonante: 2, nombre: "Gustavo Gutierrez", mesesUltimaDonacion: 6, totalDonado: 14395),
+                DonanteAltoValor(idDonante: 3, nombre: "Octavio Castro", mesesUltimaDonacion: 2, totalDonado: 9503)
             ]
         )
     }

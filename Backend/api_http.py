@@ -1,34 +1,19 @@
-import os
-from dotenv import load_dotenv
 from flask import Flask, jsonify, make_response, request, send_file
 from endpoints.dashboard import dashboard_bp
 import json
 import sys
 import mssql_functions as MSSql
-from auth import generar_token # <- Se agrego para el jwt
 from endpoints.detailed_donor import donors_bp
-from endpoints.detailed_collection import collections_bp
 from endpoints.promesas import promesas_bp
 from endpoints.pagos import pagos_bp
-from endpoints.recaudacionAreas import recaudacionArea_bp
-from endpoints.donante_riesgo import DonanteRiesgo_bp
-from endpoints.donante_altovalor import DonanteAltoValor_bp
-from endpoints.topDonantesAdmin import topDonantesAdmin_bp
-from endpoints.donante_potencial import DonantePotencial_bp
-from endpoints.adminRecolecciones import adminRecolecciones_bp
-from endpoints.reprogramarRecoleccion import recolecciones_bp
 from flasgger import Swagger
-from auth import logger #<- para el syslog
-from secure import Secure #<- para asegurar los headers
-
-load_dotenv()
 
 # Connect to mssql dB from start
 mssql_params = {}
-mssql_params['DB_HOST'] = os.getenv('DB_HOST')
-mssql_params['DB_NAME'] = os.getenv('DB_NAME')
-mssql_params['DB_USER'] = os.getenv('DB_USER')
-mssql_params['DB_PASSWORD'] = os.getenv('DB_PASSWORD')
+mssql_params['DB_HOST'] = '100.80.80.7'
+mssql_params['DB_NAME'] = 'CaritasBD'
+mssql_params['DB_USER'] = 'SA'
+mssql_params['DB_PASSWORD'] = 'Shakira123.'
 
 try:
     MSSql.cnx = MSSql.mssql_connect(mssql_params)
@@ -37,16 +22,6 @@ except Exception as e:
     sys.exit()
 
 app = Flask(__name__)
-# --- Secure headers ---
-secure_headers =  Secure.with_default_headers()
-
-@app.after_request
-def add_security_headers(response):
-    if not request.path.startswith(('/apidocs', '/flasgger_static', '/apispec')):
-        secure_headers.set_headers(response)
-        # El API solo regresa JSON: no necesita cargar scripts, estilos ni fuentes
-        response.headers['Content-Security-Policy'] = "default-src 'none'; frame-ancestors 'none'; form-action 'none'"
-    return response
 
 swagger = Swagger(app, template= {
     "info": {
@@ -57,17 +32,9 @@ swagger = Swagger(app, template= {
 })
 
 app.register_blueprint(donors_bp)
-app.register_blueprint(collections_bp)
 app.register_blueprint(promesas_bp)
 app.register_blueprint(pagos_bp)
 app.register_blueprint(dashboard_bp)
-app.register_blueprint(recaudacionArea_bp)
-app.register_blueprint(DonanteRiesgo_bp)
-app.register_blueprint(topDonantesAdmin_bp)
-app.register_blueprint(DonantePotencial_bp)
-app.register_blueprint(DonanteAltoValor_bp)
-app.register_blueprint(adminRecolecciones_bp)
-app.register_blueprint(recolecciones_bp)
 
 @app.route("/hello")
 def hello():
@@ -116,6 +83,16 @@ def getRecPorDia():
     recArr = MSSql.recoleccionPorDia()
     return make_response(jsonify(recArr))
 
+@app.route("/recoleccionesMontoSum", methods=['GET'])
+def getRecoleccionesMontoSum():
+    suma = MSSql.recMontoSum()
+    return make_response(jsonify(suma))
+
+@app.route("/numRecolecciones", methods=['GET'])
+def getNumRecolecciones():
+    num = MSSql.numRecSemanal()
+    return make_response(jsonify(num))
+
 @app.route("/login", methods=['POST'])
 def logIn():
     """
@@ -162,24 +139,13 @@ def logIn():
     usuario = data.get("userName")
     password = data.get("password_hash")
 
-    validUser = MSSql.funcionLogin(usuario,password)
+    validUser = MSSql.funcionLogin('Usuario',usuario,password)
 
-    if validUser:                  #-----Se agrego para el jwt---------
-        logger.info(f"Login exitoso usuario={usuario}")
-        return make_response(jsonify({"token": generar_token(validUser), "nombre": validUser["nombre"], "idRol": validUser["idRol"]}),200)
+    if validUser:
+        return make_response(jsonify({"nombre": validUser["nombre"], "idRol": validUser["idRol"]}),200)
     else:
-        logger.info(f"Login fallado usuario={usuario}")
         return make_response(jsonify({"error": "Usuario Invalido"}), 401)
-
-API_CERT = '/home/user01/mnt/backend/SSL/equipo4.tc2007b.tec.mx.cer'
-API_KEY = '/home/user01/mnt/backend/SSL/equipo4.tc2007b.tec.mx.key'
-
-API_HOST = os.getenv('API_HOST', '127.0.0.1')
-API_PORT = int(os.getenv('API_PORT', '10207'))
 
 if __name__ == '__main__':
     print ("Running API...")
-    import ssl
-    context = ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)
-    context.load_cert_chain(API_CERT, API_KEY)
-    app.run(host=API_HOST, port=API_PORT, ssl_context=context)
+    app.run(host='0.0.0.0', port=10206, debug=True)

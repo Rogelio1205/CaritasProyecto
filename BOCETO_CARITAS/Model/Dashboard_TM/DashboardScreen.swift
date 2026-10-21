@@ -11,6 +11,6 @@ struct DashboardScreen: Codable {
     let meta: Meta
     let riesgo: Riesgo
     let donantesEnRiesgo: [DonanteRiesgo]
-    let donantesPotenciales: [DonantesPotenciales]
+    let donantesPotenciales: [DonantePotencial]
     let donantesAltoValor: [DonanteAltoValor]
 }
