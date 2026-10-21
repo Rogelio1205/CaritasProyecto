@@ -1,47 +1,11 @@
 //
-//  ContentView.swift
+//  PantallaPrincipal.swift
 //  BOCETO_CARITAS
 //
-//  Created by Rogelio Iram González Ortiz on 29/08/26.
+//  Created by Rogelio Iram González Ortiz on 19/10/26.
 //
 
 import SwiftUI
-
-struct ContentView: View {
-    let idUsuario: Int
-    @State private var tabSeleccionado: Tabs = .inicio
-
-    var body: some View {
-        NavigationStack {
-            ZStack(alignment: .bottom) {
-                Color(red: 0.94, green: 0.94, blue: 0.94)
-                    .ignoresSafeArea()
-
-                ScrollView {
-                    VStack {
-                        switch tabSeleccionado {
-                        case .inicio:
-                            PantallaPrincipal(idUsuario: idUsuario,
-                                              tabSeleccionado: $tabSeleccionado)
-                        case .riesgo:
-                            DonantesEnRiesgo()
-                        case .donantes:
-                            DonantesPotenciales()
-                        case .potenciales:
-                            DonantesAltoValor()
-                        }
-
-                        Color.clear.frame(height: 120)
-                    }
-                
-                }
-
-                NavBar(tabSeleccionado: $tabSeleccionado)
-                    .padding(.bottom, 12)
-            }
-        }
-    }
-}
 
 struct PantallaPrincipal: View {
     let idUsuario: Int
@@ -73,8 +37,4 @@ struct PantallaPrincipal: View {
         .task { await viewmodel.cargar(idUsuario: idUsuario) }
         
     }
-}
-
-#Preview {
-    ContentView(idUsuario: 1)
 }

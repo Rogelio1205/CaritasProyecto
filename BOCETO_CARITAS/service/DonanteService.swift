@@ -2,7 +2,7 @@ import Foundation
 
 class DonanteService {
     
-    static let urlBase = "http://10.14.255.41:10206"
+    static let urlBase = "https://equipo4.tc2007b.tec.mx:10207"
     
     static func getDonante(id : Int) async throws -> Donor{
         

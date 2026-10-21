@@ -1,3 +1,4 @@
+
 import SwiftUI
 
 struct PaymentsAndPromises: View {
@@ -75,14 +76,14 @@ struct PaymentsAndPromises: View {
             )
             .frame(height: 270)
         }
-        .sheet(item: $promesaSeleccionada) { promesa in
+       /* .sheet(item: $promesaSeleccionada) { promesa in
             DetallePromesas(idPromesa: promesa.id)
                 .presentationDetents([.large])
         }
-        .sheet(item: $pagoSeleccionado) { pago in
+    .sheet(item: $pagoSeleccionado) { pago in
             DetallePagosSheet(idPago: pago.id)
                 .presentationDetents([.large])
-        }
+        }   */
 
     }
 }
@@ -95,3 +96,4 @@ struct PaymentsAndPromises: View {
         Pago(estadoPago: "No", fecha: "no", id: 1, idPromesa: 1, importe: "10")
     ])
 }
+

@@ -4,33 +4,40 @@
 //
 //  Created by Alumno on 29/09/26.
 //
-
+/*
 import SwiftUI
 
 struct CasosAcitvosRow: View {
+    
+    let casosAct: CasosActivos
+    
     var body: some View {
         VStack{ // VSTACK principal
             HStack{ // HSTACK
                 VStack(alignment: .leading) { // VSTACK CAMP y DES
-                    Text("Campaña Cancer ")
+                    Text("\(casosAct.nombre)")
                         .font(.title)
                         .bold()
                         .foregroundStyle(ColorConstants.mainColor)
-                    Text("Apoyo a Tratamientos oncologicos")
+                    Text("\(casosAct.descripcion)")
                         .foregroundStyle(Color(red: 164/255, green: 164/255, blue: 164/255))
                 } // VSTACK CAMP y DES
                 
                 Spacer()
                 
                 VStack {
+                    var numSinFormato = casosAct.totalPagado
+                    var numFormateado = numSinFormato.formatted(.number.precision(.fractionLength(0)))
                     Text("Recaudado")
-                    Text("$36,750 pesos")
+                    Text("$\(numFormateado) pesos")
+                        .font(.system(size: 17))
+                        .fontWeight(.bold)
                 }
                 
                 
                 
             } // HSTACK
-            .padding(.leading, 70)
+            .padding(.leading, 10)
             .padding(.trailing, 50)
             .padding(.vertical, 10)
             
@@ -41,5 +48,7 @@ struct CasosAcitvosRow: View {
 }
 
 #Preview {
-    CasosAcitvosRow()
+    let casosPrueba = CasosActivos(idCaso: 1, nombre: "Campaña Cancer", descripcion: "Apoyo a tratamientos oncologicos", totalPagado: 48200)
+    CasosAcitvosRow(casosAct: casosPrueba)
 }
+ */

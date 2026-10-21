@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let urlBaseDashboard = "http://10.14.255.41:10206/dashboard"
+private let urlBaseDashboard = "https://equipo4.tc2007b.tec.mx:10207/dashboard"
 
 func obtenerDashboard(idUsuario: Int) async throws -> DashboardScreen {
 

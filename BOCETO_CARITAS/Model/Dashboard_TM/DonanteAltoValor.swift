@@ -11,11 +11,12 @@ struct DonanteAltoValor: Codable, Identifiable {
     let idDonante: Int
     let nombre: String
     let mesesUltimaDonacion: Int
+    let diasSinDonar: Int?
     let totalDonado: Double
     var id: Int { idDonante }
 
     enum CodingKeys: String, CodingKey {
-        case idDonante, nombre, totalDonado
+        case idDonante, nombre, totalDonado, diasSinDonar
         case mesesUltimaDonacion = "mesesSinDonar"
     }
 }
