@@ -61,8 +61,8 @@ struct LoginView: View {
                     Image("Caritas-Photoroom")
                         .resizable(resizingMode: .stretch)
                         .aspectRatio(contentMode: .fit)
-                        .frame(height: 125)
-                        .padding(.leading, 25)
+                        .frame(height: 100)
+                        .padding(.leading, 20)
                     //.padding(.bottom, )
                     
                     Spacer()
@@ -86,60 +86,60 @@ struct LoginView: View {
                 Image("Logo Cara y Cruz")
                     .resizable(resizingMode: .stretch)
                     .aspectRatio(contentMode: .fit)
-                    .frame(height: 250)
+                    .frame(height: 200)
                 
                 Text("Cara y Cruz")
-                    .font(.system(size: 65))
+                    .font(.system(size: 52))
                     .fontWeight(.heavy)
-                    .padding(.bottom, 55)
+                    .padding(.bottom, 44)
                 
                 
                 VStack { // VStack reucadro blanco
                     
                     VStack (alignment: .leading) { // VStack campus de captura
                         Text("Iniciar Sesión")
-                            .font(.system(size: 50))
+                            .font(.system(size: 40))
                             .fontWeight(.bold)
                         // .padding(.bottom, 35)
-                            .padding(.leading, 45)
+                            .padding(.leading, 36)
                         
                         Divider()
                             .padding(.bottom, 10)
                         
                         Text("Usuario")
-                            .font(.system(size: 36))
+                            .font(.system(size: 29))
                             .fontWeight(.bold)
-                            .padding(.leading, 45)
+                            .padding(.leading, 36)
                         
                         // Se hace el textField de manera manual para poder customizarlo
                         TextField("caritas@gmailcom", text: $username)
                             .textInputAutocapitalization(.never)
-                            .font(.system(size: 33))
-                            .padding(20) // Pading interior
+                            .font(.system(size: 26))
+                            .padding(16) // Pading interior
                             .background(Color(red: 191/255, green: 190/255, blue: 186/255))
                             .cornerRadius(12) // Redondear borde
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color(red:0, green: 152/255, blue: 174/255), lineWidth: 3) // Color del borde
                             )
-                            .padding(.horizontal, 45)
-                            .padding(.bottom, 50)
+                            .padding(.horizontal, 36)
+                            .padding(.bottom, 40)
                         
                         Text("Contraseña")
-                            .font(.system(size: 36))
+                            .font(.system(size: 29))
                             .fontWeight(.bold)
-                            .padding(.leading, 45)
+                            .padding(.leading, 36)
                         
                         SecureField("•••••••", text: $password)
-                            .font(.system(size: 33))
-                            .padding(20) // Padin interior
+                            .font(.system(size: 26))
+                            .padding(16) // Padin interior
                             .background(Color(red: 191/255, green: 190/255, blue: 186/255))
                             .cornerRadius(12) // Redondear borde
                             .overlay(
                                 RoundedRectangle(cornerRadius: 12)
                                     .stroke(Color(red:0, green: 152/255, blue: 174/255), lineWidth: 3) // Color del borde
                             )
-                            .padding(.horizontal, 45)
+                            .padding(.horizontal, 36)
                         
                     } // VStack campus de captura
                     
@@ -150,16 +150,16 @@ struct LoginView: View {
                     label: {
                         Text("INICIAR SESIÓN")
                             .frame(maxWidth: .infinity)
-                            .padding(.top, 15)
-                            .padding(.bottom, 15)
-                            .font(.system(size: 35))
+                            .padding(.top, 12)
+                            .padding(.bottom, 12)
+                            .font(.system(size: 28))
                             .fontWeight(.bold)
                         
                     }
                     .buttonStyle(.borderedProminent)
                     .buttonBorderShape(.roundedRectangle(radius: 20))
-                    .frame(maxWidth: 300)
-                    .padding(.top, 55)
+                    .frame(maxWidth: 240)
+                    .padding(.top, 44)
                     .tint(Color(red:0, green: 152/255, blue: 174/255))
                     .font(.system(size: 100))
                     .alert("\(messageAlert)", isPresented: $showAlert){
@@ -168,7 +168,7 @@ struct LoginView: View {
                     
                     
                 } // VStack reucadro blanco
-                .padding(.vertical, 40)
+                .padding(.vertical, 32)
                 .background(.white.opacity(0.85))
                 .clipShape(RoundedRectangle(cornerRadius: 35))
                 .overlay {
@@ -176,7 +176,7 @@ struct LoginView: View {
                         .stroke(.gray, lineWidth: 1)
                 }
                 .shadow(color: .gray, radius: 10)
-                .padding(.horizontal, 60)
+                .padding(.horizontal, 48)
                 
                 
                 
