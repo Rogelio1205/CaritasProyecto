@@ -21,7 +21,7 @@ struct DonanteDetallado: View {
                         .foregroundStyle(ColorConstants.mainColor)
                         .bold()
                         .padding(.trailing, 41)
-                        .padding(.bottom, 42)
+                        .padding(.bottom, 2)
                 }
                 
                 VStack (alignment: .leading) {
@@ -69,7 +69,7 @@ struct DonanteDetallado: View {
                             Text("GENERAL Y CONTACTO").tag(1)
                             Text("PROMESAS Y PAGO").tag(2)
                         }.pickerStyle(.segmented)
-                            .padding(.bottom, 42)
+                            .padding(.bottom, 22)
                             .frame(width: 550)
                         Spacer()
                     }
