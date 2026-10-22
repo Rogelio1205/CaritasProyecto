@@ -26,6 +26,7 @@ struct InformacionGeneral : Codable {
     let donanteEspecial : Bool
     let excluido : Bool
     let fechaExclusion : String?
+    let fechaNacimiento : String?
     let tipoDonante : String
 }
 
