@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let baseURL = "https://equipo4.tc2007b.tec.mx:10207/"
+private let baseURL = "https://equipo4.tc2007b.tec.mx:10207"
 
 func ObtenerPromesaDetalle(idPromesa: Int) async throws -> PromesaDetalle {
     guard let url = URL(string: "\(baseURL)/promesa/\(idPromesa)") else {
