@@ -1,4 +1,3 @@
-
 import SwiftUI
 
 struct PaymentsAndPromises: View {
@@ -8,6 +7,10 @@ struct PaymentsAndPromises: View {
     
     @State private var promesaSeleccionada: Promesa?
     @State private var pagoSeleccionado: Pago?
+    
+    private func nombrePromesa(_ idPromesa: Int) -> String {
+        promesas?.first(where: { $0.id == idPromesa })?.caso ?? "Sin campaña"
+    }
     
     var body: some View {
         VStack {
@@ -60,7 +63,7 @@ struct PaymentsAndPromises: View {
                             ForEach(pagos ?? [], id: \.id) { pago in
                                 
                                 TableRow(
-                                    field1: String(pago.id),
+                                    field1: nombrePromesa(pago.idPromesa),
                                     field2: formatDate(pago.fecha),
                                     field3: "$\(pago.importe)",
                                     onTap: {
@@ -96,4 +99,3 @@ struct PaymentsAndPromises: View {
         Pago(estadoPago: "No", fecha: "no", id: 1, idPromesa: 1, importe: "10")
     ])
 }
-
