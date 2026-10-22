@@ -7,7 +7,7 @@
 
 import Foundation
 
-private let baseURL = "http://10.14.255.41:10206"
+private let baseURL = "https://equipo4.tc2007b.tec.mx:10207/"
 
 func obtenerPagoDetalle(idPago: Int) async throws -> PagoDetalle {
     guard let url = URL(string: "\(baseURL)/pago/\(idPago)") else {
