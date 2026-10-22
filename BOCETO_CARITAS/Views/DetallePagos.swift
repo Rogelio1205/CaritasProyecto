@@ -9,60 +9,76 @@ import SwiftUI
 
 struct DetallePagosSheet: View {
     @Environment(\.dismiss) private var dismiss
-    
+
     let idPago: Int
-    
+
     @State private var pagoActual: PagoDetalle?
-    @State private var isLoading: Bool = false
+    @State private var isLoading: Bool = true
     @State private var mensajeError: String?
-    
+
     var body: some View {
-        ScrollView {
-            VStack {
-                if isLoading{
-                    ProgressView("Cargando detalles de pago...")
-                } else if let error = mensajeError{
-                    Text("Error: \(error)")
-                } else if let pago = pagoActual {
-                    HeaderCardPago(titulo: pago.nombreCampana, subtitulo: "PAGOS")
-                    PagoStatusCard(
-                        monto: pago.montoDouble,
-                        estatus: pago.estatusPago,
-                        formaPago: pago.formaPago,
-                        fechaConfirmacion: formatDate(pago.fechaConfirmacion!),
-                        cancelado: pago.cancelado
-                    )
-                    
-                    VStack {
-                        Grid {
+        VStack(spacing: 0) {
+            ScrollView {
+                VStack(alignment: .leading, spacing: 20) {
+                    if isLoading {
+                        ProgressView("Cargando detalles de pago...")
+                            .controlSize(.large)
+                            .frame(maxWidth: .infinity)
+                            .padding(.top, 80)
+                    } else if let error = mensajeError {
+                        ContentUnavailableView(
+                            "No se pudo cargar el pago",
+                            systemImage: "exclamationmark.triangle",
+                            description: Text(error)
+                        )
+                        .padding(.top, 40)
+                    } else if let pago = pagoActual {
+                        HeaderCardPago(titulo: pago.nombreCampana, subtitulo: "PAGOS")
+
+                        PagoStatusCard(
+                            monto: pago.montoDouble,
+                            estatus: pago.estatusPago,
+                            formaPago: pago.formaPago,
+                            fechaConfirmacion: pago.fechaConfirmacion.map { formatDate($0) } ?? "N/A",
+                            cancelado: pago.cancelado
+                        )
+
+                        Grid(horizontalSpacing: 16, verticalSpacing: 16) {
                             GridRow {
                                 StatCardPago(
                                     title: "Reprogramado",
                                     subtitulo: pago.reprogramado
                                 )
                                 StatCardPago(
-                                    title: "Fecha Reprogramación",
-                                    subtitulo: pago.fechaReprogramacion ?? "N/A"
+                                    title: "Fecha de reprogramación",
+                                    subtitulo: pago.fechaReprogramacion.map { formatDate($0) } ?? "N/A"
                                 )
                             }
                         }
                     }
                 }
-                
-                BotonAceptarPago {
-                    dismiss()
-                }
-                .padding(.top, 20)
+                .padding(28)
             }
-            .padding(30)
+
+            // Botón fijo abajo: siempre visible aunque el contenido haga scroll
+            BotonAceptarPago {
+                dismiss()
+            }
+            .padding(.horizontal, 28)
+            .padding(.vertical, 16)
+            .background(.bar)
         }
-        .frame(minWidth: 850, minHeight: 600)
+        // Tamaño de la sheet en iPad (iOS 18+)
+        .presentationSizing(.page)
+        .presentationDragIndicator(.visible)
         .task {
-            do{
-                pagoActual = try await obtenerPagoDetalle(idPago:idPago)
-            } catch{
+            do {
+                pagoActual = try await obtenerPagoDetalle(idPago: idPago)
+            } catch {
+                mensajeError = error.localizedDescription
                 print("Error: \(error)")
             }
+            isLoading = false
         }
     }
 }
@@ -71,21 +87,19 @@ struct DetallePagosSheet: View {
 struct HeaderCardPago: View {
     let titulo: String
     let subtitulo: String
-    
+
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(titulo)
-                    .font(.system(size: 30, weight: .bold))
-                    .foregroundStyle(Color.black)
-                Text(subtitulo)
-                    .font(.system(size: 14, weight: .medium))
-                    .foregroundStyle(.gray)
-            }
-            Spacer()
+        VStack(alignment: .leading, spacing: 4) {
+            Text(subtitulo)
+                .font(.system(size: 14, weight: .semibold))
+                .foregroundStyle(.secondary)
+            Text(titulo)
+                .font(.system(size: 28, weight: .bold))
+                .foregroundStyle(.primary)
+                .lineLimit(2)
+                .minimumScaleFactor(0.8)
         }
-        .padding(.top, 10)
-        .padding(.horizontal, 10)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -95,42 +109,44 @@ struct PagoStatusCard: View {
     let formaPago: String
     let fechaConfirmacion: String
     let cancelado: String
-    
+
     let mainColor = Color(red: 17/255, green: 153/255, blue: 170/255)
-    
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 20) {
+        VStack(alignment: .leading, spacing: 24) {
             HStack(alignment: .top) {
-                VStack(alignment: .leading) {
+                VStack(alignment: .leading, spacing: 4) {
                     Text("MONTO")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundStyle(Color.gray)
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.secondary)
                     Text(monto.formatted(.currency(code: "MXN")))
-                        .font(.system(size: 40, weight: .bold))
+                        .font(.system(size: 38, weight: .bold))
                         .foregroundStyle(mainColor)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.6)
                 }
-                
-                Spacer()
-                
-                VStack(alignment: .trailing, spacing: 5) {
-                    Text("ESTATUS PAGO")
-                        .font(.system(size: 16, weight: .bold))
-                        .foregroundStyle(Color.gray)
-                    
+
+                Spacer(minLength: 16)
+
+                VStack(alignment: .trailing, spacing: 4) {
+                    Text("ESTATUS")
+                        .font(.system(size: 16, weight: .semibold))
+                        .foregroundStyle(.secondary)
                     Text(estatus)
-                        .font(.system(size: 22, weight: .bold))
-                        .foregroundStyle(estatus == "Aprobado" ? mainColor : .gray)
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(estatus == "Aprobado" ? mainColor : .secondary)
                 }
             }
-            .padding(.trailing, 20)
-            
-            HStack(spacing: 40) {
+
+            Divider()
+
+            HStack(alignment: .top, spacing: 16) {
                 DetailStackPago(label: "Forma de pago", value: formaPago)
-                DetailStackPago(label: "Fecha Confirmación", value: fechaConfirmacion)
+                DetailStackPago(label: "Fecha de confirmación", value: fechaConfirmacion)
                 DetailStackPago(label: "Cancelado", value: cancelado)
             }
         }
-        .padding(30)
+        .padding(24)
         .background(
             RoundedRectangle(cornerRadius: 22)
                 .fill(Color(red: 120/255, green: 120/255, blue: 120/255, opacity: 0.12))
@@ -141,14 +157,17 @@ struct PagoStatusCard: View {
 struct DetailStackPago: View {
     let label: String
     let value: String
-    
+
     var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(label)
-                .font(Font.system(size: 16, weight: .bold))
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(.secondary)
             Text(value)
-                .font(Font.system(size: 18))
+                .font(.system(size: 18))
         }
+        // Las 3 columnas se reparten el ancho por igual y el texto hace salto de línea
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }
 
@@ -157,10 +176,10 @@ struct StatCardPago: View {
     let subtitulo: String
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 5) {
+        VStack(alignment: .leading, spacing: 4) {
             Text(title)
-                .font(.system(size: 16, weight: .bold))
-
+                .font(.system(size: 15, weight: .bold))
+                .foregroundStyle(.secondary)
             Text(subtitulo)
                 .font(.system(size: 20))
         }
@@ -176,20 +195,24 @@ struct StatCardPago: View {
 struct BotonAceptarPago: View {
     var accion: () -> Void
     let mainColor = Color(red: 17/255, green: 153/255, blue: 170/255)
-    
+
     var body: some View {
         Button(action: accion) {
             Text("ACEPTAR")
-                .font(.system(size: 24, weight: .bold))
-                .foregroundColor(.white)
-                .frame(width: 200, height: 50)
-                .background(mainColor)
-                .cornerRadius(25)
+                .font(.system(size: 20, weight: .bold))
+                .frame(maxWidth: 320)
+                .frame(height: 50)
         }
-        .padding(20)
+        .buttonStyle(.borderedProminent)
+        .buttonBorderShape(.capsule)
+        .tint(mainColor)
+        .frame(maxWidth: .infinity)
     }
 }
 
 #Preview {
-    DetallePagosSheet(idPago: 1)
+    Color.clear
+        .sheet(isPresented: .constant(true)) {
+            DetallePagosSheet(idPago: 1)
+        }
 }
