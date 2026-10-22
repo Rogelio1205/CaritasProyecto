@@ -78,7 +78,7 @@ struct PaymentsAndPromises: View {
                 }
             )
             .frame(height: 270)
-        }
+        }/*
         .sheet(item: $promesaSeleccionada) { promesa in
             DetallePromesas(idPromesa: promesa.id)
                 .presentationDetents([.large])
@@ -87,7 +87,7 @@ struct PaymentsAndPromises: View {
             DetallePagosSheet(idPago: pago.id)
                 .presentationDetents([.large])
         }
-
+*/
     }
 }
 
